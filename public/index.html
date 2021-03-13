@@ -214,6 +214,7 @@
     textBox.addEventListener('focus', ev => {
         if (blurTimeout) {
             clearTimeout(blurTimeout);
+            blurTimeout = void 0;
         }
     });
 

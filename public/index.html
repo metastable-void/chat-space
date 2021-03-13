@@ -40,6 +40,11 @@
         padding: .5em;
     }
 
+    #comments .commentBox::before {
+        content: attr(data-shortId) ': ';
+        color: #888;
+    }
+
 </style>
 <h1>WebSocket chat demo</h1>
 <input tyep="text" id="text" size="280"/>
@@ -73,6 +78,7 @@
 
     const UUID = getUuid();
     const PING_TIMEOUT = 30000;
+    let lastUpdate = 0;
 
     const wsUrl = new URL('/ws', location.href);
     wsUrl.protocol = 'https:' == wsUrl.protocol ? 'wss:' : 'ws:';
@@ -117,10 +123,11 @@
     };
 
     let previousText = '';
-    textBox.addEventListener('keyup', ev => {
+    const sendUpdate = (force) => {
         const text = textBox.value.trim();
-        if (text == previousText) return;
+        if (text == previousText && !force) return;
         previousText = text;
+        lastUpdate = getTime();
         if (text.length < 1) {
             sendMessage({
                 uuid: UUID,
@@ -136,11 +143,15 @@
                 time: getTime(),
             });
         }
+    }
+    textBox.addEventListener('keyup', ev => {
+        sendUpdate();
     });
 
     textBox.addEventListener('change', ev => {
         textBox.value = '';
         if (previousText == '') return;
+        lastUpdate = getTime();
         previousText = '';
         sendMessage({
             uuid: UUID,
@@ -159,6 +170,7 @@
             const commentBox = document.createElement('div');
             commentBox.classList.add('commentBox');
             commentBox.dataset.uuid = uuid;
+            commentBox.dataset.shortId = uuid.split('-')[0];
             commentBox.append('' + textMap[uuid].text);
             commentsContainer.prepend(commentBox);
         }
@@ -187,8 +199,10 @@
                     break;
                 }
                 case 'text_cleared': {
-                    delete textMap[data.uuid];
-                    renderText();
+                    setTimeout(() => {
+                        delete textMap[data.uuid];
+                        renderText();
+                    }, 1000);
                     break;
                 }
                 default: {
@@ -202,6 +216,9 @@
 
     setInterval(() => {
         const currentTime = getTime();
+        if (currentTime - lastUpdate > 3000) {
+            sendUpdate(true);
+        }
         for (const uuid of Reflect.ownKeys(textMap)) {
             if (!textMap[uuid]) {
                 delete textMap[uuid];

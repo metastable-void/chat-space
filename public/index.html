@@ -58,6 +58,7 @@
 </head>
 <body>
 <h1>WebSocket chat demo</h1>
+<div id="status">[<span id="connection">?</span>] <span id="online_count">0</span> user(s) online.</div>
 <div id="text" contenteditable="true"></div>
 <div id="comments"></div>
 <script type="module">
@@ -66,6 +67,8 @@
     */
     const textBox = document.querySelector('#text');
     const commentsContainer = document.querySelector('#comments');
+    const connectionStatus = document.querySelector('#connection');
+    const onlineCount = document.querySelector('#online_count');
 
     const getUuid = () => {
         const bytes = new Uint8Array(16);
@@ -115,6 +118,7 @@
 
     const updateStatus = () => {
         console.log('readyState:', showReadyState(ws.readyState));
+        connectionStatus.textContent = showReadyState(ws.readyState);
     }
 
     ws.addEventListener('open', ev => {
@@ -188,15 +192,20 @@
 
     const textMap = Object.create(null);
 
+    const getOnlineCount = () => Reflect.ownKeys(textMap).length;
+
     const renderText = () => {
+        onlineCount.textContent = getOnlineCount();
         commentsContainer.textContent = '';
         for (const uuid of Reflect.ownKeys(textMap)) {
             if ('string' != typeof uuid) continue;
+            const text = textMap[uuid].text;
+            if ('' === text) continue;
             const commentBox = document.createElement('div');
             commentBox.classList.add('commentBox');
             commentBox.dataset.uuid = uuid;
             commentBox.dataset.shortId = uuid.split('-')[0];
-            commentBox.append('' + textMap[uuid].text);
+            commentBox.append(text);
             commentsContainer.prepend(commentBox);
         }
     };
@@ -225,7 +234,10 @@
                 }
                 case 'text_cleared': {
                     setTimeout(() => {
-                        delete textMap[data.uuid];
+                        textMap[data.uuid] = {
+                            text,
+                            receivedTime: getTime(),
+                        };
                         renderText();
                     }, 1000);
                     break;
@@ -250,7 +262,7 @@
                 continue;
             }
             const state = textMap[uuid];
-            if (currentTime - state.receivedTime > 30000) {
+            if (currentTime - state.receivedTime > 10000) {
                 delete textMap[uuid];
                 continue;
             }

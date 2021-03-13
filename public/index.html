@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta charset="utf-8"/>
-<title>WebSocket chat demo</title>
+<title>Menhera Chatspace: realtime text chat</title>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <style>
     body, input, textarea, button, select {
@@ -16,10 +16,31 @@
     :root {
         font-family: system-ui, -apple-system, sans-serif;
         font-size: 100%;
+        display: grid;
+        min-width: 100%;
+        min-height: 100%;
     }
 
     body {
         display: grid;
+        margin: 0;
+        padding: .5rem;
+    }
+
+    #main {
+        display: grid;
+        align-content: end;
+        background-color: #f2f2f2;
+    }
+
+    #controls {
+        position: -webkit-sticky;
+        position: sticky;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        inline-size: 100%;
+        background-color: #fff;
     }
 
     #text {
@@ -31,12 +52,6 @@
         box-sizing: border-box;
         overflow: hidden;
         white-space: pre-wrap;
-        position: fixed;
-        inline-size: 100%;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background-color: #f2f2f2;
     }
 
     #text:empty::after {
@@ -44,8 +59,22 @@
         content: 'Input text here and press enter to clear...';
     }
 
+    #connection {
+        background-color: #888;
+        color: #fff;
+    }
+
+    #connection[data-status="OPEN"] {
+        background-color: #5eaf30;
+    }
+
+    #connection[data-status="CONNECTING"] {
+        background-color: #b89930;
+    }
+
     #comments {
         display: grid;
+        align-content: end;
     }
 
     #comments .commentBox {
@@ -53,6 +82,7 @@
         margin-block-start: 1em;
         border: solid .125rem #ccc;
         padding: .5em;
+        background-color: #fff;
     }
 
     #comments .commentBox::before, #text::before {
@@ -63,10 +93,16 @@
 </style>
 </head>
 <body>
-<h1>WebSocket chat demo</h1>
-<div id="status">[<span id="connection">?</span>] You and <span id="online_count">0</span> user(s) online.</div>
-<div id="text" contenteditable="true" autofocus=""></div>
+<main id="main">
+<h1>Menhera Chatspace: realtime text chat</h1>
 <div id="comments"></div>
+<div id="status">Online: You+<span id="online_count">0</span></div>
+</main>
+<div id="controls">
+<div id="connection">UNKNOWN</div>
+<input id="name" type="text" placeholder="Your name" title="Your name"/>
+<div id="text" contenteditable="true" autofocus=""></div>
+</div>
 <script type="module">
     /**
      * @type {HTMLInputElement}
@@ -140,9 +176,11 @@
     };
 
     const updateStatus = () => {
-        console.log('readyState:', showReadyState(ws.readyState));
-        connectionStatus.textContent = showReadyState(ws.readyState);
-    }
+        const status = showReadyState(ws.readyState);
+        console.log('readyState:', status);
+        connectionStatus.textContent = status;
+        connectionStatus.dataset.status = status;
+    };
 
     const sendMessage = data => {
         if (ws.readyState == WebSocket.OPEN) {
@@ -233,6 +271,7 @@
             commentBox.classList.add('commentBox');
             commentBox.dataset.uuid = uuid;
             commentBox.dataset.shortId = uuid.split('-')[0];
+            commentBox.title = uuid;
             commentBox.append(text);
             commentsContainer.prepend(commentBox);
         }

@@ -33,6 +33,6 @@ setInterval(() => {
             continue;
         }
         client.isAlive = false;
-        client.ping({});
+        client.ping('');
     }
 }, 30000);

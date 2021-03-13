@@ -154,7 +154,7 @@
 
     const renderText = () => {
         commentsContainer.textContent = '';
-        for (const uuid of Reflect.keys(textMap)) {
+        for (const uuid of Reflect.ownKeys(textMap)) {
             if ('string' != typeof uuid) continue;
             const commentBox = document.createElement('div');
             commentBox.classList.add('commentBox');

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<meta charset="utf-8"/>
+<title>WebSocket chat demo</title>
+<style>
+    body, input, textarea, button, select {
+        font: inherit;
+    }
+
+    pre {
+        white-space: pre-wrap;
+    }
+
+    :root {
+        font-family: system-ui, -apple-system, sans-serif;
+        font-size: 100%;
+    }
+
+    body {
+        display: grid;
+    }
+
+    #text {
+        margin: 0;
+        display: block;
+        border: solid .125rem #aaa;
+        padding: .5em;
+        appearance: none;
+    }
+
+    #comments {
+        display: grid;
+    }
+
+    #comments .commentBox {
+        margin: 0;
+        margin-block-start: 1em;
+        border: solid .125rem #ccc;
+        padding: .5em;
+    }
+
+</style>
+<h1>WebSocket chat demo</h1>
+<input tyep="text" id="text" size="280"/>
+<div id="comments"></div>
+<script type="module">
+    /**
+     * @type {HTMLInputElement}
+    */
+    const textBox = document.querySelector('#text');
+    const commentsContainer = document.querySelector('#comments');
+
+    const getUuid = () => {
+        const bytes = new Uint8Array(16);
+        crypto.getRandomValues(bytes);
+        bytes[6] = bytes[6] & 0x0f ^ 0x40;
+        bytes[8] = bytes[8] & 0x3f ^ 0x80;
+        const hex = Array.prototype.map.call(
+            bytes,
+            byte => ((byte | 0x100).toString(0x10)).slice(-2)
+        ).join('');
+        return [
+            hex.substr(0, 8),
+            hex.substr(8, 4),
+            hex.substr(12, 4),
+            hex.substr(16, 4),
+            hex.substr(20, 12),
+        ].join('-');
+    };
+
+    const getTime = () => +new Date;
+
+    const UUID = getUuid();
+    const PING_TIMEOUT = 30000;
+
+    const ws = new WebSocket(`ws://${location.hostname}:8081/`);
+    let isOpen = false;
+    
+    const showReadyState = readyState => {
+        switch (readyState) {
+            case WebSocket.CONNECTING:
+                return 'CONNECTING';
+            case WebSocket.OPEN:
+                return 'OPEN';
+            case WebSocket.CLOSING:
+                return 'CLOSING';
+            case WebSocket.CLOSED:
+                return 'CLOSED';
+            default:
+                return 'UNKNOWN';
+        }
+    };
+
+    const updateStatus = () => {
+        console.log('readyState:', showReadyState(ws.readyState));
+    }
+
+    ws.addEventListener('open', ev => {
+        console.log('ws: open');
+        updateStatus();
+    });
+    ws.addEventListener('close', ev => {
+        console.log('ws: close');
+        updateStatus();
+    });
+
+    const sendMessage = data => {
+        if (ws.readyState == WebSocket.OPEN) {
+            ws.send(JSON.stringify(data));
+            return true;
+        } else {
+            return false;
+        }
+    };
+
+    let previousText = '';
+    textBox.addEventListener('keydown', ev => {
+        const text = textBox.value.trim();
+        if (text == previousText) return;
+        previousText = text;
+        if (text.length < 1) {
+            sendMessage({
+                uuid: UUID,
+                command: 'text_cleared',
+                text: '',
+                time: getTime(),
+            });
+        } else {
+            sendMessage({
+                uuid: UUID,
+                command: 'text_updated',
+                text,
+                time: getTime(),
+            });
+        }
+    });
+
+    textBox.addEventListener('change', ev => {
+        textBox.value = '';
+        if (previousText == '') return;
+        previousText = '';
+        sendMessage({
+            uuid: UUID,
+            command: 'text_cleared',
+            text: '',
+            time: getTime(),
+        });
+    });
+
+    const textMap = Object.create(null);
+
+    const renderText = () => {
+        commentsContainer.textContent = '';
+        for (const uuid of Reflect.keys(textMap)) {
+            if ('string' != typeof uuid) continue;
+            const commentBox = document.createElement('div');
+            commentBox.classList.add('commentBox');
+            commentBox.dataset.uuid = uuid;
+            commentBox.append('' + textMap[uuid].text);
+            commentsContainer.prepend(commentBox);
+        }
+    };
+
+    ws.addEventListener('message', ev => {
+        try {
+            if ('string' != typeof ev.data) {
+                throw 'Invalid data type';
+            }
+
+            const data = JSON.parse(ev.data);
+            if ('object' != typeof data || !data) throw 'Invalid data';
+            if ('string' != typeof data.uuid) throw 'Invalid UUID';
+            if ('number' != typeof data.time) throw 'Invalid time';
+            if ('string' != typeof data.command) throw 'Invalid command';
+            
+            const text = 'string' == typeof data.text ? data.text : '';
+            switch (data.command) {
+                case 'text_updated': {
+                    textMap[data.uuid] = {
+                        text,
+                        receivedTime: getTime(),
+                    };
+                    renderText();
+                    break;
+                }
+                case 'text_cleared': {
+                    delete textMap[data.uuid];
+                    renderText();
+                    break;
+                }
+                default: {
+                    console.warn('Unknown command');
+                }
+            }
+        } catch (e) {
+            console.error('Protocol violation:', e);
+        }
+    });
+
+    setInterval(() => {
+        const currentTime = getTime();
+        for (const uuid of Reflect.ownKeys(textMap)) {
+            if (!textMap[uuid]) {
+                delete textMap[uuid];
+                continue;
+            }
+            const state = textMap[uuid];
+            if (currentTime - state.receivedTime > 30000) {
+                delete textMap[uuid];
+                continue;
+            }
+        }
+    }, 5000);
+
+</script>

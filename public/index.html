@@ -42,6 +42,8 @@
         right: 0;
         inline-size: 100%;
         background-color: #fff;
+        display: grid;
+        grid-template-columns: max-content 1fr;
     }
 
     #text {
@@ -74,6 +76,7 @@
     #connection {
         background-color: #888;
         color: #fff;
+        padding: .5em;
     }
 
     #connection[data-status="OPEN"] {

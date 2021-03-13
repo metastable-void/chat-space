@@ -117,7 +117,7 @@
     };
 
     let previousText = '';
-    textBox.addEventListener('keydown', ev => {
+    textBox.addEventListener('keyup', ev => {
         const text = textBox.value.trim();
         if (text == previousText) return;
         previousText = text;

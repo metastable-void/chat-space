@@ -96,7 +96,21 @@
 
     const getTime = () => +new Date;
 
-    const UUID = getUuid();
+    const getMyUuid = () => {
+        try {
+            const uuid = sessionStorage.getItem('menhera.chatspace.self.id');
+            if (!uuid) {
+                throw void 0;
+            }
+            return uuid;
+        } catch (e) {
+            const uuid = getUuid();
+            sessionStorage.setItem('menhera.chatspace.self.id', uuid);
+            return uuid;
+        }
+    };
+
+    const UUID = getMyUuid();
     const PING_TIMEOUT = 30000;
     let lastUpdate = 0;
     textBox.dataset.uuid = UUID;

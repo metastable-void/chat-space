@@ -31,6 +31,10 @@
         box-sizing: border-box;
         overflow: hidden;
         white-space: pre-wrap;
+        position: fixed;
+        inset-block-end: 0;
+        inline-size: 100%;
+        inset-inline-start: 0;
     }
 
     #text:empty::after {
@@ -58,7 +62,7 @@
 </head>
 <body>
 <h1>WebSocket chat demo</h1>
-<div id="status">[<span id="connection">?</span>] <span id="online_count">0</span> user(s) online.</div>
+<div id="status">[<span id="connection">?</span>] You and <span id="online_count">0</span> user(s) online.</div>
 <div id="text" contenteditable="true"></div>
 <div id="comments"></div>
 <script type="module">
@@ -266,6 +270,7 @@
 
     document.addEventListener('visibilitychange', ev => {
         if (!document.hidden) {
+            console.log('Page is now visible!');
             openSocket();
         }
     });

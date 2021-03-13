@@ -32,9 +32,10 @@
         overflow: hidden;
         white-space: pre-wrap;
         position: fixed;
-        inset-block-end: 0;
         inline-size: 100%;
-        inset-inline-start: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
         background-color: #f2f2f2;
     }
 
@@ -64,7 +65,7 @@
 <body>
 <h1>WebSocket chat demo</h1>
 <div id="status">[<span id="connection">?</span>] You and <span id="online_count">0</span> user(s) online.</div>
-<div id="text" contenteditable="true"></div>
+<div id="text" contenteditable="true" autofocus=""></div>
 <div id="comments"></div>
 <script type="module">
     /**
@@ -186,8 +187,20 @@
         }
     });
 
+    let blurTimeout;
     textBox.addEventListener('blur', ev => {
-        commit();
+        if (!blurTimeout) {
+            blurTimeout = setTimeout(() => {
+                blurTimeout = void 0;
+                commit();
+            }, 15000);
+        }
+    });
+
+    textBox.addEventListener('focus', ev => {
+        if (blurTimeout) {
+            clearTimeout(blurTimeout);
+        }
     });
 
     const textMap = Object.create(null);

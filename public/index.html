@@ -40,7 +40,7 @@
         padding: .5em;
     }
 
-    #comments .commentBox::before {
+    #comments .commentBox::before, #text::before {
         content: attr(data-short-id) ': ';
         color: #888;
     }
@@ -79,6 +79,8 @@
     const UUID = getUuid();
     const PING_TIMEOUT = 30000;
     let lastUpdate = 0;
+    textBox.dataset.uuid = UUID;
+    textBox.dataset.shortId = UUID.split('-')[0];
 
     const wsUrl = new URL('/ws', location.href);
     wsUrl.protocol = 'https:' == wsUrl.protocol ? 'wss:' : 'ws:';

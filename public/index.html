@@ -98,8 +98,11 @@
 
     const wsUrl = new URL('/ws', location.href);
     wsUrl.protocol = 'https:' == wsUrl.protocol ? 'wss:' : 'ws:';
-    const ws = new WebSocket(String(wsUrl));
-    let isOpen = false;
+
+    /**
+     * @type {WebSocket?}
+     * */
+    let ws;
     
     const showReadyState = readyState => {
         switch (readyState) {
@@ -120,15 +123,6 @@
         console.log('readyState:', showReadyState(ws.readyState));
         connectionStatus.textContent = showReadyState(ws.readyState);
     }
-
-    ws.addEventListener('open', ev => {
-        console.log('ws: open');
-        updateStatus();
-    });
-    ws.addEventListener('close', ev => {
-        console.log('ws: close');
-        updateStatus();
-    });
 
     const sendMessage = data => {
         if (ws.readyState == WebSocket.OPEN) {
@@ -181,6 +175,7 @@
 
     textBox.addEventListener('keydown', ev => {
         if (ev.keyCode == 13) {
+            // ENTER
             ev.preventDefault();
             commit();
         }
@@ -210,7 +205,8 @@
         }
     };
 
-    ws.addEventListener('message', ev => {
+    const processMessage = ev => {
+        //
         try {
             if ('string' != typeof ev.data) {
                 throw 'Invalid data type';
@@ -249,7 +245,32 @@
         } catch (e) {
             console.error('Protocol violation:', e);
         }
+    };
+
+    const openSocket = () => {
+        if (!ws || ws.readyState == WebSocket.CLOSED) {
+            ws = new WebSocket(String(wsUrl));
+            
+            ws.addEventListener('open', ev => {
+                console.log('ws: open');
+                updateStatus();
+            });
+            ws.addEventListener('close', ev => {
+                console.log('ws: close');
+                updateStatus();
+            });
+
+            ws.addEventListener('message', processMessage);
+        }
+    };
+
+    document.addEventListener('visibilitychange', ev => {
+        if (!document.hidden) {
+            openSocket();
+        }
     });
+
+    openSocket();
 
     setInterval(() => {
         const currentTime = getTime();
@@ -267,6 +288,8 @@
                 continue;
             }
         }
+
+        renderText();
     }, 5000);
 
 </script>

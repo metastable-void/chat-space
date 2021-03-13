@@ -1,6 +1,9 @@
 <!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
 <meta charset="utf-8"/>
 <title>WebSocket chat demo</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
 <style>
     body, input, textarea, button, select {
         font: inherit;
@@ -27,6 +30,12 @@
         appearance: none;
         box-sizing: border-box;
         overflow: hidden;
+        white-space: pre-wrap;
+    }
+
+    #text:empty::after {
+        color: #ccc;
+        content: 'Input text here and press enter to clear...';
     }
 
     #comments {
@@ -46,8 +55,10 @@
     }
 
 </style>
+</head>
+<body>
 <h1>WebSocket chat demo</h1>
-<input tyep="text" id="text" size="280"/>
+<div id="text" contenteditable="true"></div>
 <div id="comments"></div>
 <script type="module">
     /**
@@ -126,7 +137,7 @@
 
     let previousText = '';
     const sendUpdate = (force) => {
-        const text = textBox.value.trim();
+        const text = textBox.textContent.trim();
         if (text == previousText && !force) return;
         previousText = text;
         lastUpdate = getTime();
@@ -145,12 +156,9 @@
                 time: getTime(),
             });
         }
-    }
-    textBox.addEventListener('keyup', ev => {
-        sendUpdate();
-    });
+    };
 
-    textBox.addEventListener('change', ev => {
+    const commit = () => {
         textBox.value = '';
         if (previousText == '') return;
         lastUpdate = getTime();
@@ -161,6 +169,21 @@
             text: '',
             time: getTime(),
         });
+    };
+
+    textBox.addEventListener('input', ev => {
+        sendUpdate();
+    });
+
+    textBox.addEventListener('keydown', ev => {
+        if (ev.keyCode == 13) {
+            ev.preventDefault();
+            commit();
+        }
+    });
+
+    textBox.addEventListener('blur', ev => {
+        commit();
     });
 
     const textMap = Object.create(null);
@@ -235,3 +258,5 @@
     }, 5000);
 
 </script>
+</body>
+</html>

@@ -159,7 +159,7 @@
     };
 
     const commit = () => {
-        textBox.value = '';
+        textBox.textContent = '';
         if (previousText == '') return;
         lastUpdate = getTime();
         previousText = '';

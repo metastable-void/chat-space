@@ -24,13 +24,14 @@
     body {
         display: grid;
         margin: 0;
-        padding: .5rem;
+        grid-template-rows: auto max-content;
     }
 
     #main {
         display: grid;
         align-content: end;
         background-color: #f2f2f2;
+        padding: .5rem;
     }
 
     #controls {
@@ -85,8 +86,13 @@
         background-color: #fff;
     }
 
-    #comments .commentBox::before, #text::before {
-        content: attr(data-short-id) ': ';
+    #comments .commentBox::before {
+        content: attr(data-name) ' #' attr(data-short-id) ': ';
+        color: #888;
+    }
+
+    #text::before {
+        content: '(#' attr(data-short-id) '): ';
         color: #888;
     }
 
@@ -104,10 +110,13 @@
 <div id="text" contenteditable="true" autofocus=""></div>
 </div>
 <script type="module">
+    const textBox = document.querySelector('#text');
+
     /**
      * @type {HTMLInputElement}
     */
-    const textBox = document.querySelector('#text');
+    const nameBox = document.querySelector('#name');
+
     const commentsContainer = document.querySelector('#comments');
     const connectionStatus = document.querySelector('#connection');
     const onlineCount = document.querySelector('#online_count');
@@ -194,6 +203,7 @@
     let previousText = '';
     const sendUpdate = (force) => {
         const text = textBox.textContent.trim();
+        const name = nameBox.value.trim();
         if (text == previousText && !force) return;
         previousText = text;
         lastUpdate = getTime();
@@ -203,6 +213,7 @@
                 command: 'text_cleared',
                 text: '',
                 time: getTime(),
+                name,
             });
         } else {
             sendMessage({
@@ -210,12 +221,14 @@
                 command: 'text_updated',
                 text,
                 time: getTime(),
+                name,
             });
         }
     };
 
     const commit = () => {
         textBox.textContent = '';
+        const name = nameBox.value.trim();
         if (previousText == '') return;
         lastUpdate = getTime();
         previousText = '';
@@ -224,6 +237,7 @@
             command: 'text_cleared',
             text: '',
             time: getTime(),
+            name,
         });
     };
 
@@ -266,10 +280,12 @@
         for (const uuid of Reflect.ownKeys(textMap)) {
             if ('string' != typeof uuid) continue;
             const text = textMap[uuid].text;
+            const name = textMap[uuid].name || '';
             if ('' === text) continue;
             const commentBox = document.createElement('div');
             commentBox.classList.add('commentBox');
             commentBox.dataset.uuid = uuid;
+            commentBox.dataset.name = name || 'Anonymous';
             commentBox.dataset.shortId = uuid.split('-')[0];
             commentBox.title = uuid;
             commentBox.append(text);
@@ -291,10 +307,12 @@
             if ('string' != typeof data.command) throw 'Invalid command';
             
             const text = 'string' == typeof data.text ? data.text : '';
+            const name = data.name || '';
             switch (data.command) {
                 case 'text_updated': {
                     textMap[data.uuid] = {
                         text,
+                        name,
                         receivedTime: getTime(),
                     };
                     renderText();
@@ -305,6 +323,7 @@
                         textMap[data.uuid] = {
                             text,
                             receivedTime: getTime(),
+                            name,
                         };
                         renderText();
                     }, 1000);

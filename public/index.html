@@ -85,6 +85,10 @@
         background-color: #5eaf30;
     }
 
+    #connection[data-status="OPEN"]::after {
+        content: ' (' attr(data-online-count) ')';
+    }
+
     #connection[data-status="CONNECTING"] {
         background-color: #b89930;
     }
@@ -118,10 +122,9 @@
 <main id="main">
 <h1>Menhera Chatspace: realtime text chat</h1>
 <div id="comments"></div>
-<div id="status">Online: You+<span id="online_count">0</span></div>
 </main>
 <div id="controls">
-<div id="connection">UNKNOWN</div>
+<div id="connection">Offline</div>
 <input id="name" type="text" placeholder="Your name" title="Your name"/>
 <div id="text" contenteditable="true" autofocus=""></div>
 </div>
@@ -135,7 +138,6 @@
 
     const commentsContainer = document.querySelector('#comments');
     const connectionStatus = document.querySelector('#connection');
-    const onlineCount = document.querySelector('#online_count');
 
     const getUuid = () => {
         const bytes = new Uint8Array(16);
@@ -203,7 +205,7 @@
     const updateStatus = () => {
         const status = showReadyState(ws.readyState);
         console.log('readyState:', status);
-        connectionStatus.textContent = status;
+        connectionStatus.textContent = ws.readyState == WebSocket.OPEN ? `Online` : 'Offline';
         connectionStatus.dataset.status = status;
     };
 
@@ -294,7 +296,7 @@
     const getOnlineCount = () => Reflect.ownKeys(textMap).length;
 
     const renderText = () => {
-        onlineCount.textContent = getOnlineCount();
+        connectionStatus.dataset.onlineCount = getOnlineCount();
         commentsContainer.textContent = '';
         for (const uuid of Reflect.ownKeys(textMap)) {
             if ('string' != typeof uuid) continue;

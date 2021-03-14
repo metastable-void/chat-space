@@ -70,6 +70,7 @@
         inline-size: 100%;
         box-sizing: border-box;
         overflow: hidden;
+        margin: 0;
     }
 
     #token {
@@ -176,7 +177,7 @@
         align-content: end;
     }
 
-    #comments .commentBox {
+    .commentBox {
         margin: 0;
         margin-block-end: 1em;
         border: solid .125rem #ccc;
@@ -184,7 +185,7 @@
         background-color: #fff;
     }
 
-    #comments .commentBox::before {
+    .commentBox::before {
         content: attr(data-name) ' #' attr(data-short-id) ': ';
         color: #888;
     }
@@ -206,6 +207,7 @@
 </header>
 <main id="main">
 <div id="comments"></div>
+<div id="members"></div>
 <section id="about">
 <p>Menhera Chatspace is a realtime chat app where you can text like a voice call.</p>
 <p>A <a href="https://www.menhera.org/">Menhera.org</a> project. Software copyright &copy; 2021 Menhera.org.</p>
@@ -226,6 +228,7 @@
     const nameBox = document.querySelector('#name');
 
     const commentsContainer = document.querySelector('#comments');
+    const membersContainer = document.querySelector('#members');
     const connectionStatus = document.querySelector('#connection');
 
     const getUuid = () => {
@@ -387,6 +390,7 @@
     const renderText = () => {
         connectionStatus.dataset.onlineCount = getOnlineCount();
         commentsContainer.textContent = '';
+        membersContainer.textContent = '';
         for (const uuid of Reflect.ownKeys(textMap)) {
             if ('string' != typeof uuid) continue;
             const state = textMap[uuid];
@@ -404,7 +408,11 @@
             commentBox.dataset.shortId = uuid.split('-')[0];
             commentBox.title = uuid;
             commentBox.append(text);
-            commentsContainer.prepend(commentBox);
+            if (text) {
+                commentsContainer.prepend(commentBox);
+            } else {
+                membersContainer.prepend(commentBox);
+            }
         }
     };
 

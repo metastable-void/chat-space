@@ -230,6 +230,7 @@
                 text: '',
                 time: getTime(),
                 name,
+                isActive: !document.hidden,
             });
         } else {
             sendMessage({
@@ -238,6 +239,7 @@
                 text,
                 time: getTime(),
                 name,
+                isActive: !document.hidden,
             });
         }
     };
@@ -254,6 +256,7 @@
             text: '',
             time: getTime(),
             name,
+            isActive: !document.hidden,
         });
     };
 
@@ -295,9 +298,14 @@
         commentsContainer.textContent = '';
         for (const uuid of Reflect.ownKeys(textMap)) {
             if ('string' != typeof uuid) continue;
-            const text = textMap[uuid].text;
-            const name = textMap[uuid].name || '';
-            if ('' === text) continue;
+            const state = textMap[uuid];
+            if (!state) continue;
+            const text = state.text;
+            const name = state.name || '';
+            const isActive = !!state.isActive;
+            if ('' === text && ('' === name || !isActive)) {
+                continue;
+            }
             const commentBox = document.createElement('div');
             commentBox.classList.add('commentBox');
             commentBox.dataset.uuid = uuid;

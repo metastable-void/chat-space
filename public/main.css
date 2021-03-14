@@ -43,6 +43,7 @@ body {
     right: 0;
     inline-size: 100%;
     box-shadow: 0 -16rem 0 16rem #5eaf30;
+    z-index: 1;
 }
 
 #logotype {

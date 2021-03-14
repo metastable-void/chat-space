@@ -22,7 +22,7 @@
 
     a {
         text-decoration: none;
-        opacity: .9;
+        opacity: .75;
         color: inherit;
     }
 
@@ -188,6 +188,10 @@
     .commentBox::before {
         content: attr(data-name) ' #' attr(data-short-id) ': ';
         color: #888;
+    }
+
+    #members .commentBox {
+        opacity: .75;
     }
 
     #text::before {

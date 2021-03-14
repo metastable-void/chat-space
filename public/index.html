@@ -314,8 +314,10 @@
     });
 
     window.addEventListener('hashchange', ev => {
+        console.log('hashchange');
         const token = decodeURIComponent(location.hash.slice(1)).trim();
         tokenBox.value = token;
+        console.log('New token:', token);
     });
 
     /**

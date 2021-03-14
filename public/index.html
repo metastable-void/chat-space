@@ -287,12 +287,16 @@
         console.log('Name not restored.');
     }
 
-    nameBox.addEventListener('change', ev => {
+    const saveUsername = () => {
         try {
             localStorage.setItem('menhera.chatspace.self.name', nameBox.value);
         } catch (e) {
             console.warn('Failed to save your name:', e);
         }
+    };
+
+    nameBox.addEventListener('change', ev => {
+        saveUsername();
     });
 
     /**
@@ -510,6 +514,7 @@
 
     window.addEventListener('pageshow', ev => {
         console.log('pageshow');
+        saveUsername();
         openSocket();
     });
 

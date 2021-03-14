@@ -236,6 +236,8 @@
      * */
     const tokenBox = document.querySelector('#token');
 
+    const randomButton = document.querySelector('#random');
+
     const commentsContainer = document.querySelector('#comments');
     const membersContainer = document.querySelector('#members');
     const connectionStatus = document.querySelector('#connection');
@@ -300,6 +302,12 @@
         }
     };
 
+    const openRandomRoom = () => {
+        console.log('openRandomRoom');
+        const token = getUuid();
+        location.hash = `#${token}`;
+    };
+
     nameBox.addEventListener('change', ev => {
         saveUsername();
     });
@@ -318,6 +326,10 @@
         const token = decodeURIComponent(location.hash.slice(1)).trim();
         tokenBox.value = token;
         console.log('New token:', token);
+    });
+
+    randomButton.addEventListener('click', ev => {
+        openRandomRoom();
     });
 
     /**

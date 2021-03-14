@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta charset="utf-8"/>
-<title>Menhera Chatspace: realtime text chat</title>
+<title>Chatspace</title>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <link rel="icon" href="/menhera-icon.png"/>
 <meta property="og:type" content="article"/>
@@ -308,6 +308,13 @@
         location.hash = `#${token}`;
     };
 
+    const readHash = () => {
+        const token = decodeURIComponent(location.hash.slice(1)).trim();
+        tokenBox.value = token;
+        document.title = token ? `Chatspace #${token}` : 'Chatspace (root)';
+        console.log('New token:', token);
+    };
+
     nameBox.addEventListener('change', ev => {
         saveUsername();
     });
@@ -323,9 +330,7 @@
 
     window.addEventListener('hashchange', ev => {
         console.log('hashchange');
-        const token = decodeURIComponent(location.hash.slice(1)).trim();
-        tokenBox.value = token;
-        console.log('New token:', token);
+        readHash();
     });
 
     randomButton.addEventListener('click', ev => {
@@ -547,6 +552,7 @@
 
     window.addEventListener('pageshow', ev => {
         console.log('pageshow');
+        readHash();
         saveUsername();
         openSocket();
     });

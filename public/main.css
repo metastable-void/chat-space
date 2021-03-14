@@ -133,6 +133,7 @@ body {
     white-space: pre-wrap;
     grid-column-start: 1;
     grid-column-end: -1;
+    padding-block-end: 1.5rem;
 }
 
 #name {

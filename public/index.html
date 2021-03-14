@@ -43,14 +43,29 @@
     #header {
         display: grid;
         grid-template-columns: max-content 1fr max-content;
+        background-color: #5eaf30;
+        color: #fff;
     }
 
     #logotype {
         font-weight: 500;
+        padding: .5em;
+    }
+
+    #location {
+        display: grid;
+        grid-template-columns: max-content 1fr;
+    }
+
+    #location::before {
+        display: block;
+        padding: .5em;
+        content: '#';
     }
 
     #random, #token {
         display: block;
+        padding: .5em;
     }
 
     #main {
@@ -156,7 +171,7 @@
 <header id="header">
 <div id="logotype">Chatspace</div>
 <div id="location">
-<input id="token"/>
+<input id="token" name="token"/>
 </div>
 <button id="random">Random</button>
 </header>
@@ -170,7 +185,7 @@
 </main>
 <div id="controls">
 <div id="connection" data-online-count="0">Offline</div>
-<input id="name" type="text" placeholder="Your name" title="Your name"/>
+<input id="name" type="text" name="name" placeholder="Your name" title="Your name"/>
 <div id="text" contenteditable="true" autofocus=""></div>
 </div>
 <script type="module">

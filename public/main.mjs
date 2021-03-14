@@ -65,7 +65,7 @@ let lastUpdate = 0;
 textBox.dataset.uuid = UUID;
 textBox.dataset.shortId = UUID.split('-')[0];
 
-const wsUrl = new URL('/ws', location.href);
+const wsUrl = new URL('/ws/', location.href);
 wsUrl.protocol = 'https:' == wsUrl.protocol ? 'wss:' : 'ws:';
 
 try {

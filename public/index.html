@@ -89,6 +89,10 @@
         content: ' (You +' attr(data-online-count) ')';
     }
 
+    #connection[data-status="OPEN"][data-online-count="0"]::after {
+        content: ' (You are alone)';
+    }
+
     #connection[data-status="CONNECTING"] {
         background-color: #b89930;
     }

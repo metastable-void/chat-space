@@ -1,6 +1,5 @@
 
 require('dotenv').config();
-const { createPublicKey } = require('node:crypto');
 const WebSocket = require('ws');
 
 const WS_SERVER_PORT = process.env.WS_SERVER_PORT || 8081;

@@ -65,8 +65,13 @@ let lastUpdate = 0;
 textBox.dataset.uuid = UUID;
 textBox.dataset.shortId = UUID.split('-')[0];
 
-const wsUrl = new URL('/ws/', location.href);
-wsUrl.protocol = 'https:' == wsUrl.protocol ? 'wss:' : 'ws:';
+let wsUrl;
+
+const setWsUrl = (channel) => {
+    const url = new URL('/ws/' + encodeURIComponent(channel || ''), location.href);
+    url.protocol = 'https:' == location.protocol ? 'wss:' : 'ws:';
+    wsUrl = String(url);
+};
 
 try {
     const name = localStorage.getItem('menhera.chatspace.self.name');
@@ -90,35 +95,6 @@ const openRandomRoom = () => {
     const token = getUuid();
     location.hash = `#${token}`;
 };
-
-const readHash = () => {
-    const token = decodeURIComponent(location.hash.slice(1)).trim();
-    tokenBox.value = token;
-    document.title = token ? `Chatspace #${token}` : 'Chatspace (root)';
-    console.log('Opening room:', token);
-};
-
-nameBox.addEventListener('change', ev => {
-    saveUsername();
-});
-
-tokenBox.addEventListener('change', ev => {
-    const token = tokenBox.value.trim();
-    if (token) {
-        location.hash = `#${encodeURIComponent(token)}`;
-    } else {
-        location.hash = '';
-    }
-});
-
-window.addEventListener('hashchange', ev => {
-    console.log('hashchange');
-    readHash();
-});
-
-randomButton.addEventListener('click', ev => {
-    openRandomRoom();
-});
 
 /**
  * @type {WebSocket?}
@@ -200,36 +176,7 @@ const commit = () => {
     });
 };
 
-textBox.addEventListener('input', ev => {
-    sendUpdate();
-});
-
-textBox.addEventListener('keydown', ev => {
-    if (ev.keyCode == 13) {
-        // ENTER
-        ev.preventDefault();
-        commit();
-    }
-});
-
-let blurTimeout;
-textBox.addEventListener('blur', ev => {
-    if (!blurTimeout) {
-        blurTimeout = setTimeout(() => {
-            blurTimeout = void 0;
-            commit();
-        }, 15000);
-    }
-});
-
-textBox.addEventListener('focus', ev => {
-    if (blurTimeout) {
-        clearTimeout(blurTimeout);
-        blurTimeout = void 0;
-    }
-});
-
-const textMap = Object.create(null);
+let textMap = Object.create(null);
 
 const getOnlineCount = () => Reflect.ownKeys(textMap).length;
 
@@ -309,9 +256,12 @@ const processMessage = ev => {
     }
 };
 
-const openSocket = () => {
-    if (!ws || ws.readyState == WebSocket.CLOSED) {
+const openSocket = (force) => {
+    if (!ws || ws.readyState == WebSocket.CLOSED || force) {
         ws = new WebSocket(String(wsUrl));
+
+        textMap = Object.create(null);
+        renderText();
         
         ws.addEventListener('open', ev => {
             console.log('ws: open');
@@ -326,6 +276,67 @@ const openSocket = () => {
     }
 };
 
+const readHash = () => {
+    const token = decodeURIComponent(location.hash.slice(1)).trim();
+    tokenBox.value = token;
+    document.title = token ? `Chatspace #${token}` : 'Chatspace (root)';
+    console.log('Opening room:', token);
+    const channel = ''; // TODO: derive channel name from token
+    setWsUrl(channel);
+    openSocket(true);
+};
+
+nameBox.addEventListener('change', ev => {
+    saveUsername();
+});
+
+tokenBox.addEventListener('change', ev => {
+    const token = tokenBox.value.trim();
+    if (token) {
+        location.hash = `#${encodeURIComponent(token)}`;
+    } else {
+        location.hash = '';
+    }
+});
+
+window.addEventListener('hashchange', ev => {
+    console.log('hashchange');
+    readHash();
+});
+
+randomButton.addEventListener('click', ev => {
+    openRandomRoom();
+});
+
+textBox.addEventListener('input', ev => {
+    sendUpdate();
+});
+
+textBox.addEventListener('keydown', ev => {
+    if (ev.keyCode == 13) {
+        // ENTER
+        ev.preventDefault();
+        commit();
+    }
+});
+
+let blurTimeout;
+textBox.addEventListener('blur', ev => {
+    if (!blurTimeout) {
+        blurTimeout = setTimeout(() => {
+            blurTimeout = void 0;
+            commit();
+        }, 15000);
+    }
+});
+
+textBox.addEventListener('focus', ev => {
+    if (blurTimeout) {
+        clearTimeout(blurTimeout);
+        blurTimeout = void 0;
+    }
+});
+
 document.addEventListener('visibilitychange', ev => {
     if (!document.hidden) {
         console.log('Page is now visible!');
@@ -335,9 +346,8 @@ document.addEventListener('visibilitychange', ev => {
 
 window.addEventListener('pageshow', ev => {
     console.log('pageshow');
-    readHash();
     saveUsername();
-    openSocket();
+    readHash();
 });
 
 setInterval(() => {

@@ -348,6 +348,11 @@ document.addEventListener('visibilitychange', ev => {
     }
 });
 
+connectionStatus.addEventListener('click', ev => {
+    console.log('Reconnect if not connected');
+    openSocket();
+});
+
 window.addEventListener('pageshow', ev => {
     console.log('pageshow');
     saveUsername();

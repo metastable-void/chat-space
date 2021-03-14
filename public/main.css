@@ -40,6 +40,7 @@ body {
 #logotype {
     font-weight: 500;
     padding: .5em;
+    display: block;
 }
 
 #location {

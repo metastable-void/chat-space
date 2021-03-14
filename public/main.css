@@ -1,0 +1,189 @@
+@namespace 'http://www.w3.org/1999/xhtml';
+
+body, input, textarea, button, select {
+    font: inherit;
+    border-radius: 0;
+}
+
+pre {
+    white-space: pre-wrap;
+}
+
+a {
+    text-decoration: none;
+    opacity: .75;
+    color: inherit;
+}
+
+:root {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 100%;
+    display: grid;
+    min-width: 100%;
+    min-height: 100%;
+    font-synthesis: none;
+}
+
+body {
+    display: grid;
+    margin: 0;
+    grid-template-rows: max-content auto max-content;
+}
+
+#header {
+    display: grid;
+    grid-template-columns: max-content 1fr max-content;
+    background-color: #5eaf30;
+    color: #fff;
+}
+
+#logotype {
+    font-weight: 500;
+    padding: .5em;
+}
+
+#location {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+}
+
+#location::before {
+    display: block;
+    padding: .5em;
+    content: '#';
+}
+
+#random, #token {
+    display: block;
+    padding: .5em;
+    inline-size: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+    margin: 0;
+}
+
+#token {
+    color: inherit;
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+    appearance: none;
+}
+
+#random {
+    border: none;
+    border-inline-start: solid .125rem rgba(0, 0, 0, .25);
+    background-color: transparent;
+    color: #fff;
+}
+
+#random:active, #random:hover {
+    background-color: rgba(0, 0, 0, .25);
+    border-inline-start-color: rgba(0, 0, 0, .5);
+}
+
+#token:focus {
+    color: #666;
+    background-color: rgba(255, 255, 255, .5);
+}
+
+#main {
+    display: grid;
+    align-content: end;
+    background-color: #f2f2f2;
+    padding: .5rem;
+}
+
+#controls {
+    position: -webkit-sticky;
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    inline-size: 100%;
+    background-color: #fff;
+    display: grid;
+    grid-template-columns: max-content 1fr;
+}
+
+#about {
+    font-size: 75%;
+}
+
+#text {
+    margin: 0;
+    display: block;
+    border: solid .125rem #aaa;
+    padding: .5em;
+    appearance: none;
+    box-sizing: border-box;
+    overflow: hidden;
+    white-space: pre-wrap;
+    grid-column-start: 1;
+    grid-column-end: -1;
+}
+
+#name {
+    appearance: none;
+    display: block;
+    border: solid .125rem #aaa;
+    padding: .5em;
+    box-sizing: border-box;
+    overflow: hidden;
+    margin: 0;
+    border-radius: 0;
+}
+
+#text:empty::after {
+    color: #ccc;
+    content: 'Input text here and press enter to clear...';
+}
+
+#connection {
+    background-color: #888;
+    color: #fff;
+    padding: .5em;
+}
+
+#connection[data-status="OPEN"] {
+    background-color: #5eaf30;
+}
+
+#connection[data-status="OPEN"]::after {
+    content: ' (You +' attr(data-online-count) ')';
+}
+
+#connection[data-status="OPEN"][data-online-count="0"]::after {
+    content: ' (You are alone)';
+}
+
+#connection[data-status="CONNECTING"] {
+    background-color: #b89930;
+}
+
+#comments {
+    display: grid;
+    align-content: end;
+}
+
+.commentBox {
+    margin: 0;
+    margin-block-end: 1em;
+    border: solid .125rem #ccc;
+    padding: .5em;
+    background-color: #fff;
+}
+
+.commentBox::before {
+    content: attr(data-name) ' #' attr(data-short-id) ': ';
+    color: #888;
+}
+
+#members .commentBox {
+    opacity: .75;
+}
+
+#text::before {
+    content: '(#' attr(data-short-id) '): ';
+    color: #888;
+}

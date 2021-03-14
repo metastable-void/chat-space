@@ -231,6 +231,11 @@
     */
     const nameBox = document.querySelector('#name');
 
+    /**
+     * @type {HTMLInputElement}
+     * */
+    const tokenBox = document.querySelector('#token');
+
     const commentsContainer = document.querySelector('#comments');
     const membersContainer = document.querySelector('#members');
     const connectionStatus = document.querySelector('#connection');
@@ -297,6 +302,20 @@
 
     nameBox.addEventListener('change', ev => {
         saveUsername();
+    });
+
+    tokenBox.addEventListener('change', ev => {
+        const token = tokenBox.value.trim();
+        if (token) {
+            location.hash = `#${encodeURIComponent(token)}`;
+        } else {
+            location.hash = '';
+        }
+    });
+
+    window.addEventListener('hashchange', ev => {
+        const token = decodeURIComponent(location.hash.slice(1)).trim();
+        tokenBox.value = token;
     });
 
     /**

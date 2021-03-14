@@ -278,6 +278,23 @@
     const wsUrl = new URL('/ws', location.href);
     wsUrl.protocol = 'https:' == wsUrl.protocol ? 'wss:' : 'ws:';
 
+    try {
+        const name = localStorage.getItem('menhera.chatspace.self.name');
+        if (!name) throw void 0;
+        console.log('Name restored.');
+        nameBox.value = name;
+    } catch (e) {
+        console.log('Name not restored.');
+    }
+
+    nameBox.addEventListener('change', ev => {
+        try {
+            localStorage.setItem('menhera.chatspace.self.name', nameBox.value);
+        } catch (e) {
+            console.warn('Failed to save your name:', e);
+        }
+    });
+
     /**
      * @type {WebSocket?}
      * */

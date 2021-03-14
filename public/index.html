@@ -13,6 +13,7 @@
 <style>
     body, input, textarea, button, select {
         font: inherit;
+        border-radius: 0;
     }
 
     pre {
@@ -66,6 +67,33 @@
     #random, #token {
         display: block;
         padding: .5em;
+        inline-size: 100%;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+
+    #token {
+        color: inherit;
+        background-color: transparent;
+        border: none;
+        border-radius: 0;
+    }
+
+    #random {
+        border: none;
+        border-inline-start: solid .125rem rgba(0, 0, 0, .25);
+        background-color: transparent;
+        color: #fff;
+    }
+
+    #random:active, #random:hover {
+        background-color: rgba(0, 0, 0, .25);
+        border-inline-start-color: rgba(0, 0, 0, .5);
+    }
+
+    #token:focus {
+        color: #666;
+        background-color: rgba(255, 255, 255, .5);
     }
 
     #main {

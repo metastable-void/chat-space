@@ -42,6 +42,7 @@ body {
     left: 0;
     right: 0;
     inline-size: 100%;
+    box-shadow: 0 -16rem 0 16rem #5eaf30;
 }
 
 #logotype {

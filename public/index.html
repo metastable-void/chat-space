@@ -338,6 +338,7 @@
                         text,
                         name,
                         receivedTime: getTime(),
+                        isActive: data.isActive,
                     };
                     renderText();
                     break;
@@ -348,6 +349,7 @@
                             text,
                             receivedTime: getTime(),
                             name,
+                            isActive: data.isActive,
                         };
                         renderText();
                     }, 1000);
@@ -406,7 +408,7 @@
         }
 
         renderText();
-    }, 5000);
+    }, 4000);
 
 </script>
 </body>

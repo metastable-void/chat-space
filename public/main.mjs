@@ -258,6 +258,10 @@ const processMessage = ev => {
 
 const openSocket = (force) => {
     if (!ws || ws.readyState == WebSocket.CLOSED || force) {
+        if (ws && ws.readyState == WebSocket.OPEN) {
+            ws.close();
+        }
+
         ws = new WebSocket(String(wsUrl));
 
         textMap = Object.create(null);

@@ -7,7 +7,7 @@
 <link rel="icon" href="/menhera-icon.png"/>
 <meta property="og:type" content="article"/>
 <meta property="og:title" content="Menhera Chatspace"/>
-<meta property="og:description" content="Chatspace is a realtime text chat app like a voice call."/>
+<meta property="og:description" content="Menhera Chatspace is a realtime chat app where you can text like a voice call."/>
 <meta property="og:image" content="https://menhera.io/menhera-icon.png"/>
 <meta name="twitter:site" content="MenheraOrg"/>
 <style>
@@ -19,18 +19,37 @@
         white-space: pre-wrap;
     }
 
+    a {
+        text-decoration: none;
+        opacity: .9;
+    }
+
     :root {
         font-family: system-ui, -apple-system, sans-serif;
         font-size: 100%;
         display: grid;
         min-width: 100%;
         min-height: 100%;
+        font-synthesis: none;
     }
 
     body {
         display: grid;
         margin: 0;
-        grid-template-rows: auto max-content;
+        grid-template-rows: max-content auto max-content;
+    }
+
+    #header {
+        display: grid;
+        grid-template-columns: max-content 1fr max-content;
+    }
+
+    #logotype {
+        font-weight: 500;
+    }
+
+    #random, #token {
+        display: block;
     }
 
     #main {
@@ -50,6 +69,10 @@
         background-color: #fff;
         display: grid;
         grid-template-columns: max-content 1fr;
+    }
+
+    #about {
+        font-size: 75%;
     }
 
     #text {
@@ -129,8 +152,20 @@
 </style>
 </head>
 <body>
+<header id="header">
+<div id="logotype">Chatspace</div>
+<div id="location">
+<input id="token"/>
+</div>
+<button id="random">Random</button>
+</header>
 <main id="main">
 <h1>Menhera Chatspace: realtime text chat</h1>
+<section id="about">
+<p>Menhera Chatspace is a realtime chat app where you can text like a voice call.</p>
+<p>A <a href="https://www.menhera.org/">Menhera.org</a> project. Software copyright &copy; 2021 Menhera.org.</p>
+<p>Terms of use: You agree to avoid any use of this service which make its continued development difficult, including but not limited to: illegal use.</p>
+</section>
 <div id="comments"></div>
 </main>
 <div id="controls">

@@ -51,6 +51,7 @@ body {
     display: block;
     padding: .5em;
     content: '#';
+    padding-inline-end: .25em;
 }
 
 #random, #token {
@@ -68,6 +69,7 @@ body {
     border: none;
     border-radius: 0;
     appearance: none;
+    padding-inline-start: .25em;
 }
 
 #random {

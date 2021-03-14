@@ -1,0 +1,25 @@
+{
+    "lang": "en",
+    "background_color": "#5eaf30",
+    "theme_color": "#5eaf30",
+    "description": "Menhera Chatspace is a realtime chat app where you can text like a voice call.",
+    "display": "standalone",
+    "icons": [
+        {
+            "src": "/app-icon-256px.png",
+            "sizes": "256x256",
+            "type": "image/png",
+            "purpose": ["maskable"]
+        },
+        {
+            "src": "/fullsize-icon-256px.png",
+            "sizes": "256x256",
+            "type": "image/png",
+            "purpose": ["monochrome"]
+        }
+    ],
+    "name": "Menhera Chatspace",
+    "short_name": "Chatspace",
+    "start_url": "/",
+    "scope": "/"
+}

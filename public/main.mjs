@@ -1,4 +1,12 @@
 
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js', {scope: '/'}).then(reg => {
+        console.log('ServiceWorker registered:', reg);
+    }).catch(e => {
+        console.error('ServiceWorker registration failed:', e);
+    });
+}
+
 const textBox = document.querySelector('#text');
 
 /**

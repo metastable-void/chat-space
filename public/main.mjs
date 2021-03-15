@@ -296,6 +296,11 @@ const updateStatus = () => {
     connectionStatus.dataset.status = status;
 };
 
+const getChannelKey = () => {
+    const token = getToken();
+    return textEncoder.encode(`channel_key_${token}`);
+};
+
 const sendMessage = data => {
     if (ws.readyState == WebSocket.OPEN) {
         ws.send(JSON.stringify(data));
@@ -310,16 +315,20 @@ const sendCommand = (command, data) => {
     data.time = getTime();
     data.isActive = !document.hidden;
     const bytes = encodeObject(data);
-    const token = getToken();
+    const channelKey = getChannelKey();
 
     (async () => {
-        const encryptedObj = await encrypt(bytes, textEncoder.encode(token));
-        const encrypted = encodeObject(encryptedObj);
-        if (!myKeys) {
-            throw new Error('My keys not found');
+        try {
+            const encryptedObj = await encrypt(bytes, channelKey);
+            const encrypted = encodeObject(encryptedObj);
+            if (!myKeys) {
+                throw new Error('My keys not found');
+            }
+            const signedObj = await edSign(encrypted, myKeys.privateKey);
+            sendMessage(signedObj);
+        } catch (e) {
+            console.error(e);
         }
-        const signedObj = await edSign(encrypted, myKeys.privateKey);
-        sendMessage(signedObj);
     })().catch(e => {
         console.error(e);
     });
@@ -406,8 +415,8 @@ const processMessage = async ev => {
         const publicKey = decodeBase64(signedObj.publicKey);
         const fingerprint = bytesToHex(await getFingerprint(publicKey));
         const encryptedObj = decodeObject(encrypted);
-        const token = getToken();
-        const dataBytes = await decrypt(encryptedObj, textEncoder.encode(token));
+        const channelKey = getChannelKey();
+        const dataBytes = await decrypt(encryptedObj, channelKey);
 
         const data = decodeObject(dataBytes);
         if ('object' != typeof data || !data) throw 'Invalid data';

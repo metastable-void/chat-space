@@ -1,4 +1,15 @@
 
+globalThis.module = {};
+globalThis.exports = module.exports = {};
+
+import '/noble-ed25519-1.0.3.js';
+
+const ed = module.exports;
+console.log(ed);
+
+delete globalThis.module;
+delete globalThis.exports;
+
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js', {scope: '/'}).then(reg => {
         console.log('ServiceWorker registered:', reg);

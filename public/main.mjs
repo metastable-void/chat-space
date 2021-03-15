@@ -224,7 +224,7 @@ const getMyKeys = async () => {
 let myKeys;
 getMyKeys().then(keys => {
     myKeys = keys;
-    const fingerprint = encodeBase64(keys.fingerprint);
+    const fingerprint = bytesToHex(keys.fingerprint);
     identityBox.title = fingerprint;
     identityBox.textContent = fingerprint.substr(0, 8);
 });
@@ -323,8 +323,6 @@ const sendCommand = (command, data) => {
     })().catch(e => {
         console.error(e);
     });
-    
-    sendMessage(data);
 };
 
 let previousText = '';
@@ -406,7 +404,7 @@ const processMessage = async ev => {
         const signedObj = JSON.parse(ev.data);
         const encrypted = await edVerify(signedObj);
         const publicKey = decodeBase64(signedObj.publicKey);
-        const fingerprint = encodeBase64(await getFingerprint(publicKey));
+        const fingerprint = bytesToHex(await getFingerprint(publicKey));
         const encryptedObj = decodeObject(encrypted);
         const token = getToken();
         const dataBytes = await decrypt(encryptedObj, textEncoder.encode(token));

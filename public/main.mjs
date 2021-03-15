@@ -346,6 +346,10 @@ clearButton.addEventListener('click', ev => {
     commit();
 });
 
+identityBox.addEventListener('focus', ev => {
+    identityBox.select();
+});
+
 textBox.addEventListener('focus', ev => {
     if (blurTimeout) {
         clearTimeout(blurTimeout);

@@ -5,6 +5,12 @@ body, input, textarea, button, select {
     border-radius: 0;
 }
 
+input[type="text"] {
+    -moz-user-select: text;
+    -webkit-user-select: text;
+    user-select: text;
+}
+
 pre {
     white-space: pre-wrap;
 }
@@ -23,6 +29,9 @@ a {
     font-synthesis: none;
     background-color: #5eaf30;
     color: #333;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
 }
 
 body {
@@ -184,6 +193,9 @@ body {
     overflow: hidden;
     white-space: pre-wrap;
     color: #888;
+    -moz-user-select: text;
+    -webkit-user-select: text;
+    user-select: text;
 }
 
 #text:focus {
@@ -270,6 +282,9 @@ body {
     border: solid .125rem #ccc;
     padding: .5em;
     background-color: #fff;
+    -moz-user-select: text;
+    -webkit-user-select: text;
+    user-select: text;
 }
 
 .commentBox::before {

@@ -244,7 +244,7 @@ body {
 }
 
 #connection[data-status="OPEN"]::after {
-    content: ' (You +' attr(data-online-count) '!)';
+    content: ' (You +' attr(data-online-count) ')';
 }
 
 #connection[data-status="OPEN"][data-online-count="0"]::after {

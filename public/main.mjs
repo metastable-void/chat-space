@@ -19,7 +19,13 @@ const nameBox = document.querySelector('#name');
  * */
 const tokenBox = document.querySelector('#token');
 
+/**
+ * @type {HTMLInputElement}
+ */
+const identityBox = document.querySelector('#identity');
+
 const randomButton = document.querySelector('#random');
+const clearButton = document.querySelector('#clear');
 
 const commentsContainer = document.querySelector('#comments');
 const membersContainer = document.querySelector('#members');
@@ -60,10 +66,12 @@ const getMyUuid = () => {
 };
 
 const UUID = getMyUuid();
+const SHORT_ID = UUID.split('-')[0];
 const PING_TIMEOUT = 30000;
 let lastUpdate = 0;
 textBox.dataset.uuid = UUID;
-textBox.dataset.shortId = UUID.split('-')[0];
+textBox.dataset.shortId = SHORT_ID;
+identityBox.value = UUID;
 
 let wsUrl;
 
@@ -332,6 +340,10 @@ textBox.addEventListener('blur', ev => {
             commit();
         }, 15000);
     }
+});
+
+clearButton.addEventListener('click', ev => {
+    commit();
 });
 
 textBox.addEventListener('focus', ev => {

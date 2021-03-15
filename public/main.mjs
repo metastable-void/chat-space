@@ -108,13 +108,13 @@ const decodeObject = bytes => JSON.parse(textDecoder.decode(bytes));
 const getShortFingerprint = bytes => bytesToHex(bytes.subarray(0, 4));
 
 const deriveKey = async (keyBytes) => {
-    const rawKey = await crypto.subtle.importKey('raw', keyBytes, 'HKDF', true, ['deriveKey']);
+    const rawKey = await crypto.subtle.importKey('raw', keyBytes, 'HKDF', false, ['deriveKey']);
     return await crypto.subtle.deriveKey({
         name: 'HKDF',
         hash: 'SHA-256',
         info: new ArrayBuffer(0),
         salt: new ArrayBuffer(0)
-    }, rawKey, {name: 'AES-GCM', length: 256}, true, ['encrypt', 'decrypt']);
+    }, rawKey, {name: 'AES-GCM', length: 256}, false, ['encrypt', 'decrypt']);
 };
 
 const encrypt = async (dataBytes, keyBytes) => {

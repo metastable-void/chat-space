@@ -662,4 +662,5 @@ exports.utils = {
     },
 };
 
+const utils = exports.utils;
 export {sign, verify, getPublicKey, utils};

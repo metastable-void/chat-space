@@ -163,7 +163,7 @@ body {
     padding-inline-start: 0;
     padding-inline-end: .25em;
     color: #ccc;
-    inline-size: 35vw;
+    inline-size: 30vw;
     block-size: max-content;
     max-inline-size: 16rem;
 }

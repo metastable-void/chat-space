@@ -23,6 +23,7 @@ a {
     min-height: 100%;
     font-synthesis: none;
     background-color: #5eaf30;
+    color: #333;
 }
 
 body {
@@ -138,7 +139,7 @@ body {
     grid-column-start: 1;
     grid-column-end: -1;
     display: grid;
-    grid-template-columns: max-content 35% 1fr 2rem;
+    grid-template-columns: max-content auto 1fr 2rem;
     padding-block-end: 1em;
 }
 
@@ -161,7 +162,14 @@ body {
     padding: .5em;
     padding-inline-start: 0;
     padding-inline-end: .25em;
+    color: #ccc;
+    inline-size: 35vw;
+    max-inline-size: 16rem;
+}
+
+#identity:focus {
     color: #888;
+    outline: none;
 }
 
 #text {
@@ -174,6 +182,12 @@ body {
     box-sizing: border-box;
     overflow: hidden;
     white-space: pre-wrap;
+    color: #888;
+}
+
+#text:focus {
+    color: #333;
+    outline: none;
 }
 
 #clear {

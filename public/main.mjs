@@ -216,6 +216,12 @@ const getMyKeys = async () => {
         privateKey = ed.utils.randomPrivateKey();
         publicKey = await ed.getPublicKey(privateKey);
         fingerprint = await getFingerprint(publicKey);
+        const base64PrivateKey = encodeBase64(privateKey);
+        try {
+            localStorage.setItem(LOCAL_STORAGE_PRIVATE_KEY, base64PrivateKey);
+        } catch (e) {
+            console.warn(e);
+        }
     }
     const shortFingerprint = getShortFingerprint(fingerprint);
     return {privateKey, publicKey, fingerprint, shortFingerprint};

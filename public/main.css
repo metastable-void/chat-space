@@ -149,7 +149,7 @@ body {
     margin: 0;
     padding: .5em;
     padding-inline-end: 0;
-    color: #888;
+    color: #ccc;
 }
 
 #identity {
@@ -164,6 +164,7 @@ body {
     padding-inline-end: .25em;
     color: #ccc;
     inline-size: 35vw;
+    block-size: max-content;
     max-inline-size: 16rem;
 }
 

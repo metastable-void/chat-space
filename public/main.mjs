@@ -262,7 +262,7 @@ const processMessage = ev => {
 };
 
 const openSocket = (force) => {
-    if (!ws || ws.readyState == WebSocket.CLOSED || force) {
+    if (!ws || ws.readyState == WebSocket.CLOSED || ws.readyState == WebSocket.CLOSING || force) {
         if (ws && ws.readyState == WebSocket.OPEN) {
             ws.close();
         }

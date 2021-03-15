@@ -140,6 +140,10 @@ const sendMessage = data => {
 let previousText = '';
 const sendUpdate = (force) => {
     const text = textBox.textContent.trim();
+    if ('' === text) {
+        // make sure placeholder is shown
+        textBox.textContent = '';
+    }
     const name = nameBox.value.trim();
     if (text == previousText && !force) return;
     previousText = text;
@@ -351,6 +355,13 @@ textBox.addEventListener('focus', ev => {
     if (blurTimeout) {
         clearTimeout(blurTimeout);
         blurTimeout = void 0;
+    }
+});
+
+nameBox.addEventListener('change', ev => {
+    if ('' === nameBox.value.trim()) {
+        // make sure placeholder is shown
+        nameBox.value = '';
     }
 });
 

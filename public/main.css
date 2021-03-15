@@ -299,6 +299,7 @@ body {
     text-indent: -10em;
     background-color: #5eaf30;
     color: transparent;
+    vertical-align: text-top;
 }
 
 .commentBox .caretMark::before {

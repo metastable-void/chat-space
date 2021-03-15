@@ -21,7 +21,7 @@
 <header id="header">
 <a id="logotype" href="/">Chatspace</a>
 <div id="location">
-<input id="token" name="token" placeholder="(root)"/>
+<input id="token" name="token" placeholder="(public)"/>
 </div>
 <button id="random">Random</button>
 </header>
@@ -30,14 +30,18 @@
 <div id="members"></div>
 <section id="about">
 <p>Menhera Chatspace is a realtime chat app where you can text like a voice call.</p>
-<p>A <a href="https://www.menhera.org/">Menhera.org</a> project. Software copyright &copy; 2021 Menhera.org.</p>
+<p>A <a href="https://www.menhera.org/">Menhera.org</a> project. Software copyright &copy; 2021 Menhera.org. <a href="https://github.com/metastable-void/chat-space">GitHub source</a>.</p>
 <p>Terms of use: You agree to avoid any use of this service which make its continued development difficult, including but not limited to: illegal use.</p>
 </section>
 </main>
 <div id="controls">
 <div id="connection" data-online-count="0">Offline</div>
 <input id="name" type="text" name="name" placeholder="Your name" title="Your name"/>
+<div id="text-wrapper">
+<input id="identity" type="text" name="identity" readonly=""/>
 <div id="text" contenteditable="true" autofocus=""></div>
+<button id="clear">Clear</button>
+</div>
 </div>
 <script type="module" src="/main.mjs"></script>
 </body>

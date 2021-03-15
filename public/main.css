@@ -64,6 +64,11 @@ body {
     padding-inline-end: .25em;
 }
 
+#location:hover {
+    color: #666;
+    background-color: #fff;
+}
+
 #random, #token {
     display: block;
     padding: .5em;
@@ -82,6 +87,11 @@ body {
     padding-inline-start: .25em;
 }
 
+#token::placeholder {
+    opacity: .5;
+    color: inherit;
+}
+
 #random {
     border: none;
     border-inline-start: solid .125rem rgba(0, 0, 0, .25);
@@ -97,6 +107,7 @@ body {
 #token:focus {
     color: #666;
     background-color: rgba(255, 255, 255, .5);
+    outline: none;
 }
 
 #main {
@@ -122,18 +133,69 @@ body {
     font-size: 75%;
 }
 
+#text-wrapper {
+    border: solid .125rem #aaa;
+    grid-column-start: 1;
+    grid-column-end: -1;
+    display: grid;
+    grid-template-columns: max-content 35% 1fr 2rem;
+    padding-block-end: 1em;
+}
+
+#text-wrapper::before {
+    content: '#';
+    display: block;
+    margin: 0;
+    padding: .5em;
+    padding-inline-end: 0;
+    color: #888;
+}
+
+#identity {
+    margin: 0;
+    display: block;
+    border: none;
+    appearance: none;
+    box-sizing: border-box;
+    overflow: hidden;
+    padding: .5em;
+    padding-inline-start: 0;
+    padding-inline-end: .25em;
+    color: #888;
+}
+
 #text {
     margin: 0;
     display: block;
-    border: solid .125rem #aaa;
+    border: none;
     padding: .5em;
+    padding-inline-start: .25em;
     appearance: none;
     box-sizing: border-box;
     overflow: hidden;
     white-space: pre-wrap;
-    grid-column-start: 1;
-    grid-column-end: -1;
-    padding-block-end: 1.5rem;
+}
+
+#clear {
+    margin: 0;
+    display: block;
+    border: none;
+    appearance: none;
+    box-sizing: border-box;
+    overflow: hidden;
+    text-indent: -100em;
+    color: transparent;
+    background-color: transparent;
+    background-image: url(/clear-24px.svg);
+    background-position: center center;
+    background-size: 50%;
+    background-repeat: no-repeat;
+    opacity: .5;
+}
+
+#clear:focus, #clear:hover, #clear:active {
+    outline: none;
+    opacity: 1;
 }
 
 #name {
@@ -198,9 +260,4 @@ body {
 
 #members .commentBox {
     opacity: .75;
-}
-
-#text::before {
-    content: '(#' attr(data-short-id) '): ';
-    color: #888;
 }

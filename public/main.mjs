@@ -354,10 +354,11 @@ const getCaretOffset = () => {
                 break;
             }
             node = prevNode;
+            if (node.nodeType == document.COMMENT_NODE) {
+                continue;
+            }
             if (node.textContent !== null) {
                 offset += node.textContent.length;
-            } else {
-                console.log('No textContent:', node);
             }
         }
         

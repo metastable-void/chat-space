@@ -292,6 +292,12 @@ body {
     color: #888;
 }
 
+.commentBox .caretMark {
+    display: inline-block;
+    inline-size: .125rem;
+    background-color: #5eaf30;
+}
+
 #members .commentBox {
     opacity: .75;
 }

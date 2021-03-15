@@ -340,6 +340,35 @@ const sendCommand = (command, data) => {
     });
 };
 
+const getCaretOffset = () => {
+    const selection = document.getSelection();
+
+    /** @type {Node} */
+    let node = selection.focusNode;
+
+    let offset = selection.focusOffset;
+    while (true) {
+        while (true) {
+            const prevNode = node.previousSibling;
+            if (!prevNode) {
+                break;
+            }
+            node = prevNode;
+            offset += node.textContent.length;
+        }
+        
+        node = node.parentElement;
+        if (!node) {
+            offset = -1;
+            break;
+        }
+        if (node.isSameNode(textBox)) {
+            break;
+        }
+    }
+    return offset;
+};
+
 let previousText = '';
 const sendUpdate = (force) => {
     const text = textBox.textContent.trim();
@@ -351,15 +380,19 @@ const sendUpdate = (force) => {
     if (text == previousText && !force) return;
     previousText = text;
     lastUpdate = getTime();
+    const offset = getCaretOffset();
+
     if (text.length < 1) {
         sendCommand('text_cleared', {
             text: '',
             name,
+            caretOffset: offset,
         });
     } else {
         sendCommand('text_updated', {
             text,
             name,
+            caretOffset: offset,
         });
     }
 };
@@ -367,12 +400,14 @@ const sendUpdate = (force) => {
 const commit = () => {
     textBox.textContent = '';
     const name = nameBox.value.trim();
+    const offset = getCaretOffset();
     if (previousText == '') return;
     lastUpdate = getTime();
     previousText = '';
     sendCommand('text_cleared', {
         text: '',
         name,
+        caretOffset: offset,
     });
 };
 
@@ -400,7 +435,24 @@ const renderText = () => {
         commentBox.dataset.name = name || 'Anonymous';
         commentBox.dataset.shortId = fingerprint.substr(0, 8);
         commentBox.title = fingerprint;
-        commentBox.append(text);
+        commentBox.dataset.caretOffset = state.caretOffset;
+        if (state.caretOffset < 0) {
+            if (text) {
+                commentBox.append(text);
+            }
+        } else {
+            const beforeText = text.substring(0, state.caretOffset);
+            const afterText = text.substring(state.caretOffset);
+            if (beforeText) {
+                commentBox.append(beforeText);
+            }
+            const caretMark = document.createElement('span');
+            caretMark.classList.add('caretMark');
+            commentBox.append(caretMark);
+            if (afterText) {
+                commentBox.append(afterText);
+            }
+        }
         if (text) {
             commentsContainer.prepend(commentBox);
         } else {
@@ -430,6 +482,7 @@ const processMessage = async ev => {
         if ('string' != typeof data.command) throw 'Invalid command';
         
         const text = 'string' == typeof data.text ? data.text : '';
+        const caretOffset = 'number' == typeof data.caretOffset ? data.caretOffset : -1;
         const name = data.name || '';
         switch (data.command) {
             case 'text_updated': {
@@ -438,6 +491,7 @@ const processMessage = async ev => {
                     name,
                     receivedTime: getTime(),
                     isActive: data.isActive,
+                    caretOffset,
                 };
                 renderText();
                 break;
@@ -449,6 +503,7 @@ const processMessage = async ev => {
                         receivedTime: getTime(),
                         name,
                         isActive: data.isActive,
+                        caretOffset,
                     };
                     renderText();
                 }, 1000);
@@ -484,6 +539,7 @@ const openSocket = (force) => {
         });
 
         ws.addEventListener('message', ev => {
+            if (ev.target.readyState != WebSocket.OPEN) return;
             processMessage(ev).catch(e => {
                 console.error(e);
             });

@@ -1,4 +1,5 @@
 "use strict";
+const exports = {};
 /*! noble-ed25519 - MIT License (c) Paul Miller (paulmillr.com) */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.utils = exports.verify = exports.sign = exports.getPublicKey = exports.SignResult = exports.Signature = exports.Point = exports.ExtendedPoint = exports.CURVE = void 0;
@@ -660,3 +661,5 @@ exports.utils = {
         return cached;
     },
 };
+
+export * from exports;

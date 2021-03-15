@@ -1,10 +1,6 @@
 
-globalThis.module = {};
-globalThis.exports = module.exports = {};
+import * as ed from '/noble-ed25519-1.0.3.mjs';
 
-import '/noble-ed25519-1.0.3.js';
-
-const ed = module.exports;
 console.log(ed);
 
 delete globalThis.module;

@@ -231,8 +231,12 @@ body {
 
 #connection {
     background-color: #888;
-    color: #fff;
+    color: rgba(255, 255, 255, .5);
     padding: .5em;
+}
+
+#connection[data-status="OPEN"]:not([data-online-count="0"]) {
+    color: #fff;
 }
 
 #connection[data-status="OPEN"] {
@@ -240,11 +244,11 @@ body {
 }
 
 #connection[data-status="OPEN"]::after {
-    content: ' (You +' attr(data-online-count) ')';
+    content: ' (You +' attr(data-online-count) '!)';
 }
 
 #connection[data-status="OPEN"][data-online-count="0"]::after {
-    content: ' (You are alone)';
+    content: ' (Only you)';
 }
 
 #connection[data-status="CONNECTING"] {

@@ -354,7 +354,11 @@ const getCaretOffset = () => {
                 break;
             }
             node = prevNode;
-            offset += node.textContent.length;
+            if (node.textContent !== null) {
+                offset += node.textContent.length;
+            } else {
+                console.log('No textContent:', node);
+            }
         }
         
         node = node.parentElement;

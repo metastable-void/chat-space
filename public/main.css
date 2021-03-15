@@ -67,7 +67,7 @@ body {
 
 #location:hover {
     color: #666;
-    background-color: #fff;
+    background-color: rgba(255, 255, 255, .5);
 }
 
 #random, #token {
@@ -93,6 +93,12 @@ body {
     color: inherit;
 }
 
+#token:focus {
+    color: #666;
+    /*background-color: rgba(255, 255, 255, .5);*/
+    outline: none;
+}
+
 #random {
     border: none;
     border-inline-start: solid .125rem rgba(0, 0, 0, .25);
@@ -103,12 +109,6 @@ body {
 #random:active, #random:hover {
     background-color: rgba(0, 0, 0, .25);
     border-inline-start-color: rgba(0, 0, 0, .5);
-}
-
-#token:focus {
-    color: #666;
-    background-color: rgba(255, 255, 255, .5);
-    outline: none;
 }
 
 #main {

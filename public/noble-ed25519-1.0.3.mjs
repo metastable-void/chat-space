@@ -662,4 +662,4 @@ exports.utils = {
     },
 };
 
-export * from exports;
+export {sign, verify, getPublicKey, utils};

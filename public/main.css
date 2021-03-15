@@ -295,10 +295,14 @@ body {
 .commentBox .caretMark {
     display: inline-block;
     inline-size: .125rem;
-    block-size: 100%;
-    position: relative;
-    top: .25em;
+    overflow: hidden;
+    text-indent: -10em;
     background-color: #5eaf30;
+    color: transparent;
+}
+
+.commentBox .caretMark::before {
+    content: '*';
 }
 
 #members .commentBox {

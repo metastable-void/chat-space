@@ -19,9 +19,6 @@ const nameBox = document.querySelector('#name');
  * */
 const tokenBox = document.querySelector('#token');
 
-/**
- * @type {HTMLInputElement}
- */
 const identityBox = document.querySelector('#identity');
 
 const randomButton = document.querySelector('#random');
@@ -71,7 +68,7 @@ const PING_TIMEOUT = 30000;
 let lastUpdate = 0;
 textBox.dataset.uuid = UUID;
 textBox.dataset.shortId = SHORT_ID;
-identityBox.value = UUID;
+identityBox.textContent = SHORT_ID;
 
 let wsUrl;
 
@@ -344,10 +341,6 @@ textBox.addEventListener('blur', ev => {
 
 clearButton.addEventListener('click', ev => {
     commit();
-});
-
-identityBox.addEventListener('focus', ev => {
-    identityBox.select();
 });
 
 textBox.addEventListener('focus', ev => {

@@ -348,6 +348,9 @@ const getCaretOffset = () => {
 
     let offset = selection.focusOffset;
     while (true) {
+        if (node.isSameNode(textBox)) {
+            break;
+        }
         while (true) {
             const prevNode = node.previousSibling;
             if (!prevNode) {
@@ -365,9 +368,6 @@ const getCaretOffset = () => {
         node = node.parentElement;
         if (!node) {
             offset = -1;
-            break;
-        }
-        if (node.isSameNode(textBox)) {
             break;
         }
     }

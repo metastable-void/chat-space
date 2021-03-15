@@ -295,6 +295,9 @@ body {
 .commentBox .caretMark {
     display: inline-block;
     inline-size: .125rem;
+    block-size: 100%;
+    position: relative;
+    top: .25em;
     background-color: #5eaf30;
 }
 

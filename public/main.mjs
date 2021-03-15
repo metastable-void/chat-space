@@ -341,6 +341,9 @@ const sendCommand = (command, data) => {
 };
 
 const getCaretOffset = () => {
+    if (document.activeElement != textBox) {
+        return -1;
+    }
     const selection = document.getSelection();
 
     /** @type {Node} */
@@ -376,6 +379,9 @@ const getCaretOffset = () => {
 
 let previousText = '';
 const sendUpdate = (force) => {
+    if (textBox.textContent.includes('\n')) {
+        textBox.textContent = textBox.textContent.split('\n').join('').split('\r').join('');
+    }
     const text = textBox.textContent.trim();
     if ('' === text) {
         // make sure placeholder is shown

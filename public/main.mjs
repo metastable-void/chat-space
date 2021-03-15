@@ -1,10 +1,9 @@
 
 import * as ed from '/noble-ed25519-1.0.3.mjs';
 
-console.log(ed);
-
-delete globalThis.module;
-delete globalThis.exports;
+const LOCAL_STORAGE_PREFIX = 'menhera.chatspace';
+const LOCAL_STORAGE_PRIVATE_KEY = `${LOCAL_STORAGE_PREFIX}.private_key`;
+const LOCAL_STORAGE_USERNAME = `${LOCAL_STORAGE_PREFIX}.self.name`;
 
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js', {scope: '/'}).then(reg => {
@@ -35,15 +34,145 @@ const commentsContainer = document.querySelector('#comments');
 const membersContainer = document.querySelector('#members');
 const connectionStatus = document.querySelector('#connection');
 
+/**
+ * Convert Uint8Array to hex string.
+ * @param bytes {Uint8Array}
+ * @returns {string}
+ */
+const bytesToHex = (bytes) => Array.prototype.map.call(
+    bytes,
+    byte => (byte | 0x100).toString(0x10).slice(-2)
+).join('');
+
+/**
+ * Convert hex string into Uint8Array.
+ * @param hex {string}
+ * @returns {Uint8Array}
+ */
+const hexToBytes = (hex) => {
+    if ('string' != typeof hex) throw new TypeError('Not a string');
+    if (hex.length & 1) throw new TypeError('Invalid length');
+    if (hex.includes('.')) throw new TypeError('Invalid hex string');
+    return new Uint8Array(function* () {
+        for (let i = 0; i < (hex.length >>> 1); i++) {
+            const byteHex = hex.substr(i << 1, 2).trim();
+            if (byteHex.length != 2 || byteHex.includes('.')) {
+                throw new TypeError('Invalid hex string');
+            }
+            const byte = Number('0x' + byteHex);
+            if (isNaN(byte)) {
+                throw new TypeError('Invalid hex string');
+            }
+            yield byte;
+        }
+    }());
+};
+
+const encodeBase64 = bytes => btoa(Array.prototype.map.call(
+    bytes,
+    byte => String.fromCharCode(byte)
+).join(''));
+
+const decodeBase64 = base64 => new Uint8Array(Array.prototype.map.call(
+    atob(base64),
+    byteStr => byteStr.charCodeAt(0)
+));
+
+const getFingerprint = async bytes => {
+    const buffer = await crypto.subtle.digest('SHA-256', bytes.slice(0).buffer);
+    return new Uint8Array(buffer);
+};
+
+const textEncoder = new TextEncoder();
+const textDecoder = new TextDecoder();
+
+/**
+ * 
+ * @param obj {any}
+ * @returns {Uint8Array}
+ */
+const encodeObject = obj => textEncoder.encode(JSON.stringify(obj));
+
+/**
+ * Decode object from bytes.
+ * @param bytes {Uint8Array}
+ * @returns {any}
+ */
+const decodeObject = bytes => JSON.parse(textDecoder.decode(bytes));
+
+/**
+ * Get 32-bit fingerprint representation (not much secure) of the given data.
+ * @param bytes {Uint8Array}
+ * @returns {string}
+ */
+const getShortFingerprint = bytes => bytesToHex(bytes.subarray(0, 4));
+
+const deriveKey = async (keyBytes) => {
+    const rawKey = await crypto.subtle.importKey('raw', keyBytes, 'HKDF', true, ['deriveKey']);
+    return await crypto.subtle.deriveKey({
+        name: 'HKDF',
+        hash: 'SHA-256',
+        info: new ArrayBuffer(0),
+        salt: new ArrayBuffer(0)
+    }, rawKey, {name: 'AES-GCM', length: 256}, true, ['encrypt', 'decrypt']);
+};
+
+const encrypt = async (dataBytes, keyBytes) => {
+    const key = await deriveKey(keyBytes);
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const ciphertext = await crypto.subtle.encrypt({name: 'AES-GCM', iv}, key, dataBytes);
+    return {
+        algo: 'AES-GCM',
+        ciphertext: encodeBase64(new Uint8Array(ciphertext)),
+        iv: encodeBase64(iv),
+    };
+};
+
+const decrypt = async (dataObj, keyBytes) => {
+    if ('AES-GCM' != dataObj.algo) {
+        throw new TypeError('Unknown algorithm');
+    }
+    const key = await deriveKey(keyBytes);
+    const iv = decodeBase64(dataObj.iv);
+    const ciphertext = decodeBase64(dataObj.ciphertext);
+    const resultBuffer = await crypto.subtle.decrypt({name: 'AES-GCM', iv}, key, ciphertext);
+    return new Uint8Array(resultBuffer);
+};
+
+const edSign = async (data, privateKey) => {
+    const digestBuffer = await crypto.subtle.digest('SHA-256', data.slice(0).buffer);
+    const digest = new Uint8Array(digestBuffer);
+    const signature = await ed.sign(digest, privateKey);
+    const publicKey = await ed.getPublicKey(privateKey);
+    return {
+        algo: 'sign-ed25519',
+        data: encodeBase64(data),
+        publicKey: encodeBase64(publicKey),
+        signature: encodeBase64(signature),
+    };
+};
+
+const edVerify = async (dataObj) => {
+    if ('sign-ed25519' != dataObj.algo) {
+        throw new TypeError('Unknown algorithm');
+    }
+    const data = decodeBase64(dataObj.data);
+    const digestBuffer = await crypto.subtle.digest('SHA-256', data.buffer);
+    const digest = new Uint8Array(digestBuffer);
+    const publicKey = decodeBase64(dataObj.publicKey);
+    const signature = decodeBase64(dataObj.signature);
+    if (!ed.verify(signature, digest, publicKey)) {
+        throw new TypeError('Broken signature!');
+    }
+    return data;
+};
+
 const getUuid = () => {
     const bytes = new Uint8Array(16);
     crypto.getRandomValues(bytes);
     bytes[6] = bytes[6] & 0x0f ^ 0x40;
     bytes[8] = bytes[8] & 0x3f ^ 0x80;
-    const hex = Array.prototype.map.call(
-        bytes,
-        byte => ((byte | 0x100).toString(0x10)).slice(-2)
-    ).join('');
+    const hex = bytesToHex(bytes);
     return [
         hex.substr(0, 8),
         hex.substr(8, 4),
@@ -55,27 +184,57 @@ const getUuid = () => {
 
 const getTime = () => +new Date;
 
-const getMyUuid = () => {
+const isLocalStorageAvailable = () => {
     try {
-        const uuid = sessionStorage.getItem('menhera.chatspace.self.id');
-        if (!uuid) {
-            throw void 0;
-        }
-        return uuid;
+        const randomId = getUuid();
+        localStorage.setItem(randomId, 'test');
+        const availability = 'test' === localStorage.getItem(randomId);
+        localStorage.removeItem(randomId);
+        return availability;
     } catch (e) {
-        const uuid = getUuid();
-        sessionStorage.setItem('menhera.chatspace.self.id', uuid);
-        return uuid;
+        return false;
     }
 };
 
-const UUID = getMyUuid();
-const SHORT_ID = UUID.split('-')[0];
-const PING_TIMEOUT = 30000;
+const getMyKeys = async () => {
+    /** @type {Uint8Array} */
+    let privateKey;
+
+    /** @type {Uint8Array} */
+    let publicKey;
+
+    let fingerprint;
+    try {
+        const base64PrivateKey = localStorage.getItem(LOCAL_STORAGE_PRIVATE_KEY);
+        if (!base64PrivateKey) throw void 0;
+        privateKey = decodeBase64(base64PrivateKey);
+        publicKey = await ed.getPublicKey(privateKey);
+        fingerprint = await getFingerprint(publicKey);
+        console.log('My pubkey restored');
+    } catch (e) {
+        console.log('Failed to restore pubkey, generating...');
+        privateKey = ed.utils.randomPrivateKey();
+        publicKey = await ed.getPublicKey(privateKey);
+        fingerprint = await getFingerprint(publicKey);
+    }
+    const shortFingerprint = getShortFingerprint(fingerprint);
+    return {privateKey, publicKey, fingerprint, shortFingerprint};
+};
+
+let myKeys;
+getMyKeys().then(keys => {
+    myKeys = keys;
+    const fingerprint = encodeBase64(keys.fingerprint);
+    identityBox.title = fingerprint;
+    identityBox.textContent = fingerprint.substr(0, 8);
+});
+
+const localStorageAvailability = isLocalStorageAvailable();
+if (!localStorageAvailability) {
+    console.warn('LocalStorage not available');
+}
+
 let lastUpdate = 0;
-textBox.dataset.uuid = UUID;
-textBox.dataset.shortId = SHORT_ID;
-identityBox.textContent = SHORT_ID;
 
 let wsUrl;
 
@@ -86,7 +245,7 @@ const setWsUrl = (channel) => {
 };
 
 try {
-    const name = localStorage.getItem('menhera.chatspace.self.name');
+    const name = localStorage.getItem(LOCAL_STORAGE_USERNAME);
     if (!name) throw void 0;
     console.log('Name restored.');
     nameBox.value = name;
@@ -96,7 +255,7 @@ try {
 
 const saveUsername = () => {
     try {
-        localStorage.setItem('menhera.chatspace.self.name', nameBox.value);
+        localStorage.setItem(LOCAL_STORAGE_USERNAME, nameBox.value);
     } catch (e) {
         console.warn('Failed to save your name:', e);
     }
@@ -112,6 +271,8 @@ const openRandomRoom = () => {
  * @type {WebSocket?}
  * */
 let ws;
+
+const getToken = () => decodeURIComponent(location.hash.slice(1)).trim();
 
 const showReadyState = readyState => {
     switch (readyState) {
@@ -144,6 +305,28 @@ const sendMessage = data => {
     }
 };
 
+const sendCommand = (command, data) => {
+    data.command = command;
+    data.time = getTime();
+    data.isActive = !document.hidden;
+    const bytes = encodeObject(data);
+    const token = getToken();
+
+    (async () => {
+        const encryptedObj = await encrypt(bytes, textEncoder.encode(token));
+        const encrypted = encodeObject(encryptedObj);
+        if (!myKeys) {
+            throw new Error('My keys not found');
+        }
+        const signedObj = await edSign(encrypted, myKeys.privateKey);
+        sendMessage(signedObj);
+    })().catch(e => {
+        console.error(e);
+    });
+    
+    sendMessage(data);
+};
+
 let previousText = '';
 const sendUpdate = (force) => {
     const text = textBox.textContent.trim();
@@ -156,22 +339,14 @@ const sendUpdate = (force) => {
     previousText = text;
     lastUpdate = getTime();
     if (text.length < 1) {
-        sendMessage({
-            uuid: UUID,
-            command: 'text_cleared',
+        sendCommand('text_cleared', {
             text: '',
-            time: getTime(),
             name,
-            isActive: !document.hidden,
         });
     } else {
-        sendMessage({
-            uuid: UUID,
-            command: 'text_updated',
+        sendCommand('text_updated', {
             text,
-            time: getTime(),
             name,
-            isActive: !document.hidden,
         });
     }
 };
@@ -182,13 +357,9 @@ const commit = () => {
     if (previousText == '') return;
     lastUpdate = getTime();
     previousText = '';
-    sendMessage({
-        uuid: UUID,
-        command: 'text_cleared',
+    sendCommand('text_cleared', {
         text: '',
-        time: getTime(),
         name,
-        isActive: !document.hidden,
     });
 };
 
@@ -200,9 +371,9 @@ const renderText = () => {
     connectionStatus.dataset.onlineCount = getOnlineCount();
     commentsContainer.textContent = '';
     membersContainer.textContent = '';
-    for (const uuid of Reflect.ownKeys(textMap)) {
-        if ('string' != typeof uuid) continue;
-        const state = textMap[uuid];
+    for (const fingerprint of Reflect.ownKeys(textMap)) {
+        if ('string' != typeof fingerprint) continue;
+        const state = textMap[fingerprint];
         if (!state) continue;
         const text = state.text;
         const name = state.name || '';
@@ -212,10 +383,10 @@ const renderText = () => {
         }
         const commentBox = document.createElement('div');
         commentBox.classList.add('commentBox');
-        commentBox.dataset.uuid = uuid;
+        commentBox.dataset.fingerprint = fingerprint;
         commentBox.dataset.name = name || 'Anonymous';
-        commentBox.dataset.shortId = uuid.split('-')[0];
-        commentBox.title = uuid;
+        commentBox.dataset.shortId = fingerprint.substr(0, 8);
+        commentBox.title = fingerprint;
         commentBox.append(text);
         if (text) {
             commentsContainer.prepend(commentBox);
@@ -225,16 +396,23 @@ const renderText = () => {
     }
 };
 
-const processMessage = ev => {
+const processMessage = async ev => {
     //
     try {
         if ('string' != typeof ev.data) {
             throw 'Invalid data type';
         }
 
-        const data = JSON.parse(ev.data);
+        const signedObj = JSON.parse(ev.data);
+        const encrypted = await edVerify(signedObj);
+        const publicKey = decodeBase64(signedObj.publicKey);
+        const fingerprint = encodeBase64(await getFingerprint(publicKey));
+        const encryptedObj = decodeObject(encrypted);
+        const token = getToken();
+        const dataBytes = await decrypt(encryptedObj, textEncoder.encode(token));
+
+        const data = decodeObject(dataBytes);
         if ('object' != typeof data || !data) throw 'Invalid data';
-        if ('string' != typeof data.uuid) throw 'Invalid UUID';
         if ('number' != typeof data.time) throw 'Invalid time';
         if ('string' != typeof data.command) throw 'Invalid command';
         
@@ -242,7 +420,7 @@ const processMessage = ev => {
         const name = data.name || '';
         switch (data.command) {
             case 'text_updated': {
-                textMap[data.uuid] = {
+                textMap[fingerprint] = {
                     text,
                     name,
                     receivedTime: getTime(),
@@ -253,7 +431,7 @@ const processMessage = ev => {
             }
             case 'text_cleared': {
                 setTimeout(() => {
-                    textMap[data.uuid] = {
+                    textMap[fingerprint] = {
                         text,
                         receivedTime: getTime(),
                         name,
@@ -292,16 +470,26 @@ const openSocket = (force) => {
             updateStatus();
         });
 
-        ws.addEventListener('message', processMessage);
+        ws.addEventListener('message', ev => {
+            processMessage().catch(e => {
+                console.error(e);
+            });
+        });
     }
 };
 
-const readHash = () => {
-    const token = decodeURIComponent(location.hash.slice(1)).trim();
+const getChannelName = async (token) => {
+    const tokenBuffer = textEncoder.encode(token).buffer;
+    const digestBuffer = await crypto.subtle.digest('SHA-256', tokenBuffer);
+    return bytesToHex(new Uint8Array(digestBuffer));
+};
+
+const readHash = async () => {
+    const token = getToken();
     tokenBox.value = token;
     document.title = token ? `Chatspace #${token}` : 'Chatspace (root)';
     console.log('Opening room:', token);
-    const channel = ''; // TODO: derive channel name from token
+    const channel = await getChannelName(token);
     setWsUrl(channel);
     openSocket(true);
 };
@@ -321,7 +509,9 @@ tokenBox.addEventListener('change', ev => {
 
 window.addEventListener('hashchange', ev => {
     console.log('hashchange');
-    readHash();
+    readHash().catch(e => {
+        console.error(e);
+    });
 });
 
 randomButton.addEventListener('click', ev => {
@@ -387,7 +577,9 @@ connectionStatus.addEventListener('click', ev => {
 window.addEventListener('pageshow', ev => {
     console.log('pageshow');
     saveUsername();
-    readHash();
+    readHash().catch(e => {
+        console.error(e);
+    });
 });
 
 setInterval(() => {
@@ -395,14 +587,14 @@ setInterval(() => {
     if (currentTime - lastUpdate > 3000) {
         sendUpdate(true);
     }
-    for (const uuid of Reflect.ownKeys(textMap)) {
-        if (!textMap[uuid]) {
-            delete textMap[uuid];
+    for (const fingerprint of Reflect.ownKeys(textMap)) {
+        if (!textMap[fingerprint]) {
+            delete textMap[fingerprint];
             continue;
         }
-        const state = textMap[uuid];
+        const state = textMap[fingerprint];
         if (currentTime - state.receivedTime > 10000) {
-            delete textMap[uuid];
+            delete textMap[fingerprint];
             continue;
         }
     }

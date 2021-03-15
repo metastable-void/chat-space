@@ -478,7 +478,7 @@ const openSocket = (force) => {
         });
 
         ws.addEventListener('message', ev => {
-            processMessage().catch(e => {
+            processMessage(ev).catch(e => {
                 console.error(e);
             });
         });

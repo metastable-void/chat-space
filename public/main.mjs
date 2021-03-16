@@ -4,6 +4,7 @@ import * as ed from '/noble-ed25519-1.0.3.mjs';
 const LOCAL_STORAGE_PREFIX = 'menhera.chatspace';
 const LOCAL_STORAGE_PRIVATE_KEY = `${LOCAL_STORAGE_PREFIX}.private_key`;
 const LOCAL_STORAGE_USERNAME = `${LOCAL_STORAGE_PREFIX}.self.name`;
+const LOCAL_STORAGE_VISIT_COUNT = `${LOCAL_STORAGE_PREFIX}.visit_count`;
 
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js', {scope: '/'}).then(reg => {
@@ -231,6 +232,24 @@ const getMyKeys = async () => {
     const shortFingerprint = getShortFingerprint(fingerprint);
     return {privateKey, publicKey, fingerprint, shortFingerprint};
 };
+
+const getVisitCount = () => {
+    let count = 0;
+    try {
+        count = 0 | localStorage.getItem(LOCAL_STORAGE_VISIT_COUNT);
+    } catch (e) {
+        console.warn(e);
+    }
+    return count;
+};
+
+try {
+    const prevCount = getVisitCount();
+    localStorage.setItem(LOCAL_STORAGE_VISIT_COUNT, String(prevCount + 1));
+    console.log (`Visited ${prevCount} time(s) before.`);
+} catch (e) {
+    console.warn(e);
+}
 
 let myKeys;
 getMyKeys().then(keys => {
@@ -722,3 +741,7 @@ setInterval(() => {
 
     renderText();
 }, 4000);
+
+if (!getVisitCount()) {
+    showHelp();
+}

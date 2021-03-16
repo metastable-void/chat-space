@@ -30,6 +30,7 @@ const identityBox = document.querySelector('#identity');
 const randomButton = document.querySelector('#random');
 const clearButton = document.querySelector('#clear');
 const helpButton = document.querySelector('#help');
+const helpCloseButton = document.querySelector('#help-close-button');
 
 const commentsContainer = document.querySelector('#comments');
 const membersContainer = document.querySelector('#members');
@@ -687,10 +688,12 @@ helpBox.addEventListener('click', ev => {
 });
 
 document.body.addEventListener('click', ev => {
-    if (helpShown) {
-        hideHelp();
-    }
+    hideHelp();
 });
+
+helpCloseButton.addEventListener('click', ev => {
+    hideHelp();
+})
 
 window.addEventListener('pageshow', ev => {
     console.log('pageshow');

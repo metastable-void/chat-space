@@ -47,7 +47,7 @@
         --theme-main-text-color: var(--theme-dark-text-color);
         --theme-main-background-color: var(--theme-dark-background-color);
         --theme-inverted-text-color: var(--theme-dark-inverted-text-color);
-        --theme-input-background-color: var(--theme-dark-input-background-color)
+        --theme-input-background-color: var(--theme-dark-input-background-color);
         --theme-input-border-color: var(--theme-dark-input-border-color);
         --theme-secondary-text-color: var(--theme-dark-secondary-text-color);
         --theme-disabled-text-color: var(--theme-dark-disabled-text-color);

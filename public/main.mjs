@@ -35,6 +35,9 @@ const commentsContainer = document.querySelector('#comments');
 const membersContainer = document.querySelector('#members');
 const connectionStatus = document.querySelector('#connection');
 
+const overlayBox = document.querySelector('#overlay');
+const helpBox = document.querySelector('#helpBox');
+
 /**
  * Convert Uint8Array to hex string.
  * @param bytes {Uint8Array}
@@ -580,12 +583,16 @@ const showHelp = () => {
     if (helpShown) return;
     helpShown = true;
     console.log('showing help...');
+    overlayBox.hidden = false;
+    helpBox.hidden = false;
 };
 
 const hideHelp = () => {
     if (!helpShown) return;
     helpShown = false;
     console.log('hiding help...');
+    overlayBox.hidden = true;
+    helpBox.hidden = true;
 };
 
 nameBox.addEventListener('change', ev => {

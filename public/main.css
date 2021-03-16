@@ -38,6 +38,7 @@ body {
     display: grid;
     margin: 0;
     grid-template-rows: max-content auto max-content;
+    --scrollbar-width: calc(100vw - 100%);
 }
 
 #header {
@@ -116,7 +117,7 @@ body {
     cursor: pointer;
 }
 
-#random:active, #random:hover {
+#random:active, #random:hover, #help:active, #help:hover {
     background-color: rgba(0, 0, 0, .25);
     border-inline-start-color: rgba(0, 0, 0, .5);
 }
@@ -309,4 +310,22 @@ body {
 
 #members .commentBox {
     opacity: .75;
+}
+
+#overlay:not([hidden]) {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, .5);
+    display: grid;
+    align-content: center;
+    justify-content: center;
+}
+
+#overlay > * {
+    inline-size: 50%;
+    block-size: 50%;
+    background-color: #fff;
 }

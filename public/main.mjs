@@ -619,7 +619,7 @@ const flash = globalThis.flash = () => {
     document.body.classList.add('flash');
     setTimeout(() => {
         document.body.classList.remove('flash');
-    }, 0);
+    }, 100);
 };
 
 nameBox.addEventListener('change', ev => {

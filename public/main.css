@@ -322,6 +322,7 @@ body {
     display: grid;
     align-content: center;
     justify-content: center;
+    justify-items: center;
     grid-template-columns: 75%;
     grid-template-rows: 50%;
     overflow: hidden;
@@ -331,5 +332,6 @@ body {
     background-color: #fff;
     overflow: auto;
     padding: 1em;
+    inline-size: 100%;
     max-inline-size: 32rem;
 }

@@ -665,6 +665,21 @@ const hideHelp = () => {
     helpBox.hidden = true;
 };
 
+const updateTokenList = async () => {
+    const rooms = await getLastVisitedRooms();
+    tokenListContainer.textContent = '';
+    for (const token of rooms) {
+        const option = document.createElement('option');
+        option.append('#' + token);
+        option.value = token;
+        tokenListContainer.prepend(option);
+    }
+    const option = document.createElement('option');
+    option.append('(public)');
+    option.value = '';
+    tokenListContainer.prepend(option);
+};
+
 nameBox.addEventListener('change', ev => {
     saveUsername();
 });
@@ -774,20 +789,14 @@ window.addEventListener('pageshow', ev => {
 
 window.addEventListener('storage', ev => {
     if (LOCAL_STORAGE_VISITED_ROOMS == ev.key) {
-        getLastVisitedRooms().then(rooms => {
-            tokenListContainer.textContent = '';
-            for (const token of rooms) {
-                const option = document.createElement('option');
-                option.append('#' + token);
-                option.value = token;
-                tokenListContainer.prepend(option);
-            }
-            const option = document.createElement('option');
-            option.append('(public)');
-            option.value = '';
-            tokenListContainer.prepend(option);
+        updateTokenList().catch(e => {
+            console.error(e);
         });
     }
+});
+
+updateTokenList().catch(e => {
+    console.error(e);
 });
 
 setInterval(() => {

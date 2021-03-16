@@ -322,9 +322,13 @@ body {
     display: grid;
     align-content: center;
     justify-content: center;
-    padding: 25%;
+    grid-template-columns: 50%;
+    grid-template-rows: 50%;
+    overflow: hidden;
 }
 
 #overlay > * {
     background-color: #fff;
+    overflow: auto;
+    padding: 1em;
 }

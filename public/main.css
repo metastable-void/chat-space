@@ -322,9 +322,10 @@ body {
     display: grid;
     align-content: center;
     justify-content: center;
+    align-items: center;
     justify-items: center;
     grid-template-columns: 75%;
-    grid-template-rows: 50%;
+    grid-template-rows: 75%;
     overflow: hidden;
 }
 
@@ -332,7 +333,9 @@ body {
     background-color: #fff;
     overflow: auto;
     inline-size: 100%;
+    block-size: 100%;
     max-inline-size: 32rem;
+    max-block-size: 32rem;
     position: relative;
 }
 

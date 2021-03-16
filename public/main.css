@@ -337,8 +337,8 @@ body {
 }
 
 #overlay > * > * {
-    padding-inline-start: 1em;
-    padding-inline-end: 1em;
+    margin-inline-start: 1em;
+    margin-inline-end: 1em;
     margin-block-start: 1em;
     margin-block-end: 1em;
 }
@@ -351,4 +351,17 @@ body {
     background-color: #fff;
     margin: 0;
     padding: .5em;
+}
+
+#overlay .action-buttons button {
+    border: solid .125rem #aaa;
+    background-color: #eee;
+    appearance: none;
+    margin: 0;
+    margin-inline-start: 1em;
+    margin-inline-end: 1em;
+}
+
+#overlay .action-buttons button:hover, #overlay .action-buttons button:active {
+    background-color: #fff;
 }

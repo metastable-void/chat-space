@@ -677,8 +677,13 @@ connectionStatus.addEventListener('click', ev => {
 
 helpButton.addEventListener('click', ev => {
     if (!helpShown) {
+        ev.stopPropagation();
         showHelp();
     }
+});
+
+helpBox.addEventListener('click', ev => {
+    ev.stopPropagation();
 });
 
 document.body.addEventListener('click', ev => {

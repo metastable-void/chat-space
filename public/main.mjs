@@ -742,6 +742,6 @@ setInterval(() => {
     renderText();
 }, 4000);
 
-if (!getVisitCount()) {
+if (getVisitCount() < 2) {
     showHelp();
 }

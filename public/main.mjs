@@ -615,6 +615,13 @@ const hideHelp = () => {
     helpBox.hidden = true;
 };
 
+const flash = globalThis.flash = () => {
+    document.body.classList.add('flash');
+    setTimeout(() => {
+        document.body.classList.remove('flash');
+    }, 0);
+};
+
 nameBox.addEventListener('change', ev => {
     saveUsername();
 });

@@ -39,6 +39,12 @@ body {
     margin: 0;
     grid-template-rows: max-content auto max-content;
     --scrollbar-width: calc(100vw - 100%);
+    transition: opacity linear .5s;
+}
+
+body.flash {
+    opacity: .25;
+    transition: none;
 }
 
 #header {
@@ -267,6 +273,10 @@ body {
 
 #connection[data-status="CONNECTING"] {
     background-color: #b89930;
+}
+
+#connection[data-status="CLOSED"] {
+    cursor: pointer;
 }
 
 #connection[data-status="CLOSED"]::after {

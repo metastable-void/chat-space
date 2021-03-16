@@ -239,7 +239,11 @@ body.flash {
     color: var(--theme-secondary-text-color);
 }
 
-#identity:empty::after {
+#identity::after {
+    content: ' >';
+}
+
+#identity:empty::before {
     content: '<your id>';
 }
 

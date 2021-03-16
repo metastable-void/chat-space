@@ -322,10 +322,9 @@ body {
     display: grid;
     align-content: center;
     justify-content: center;
+    padding: 25%;
 }
 
 #overlay > * {
-    inline-size: 50%;
-    block-size: 50%;
     background-color: #fff;
 }

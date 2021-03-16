@@ -360,6 +360,8 @@ body {
     margin: 0;
     margin-inline-start: 1em;
     margin-inline-end: 1em;
+    box-sizing: border-box;
+    padding: .5em;
 }
 
 #overlay .action-buttons button:hover, #overlay .action-buttons button:active {

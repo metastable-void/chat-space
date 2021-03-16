@@ -20,6 +20,10 @@ a {
     color: #5eaf30;
 }
 
+.not-displayed {
+    display: none;
+}
+
 :root {
     font-family: system-ui, -apple-system, sans-serif;
     font-size: 100%;
@@ -247,7 +251,7 @@ body.flash {
 
 #text:empty::after {
     color: #ccc;
-    content: attr(data-message-placeholder);
+    content: attr(title);
 }
 
 #connection {

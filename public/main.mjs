@@ -720,6 +720,14 @@ textBox.addEventListener('keydown', ev => {
     }
 });
 
+nameBox.addEventListener('keydown', ev => {
+    if (ev.keyCode == 13) {
+        setTimeout(() => {
+            textBox.focus();
+        }, 50);
+    }
+});
+
 let blurTimeout;
 textBox.addEventListener('blur', ev => {
     if (!blurTimeout) {

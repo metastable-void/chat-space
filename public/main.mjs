@@ -29,6 +29,7 @@ const identityBox = document.querySelector('#identity');
 
 const randomButton = document.querySelector('#random');
 const clearButton = document.querySelector('#clear');
+const helpButton = document.querySelector('#help');
 
 const commentsContainer = document.querySelector('#comments');
 const membersContainer = document.querySelector('#members');
@@ -574,6 +575,19 @@ const readHash = async () => {
     openSocket(true);
 };
 
+let helpShown = false;
+const showHelp = () => {
+    if (helpShown) return;
+    helpShown = true;
+    console.log('showing help...');
+};
+
+const hideHelp = () => {
+    if (!helpShown) return;
+    helpShown = false;
+    console.log('hiding help...');
+};
+
 nameBox.addEventListener('change', ev => {
     saveUsername();
 });
@@ -652,6 +666,18 @@ document.addEventListener('visibilitychange', ev => {
 connectionStatus.addEventListener('click', ev => {
     console.log('Reconnect if not connected');
     openSocket();
+});
+
+helpButton.addEventListener('click', ev => {
+    if (!helpShown) {
+        showHelp();
+    }
+});
+
+document.body.addEventListener('click', ev => {
+    if (helpShown) {
+        hideHelp();
+    }
 });
 
 window.addEventListener('pageshow', ev => {

@@ -364,8 +364,10 @@ const sendCommand = (command, data) => {
     });
 };
 
+const isTextBoxFocused = () => document.activeElement == textBox;
+
 const getCaretOffset = () => {
-    if (document.activeElement != textBox) {
+    if (!isTextBoxFocused()) {
         return -1;
     }
     const selection = document.getSelection();
@@ -450,10 +452,23 @@ let textMap = Object.create(null);
 
 const getOnlineCount = () => Reflect.ownKeys(textMap).length;
 
+let lastFlash = 0;
+const flash = globalThis.flash = () => {
+    const time = getTime();
+    if (time - lastFlash < 5000) return;
+    lastFlash = time;
+    document.body.classList.add('flash');
+    setTimeout(() => {
+        document.body.classList.remove('flash');
+    }, 100);
+};
+
+let isThereComment = false;
 const renderText = () => {
     connectionStatus.dataset.onlineCount = getOnlineCount();
     commentsContainer.textContent = '';
     membersContainer.textContent = '';
+    let commentCount = 0;
     for (const fingerprint of Reflect.ownKeys(textMap)) {
         if ('string' != typeof fingerprint) continue;
         const state = textMap[fingerprint];
@@ -489,11 +504,17 @@ const renderText = () => {
             }
         }
         if (text) {
+            if (!isThereComment && commentCount < 1 || !isTextBoxFocused()) {
+                flash();
+            }
+            commentCount++;
             commentsContainer.prepend(commentBox);
         } else {
             membersContainer.prepend(commentBox);
         }
     }
+
+    isThereComment = commentCount > 0;
 };
 
 const processMessage = async ev => {

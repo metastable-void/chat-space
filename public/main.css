@@ -292,6 +292,8 @@ body.flash {
 #comments:empty::before {
     content: attr(data-placeholder);
     opacity: .5;
+    display: block;
+    margin-block-end: 1em;
 }
 
 .commentBox {

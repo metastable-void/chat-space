@@ -242,6 +242,7 @@ body.flash {
     overflow: hidden;
     margin: 0;
     border-radius: 0;
+    box-shadow: none;
 }
 
 #text:empty::after {

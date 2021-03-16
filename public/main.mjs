@@ -5,6 +5,9 @@ const LOCAL_STORAGE_PREFIX = 'menhera.chatspace';
 const LOCAL_STORAGE_PRIVATE_KEY = `${LOCAL_STORAGE_PREFIX}.private_key`;
 const LOCAL_STORAGE_USERNAME = `${LOCAL_STORAGE_PREFIX}.self.name`;
 const LOCAL_STORAGE_VISIT_COUNT = `${LOCAL_STORAGE_PREFIX}.visit_count`;
+const LOCAL_STORAGE_VISITED_ROOMS = `${LOCAL_STORAGE_PREFIX}.visited_rooms`;
+
+const VISITED_ROOMS_LIST_LENGTH = 10;
 
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js', {scope: '/'}).then(reg => {
@@ -39,6 +42,7 @@ const connectionStatus = document.querySelector('#connection');
 
 const overlayBox = document.querySelector('#overlay');
 const helpBox = document.querySelector('#helpBox');
+const tokenListContainer = document.querySelector('#token-list');
 
 /**
  * Convert Uint8Array to hex string.
@@ -241,6 +245,29 @@ const getVisitCount = () => {
         console.warn(e);
     }
     return count;
+};
+
+const getLastVisitedRooms = async () => {
+    // intentionally async for future expansion
+    try {
+        const rooms = JSON.parse(localStorage.getItem(LOCAL_STORAGE_VISITED_ROOMS));
+        if (!Array.isArray(rooms)) {
+            throw void 0;
+        }
+        return rooms.map(room => String(room));
+    } catch (e) {
+        return [];
+    }
+};
+
+const addVisitedRoom = async (token) => {
+    if (!token) return;
+    try {
+        const rooms = new Set(await getLastVisitedRooms());
+        rooms.delete(token);
+        rooms.add(token);
+        localStorage.setItem(LOCAL_STORAGE_VISITED_ROOMS, JSON.stringify([... rooms].slice(- VISITED_ROOMS_LIST_LENGTH)));
+    } catch (e) {}
 };
 
 try {
@@ -618,6 +645,7 @@ const readHash = async () => {
     const channel = await getChannelName(token);
     setWsUrl(channel);
     openSocket(true);
+    await addVisitedRoom(token);
 };
 
 let helpShown = false;
@@ -742,6 +770,24 @@ window.addEventListener('pageshow', ev => {
     readHash().catch(e => {
         console.error(e);
     });
+});
+
+window.addEventListener('storage', ev => {
+    if (LOCAL_STORAGE_VISITED_ROOMS == ev.key) {
+        getLastVisitedRooms().then(rooms => {
+            tokenListContainer.textContent = '';
+            for (const token of rooms) {
+                const option = document.createElement('option');
+                option.append('#' + token);
+                option.value = token;
+                tokenListContainer.prepend(option);
+            }
+            const option = document.createElement('option');
+            option.append('(public)');
+            option.value = '';
+            tokenListContainer.prepend(option);
+        });
+    }
 });
 
 setInterval(() => {

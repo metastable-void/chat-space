@@ -296,6 +296,8 @@ body.flash {
     margin: 0;
     border-radius: 0;
     box-shadow: none;
+    background-color: var(--theme-input-background-color);
+    color: var(--theme-main-text-color);
 }
 
 #text:empty::after {
@@ -436,6 +438,7 @@ body.flash {
     margin-inline-end: 1em;
     box-sizing: border-box;
     padding: .5em;
+    color: var(--theme-main-text-color);
 }
 
 #overlay .action-buttons button:hover, #overlay .action-buttons button:active {

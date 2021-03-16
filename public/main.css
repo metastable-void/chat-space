@@ -161,6 +161,7 @@ body.flash {
     border-radius: 0;
     appearance: none;
     padding-inline-start: .25em;
+    outline: none;
 }
 
 #token::placeholder {
@@ -171,7 +172,6 @@ body.flash {
 #token:focus {
     color: var(--theme-light-text-color);
     /*background-color: rgba(255, 255, 255, .5);*/
-    outline: none;
 }
 
 #random, #help {
@@ -300,6 +300,7 @@ body.flash {
     margin: 0;
     border-radius: 0;
     box-shadow: none;
+    outline: none;
     background-color: var(--theme-input-background-color);
     color: var(--theme-main-text-color);
 }

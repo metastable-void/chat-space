@@ -247,7 +247,7 @@ body.flash {
 
 #text:empty::after {
     color: #ccc;
-    content: 'Input text here and press enter to clear...';
+    content: attr(data-message-placeholder);
 }
 
 #connection {
@@ -265,11 +265,11 @@ body.flash {
 }
 
 #connection[data-status="OPEN"]::after {
-    content: ' (You +' attr(data-online-count) ')';
+    content: ' ' attr(data-message-online-count-before) attr(data-online-count) attr(data-message-online-count-after);
 }
 
 #connection[data-status="OPEN"][data-online-count="0"]::after {
-    content: ' (Only you)';
+    content: ' ' attr(data-message-only-you);
 }
 
 #connection[data-status="CONNECTING"] {
@@ -281,7 +281,7 @@ body.flash {
 }
 
 #connection[data-status="CLOSED"]::after {
-    content: ' (push to reload)';
+    content: ' ' attr(data-message-closed-comment);
 }
 
 #comments {
@@ -290,7 +290,7 @@ body.flash {
 }
 
 #comments:empty::before {
-    content: attr(data-placeholder);
+    content: attr(data-message-placeholder);
     opacity: .5;
     display: block;
     margin-block-end: 1em;

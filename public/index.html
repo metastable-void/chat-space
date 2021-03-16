@@ -27,15 +27,15 @@
 <button id="help">?</button>
 </header>
 <main id="main">
-<div id="comments" data-placeholder="No one's speaking."></div>
+<div id="comments" data-message-placeholder="No one's speaking."></div>
 <div id="members"></div>
 </main>
 <div id="controls">
-<div id="connection" data-online-count="0">Offline</div>
+<div id="connection" data-online-count="0" data-message-closed-comment="(push to reload)" data-message-only-you="(only you)" data-message-online-count-before="(You +" data-message-online-count-after=")">Offline</div>
 <input id="name" type="text" name="name" placeholder="Your name" title="Your name" spellcheck="false"/>
 <div id="text-wrapper">
 <div id="identity"></div>
-<div id="text" contenteditable="true"></div>
+<div id="text" contenteditable="true" data-message-placeholder="Text typed here is shown to other users. (Press enter to clear.)"></div>
 <button id="clear">Clear</button>
 </div>
 </div>

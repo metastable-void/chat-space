@@ -457,6 +457,7 @@ const flash = globalThis.flash = () => {
     const time = getTime();
     if (time - lastFlash < 5000) return;
     lastFlash = time;
+    console.log('flashing the screen...');
     document.body.classList.add('flash');
     setTimeout(() => {
         document.body.classList.remove('flash');
@@ -504,7 +505,7 @@ const renderText = () => {
             }
         }
         if (text) {
-            if (!isThereComment && commentCount < 1 || !isTextBoxFocused()) {
+            if (!isThereComment && commentCount < 1 && !isTextBoxFocused()) {
                 flash();
             }
             commentCount++;

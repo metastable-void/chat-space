@@ -289,6 +289,11 @@ body.flash {
     align-content: end;
 }
 
+#comments:empty::before {
+    content: attr(data-placeholder);
+    opacity: .5;
+}
+
 .commentBox {
     margin: 0;
     margin-block-end: 1em;

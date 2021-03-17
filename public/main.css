@@ -95,6 +95,7 @@ a {
     grid-template-columns: max-content 1fr;
     border-block-start: solid .125rem var(--theme-border-color);
     border-block-end: solid .125rem var(--theme-border-color);
+    background-color: var(--theme-input-background-color);
 }
 
 .input-box > label {
@@ -499,7 +500,7 @@ body.flash {
 }
 
 #overlay > * {
-    background-color: var(--theme-input-background-color);
+    background-color: var(--theme-main-background-color);
     overflow: auto;
     inline-size: 100%;
     block-size: 100%;
@@ -520,7 +521,7 @@ body.flash {
     position: sticky;
     text-align: center;
     bottom: 0;
-    background-color: var(--theme-input-background-color);
+    background-color: var(--theme-main-background-color);
     margin: 0;
     padding: .5em;
 }

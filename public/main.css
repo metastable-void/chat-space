@@ -146,7 +146,8 @@ body.flash {
     display: block;
     padding: .5em;
     content: '#';
-    padding-inline-end: .25em;
+    padding-inline-start: .25em;
+    padding-inline-end: .125em;
 }
 
 #location:hover {
@@ -169,7 +170,7 @@ body.flash {
     border: none;
     border-radius: 0;
     appearance: none;
-    padding-inline-start: .25em;
+    padding-inline-start: .125em;
     outline: none;
 }
 
@@ -196,9 +197,9 @@ body.flash {
     color: transparent;
     text-indent: -20em;
     box-sizing: border-box;
-    inline-size: 1.5em;
+    inline-size: 2em;
     border: none !important;
-    background-size: contain;
+    background-size: 1.5em;
     background-position: center;
     background-repeat: no-repeat;
     background-image: url(/add-white-18dp.svg);

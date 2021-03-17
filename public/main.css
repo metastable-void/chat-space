@@ -185,14 +185,6 @@ body.flash {
 }
 
 #random, #help {
-    border: none;
-    border-inline-start: solid .125rem var(--theme-highlighted-active-color);
-    background-color: transparent;
-    color: var(--theme-highlighted-text-color);
-    cursor: pointer;
-}
-
-#random {
     overflow: hidden;
     color: transparent;
     text-indent: -20em;
@@ -202,7 +194,16 @@ body.flash {
     background-size: 1.5em;
     background-position: center;
     background-repeat: no-repeat;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+#random {
     background-image: url(/add-white-18dp.svg);
+}
+
+#help {
+    background-image: url(/help-white-18dp.svg);
 }
 
 #random:active, #random:hover, #help:active, #help:hover {

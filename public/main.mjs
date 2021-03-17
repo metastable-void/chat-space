@@ -862,6 +862,12 @@ window.addEventListener('storage', ev => {
     }
 });
 
+try {
+    privateKeyBox.value = encodeBase64(myKeys.privateKey);
+} catch (e) {
+    console.error(e);
+}
+
 privateKeyBox.addEventListener('change', ev => {
     setMyKeys(privateKeyBox.value);
 });

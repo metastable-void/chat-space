@@ -817,7 +817,11 @@ document.body.addEventListener('click', ev => {
 
 helpCloseButton.addEventListener('click', ev => {
     hideHelp();
-})
+});
+
+settingsCloseButton.addEventListener('click', ev => {
+    hideSettings();
+});
 
 window.addEventListener('pageshow', ev => {
     console.log('pageshow');

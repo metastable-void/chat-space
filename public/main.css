@@ -33,6 +33,7 @@
     --theme-dark-label-text-color: #999;
     --theme-dark-clear-icon: url(/clear-white-24px.svg);
     --theme-dark-refresh-icon: url(/refresh-white-18dp.svg);
+    --theme-dark-add-icon: url(/add-white-18dp.svg);
 
     --theme-main-text-color: var(--theme-light-text-color);
     --theme-main-background-color: var(--theme-light-background-color);
@@ -188,6 +189,19 @@ body.flash {
     background-color: transparent;
     color: var(--theme-highlighted-text-color);
     cursor: pointer;
+}
+
+#random {
+    overflow: hidden;
+    color: transparent;
+    text-indent: -20em;
+    box-sizing: border-box;
+    inline-size: 1.5em;
+    border: none !important;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url(/add-white-18dp.svg);
 }
 
 #random:active, #random:hover, #help:active, #help:hover {
@@ -361,6 +375,7 @@ body.flash {
     overflow: hidden;
     background-size: 1em;
     background-position: center;
+    background-repeat: no-repeat;
     background-image: var(--theme-dark-refresh-icon);
     vertical-align: text-top;
     margin-inline-end: .25em;
@@ -391,6 +406,7 @@ body.flash {
     -moz-user-select: text;
     -webkit-user-select: text;
     user-select: text;
+    white-space: pre-wrap;
 }
 
 .commentBox::before {

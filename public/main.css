@@ -126,6 +126,7 @@ a {
     box-shadow: none;
     outline: none;
     inline-size: 100%;
+    box-sizing: border-box;
 }
 
 .input-box > input::placeholder {

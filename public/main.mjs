@@ -47,6 +47,9 @@ const helpBox = document.querySelector('#helpBox');
 const tokenListContainer = document.querySelector('#token-list');
 const settingsBox = document.querySelector('#settingsBox');
 
+/** @type {HTMLInputElement} */
+const privateKeyBox = document.querySelector('#private-key');
+
 /**
  * Convert Uint8Array to hex string.
  * @param bytes {Uint8Array}
@@ -240,6 +243,25 @@ const getMyKeys = async () => {
     return {privateKey, publicKey, fingerprint, shortFingerprint};
 };
 
+let myKeys;
+const setMyKeys = async (base64PrivateKey) => {
+    try {
+        const privateKey = decodeBase64(String(base64PrivateKey).trim());
+        if (32 != privateKey.length) throw void 0;
+        const publicKey = await ed.getPublicKey(privateKey);
+        const fingerprint = await getFingerprint(publicKey);
+        const shortFingerprint = getShortFingerprint(fingerprint);
+        myKeys = {privateKey, publicKey, fingerprint, shortFingerprint};
+        try {
+            localStorage.setItem(LOCAL_STORAGE_PRIVATE_KEY, base64PrivateKey);
+        } catch (e) {
+            console.warn(e);
+        }
+    } catch (e) {
+        console.warn('Invalid private key: not set');
+    }
+};
+
 const getVisitCount = () => {
     let count = 0;
     try {
@@ -281,7 +303,6 @@ try {
     console.warn(e);
 }
 
-let myKeys;
 getMyKeys().then(keys => {
     myKeys = keys;
     const fingerprint = bytesToHex(keys.fingerprint);
@@ -836,7 +857,13 @@ window.addEventListener('storage', ev => {
         updateTokenList().catch(e => {
             console.error(e);
         });
+    } else if (LOCAL_STORAGE_PRIVATE_KEY == ev.key) {
+        privateKeyBox.value = encodeBase64(myKeys.privateKey);
     }
+});
+
+privateKeyBox.addEventListener('change', ev => {
+    setMyKeys(privateKeyBox.value);
 });
 
 updateTokenList().catch(e => {

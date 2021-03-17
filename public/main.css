@@ -90,6 +90,48 @@ a {
     display: none;
 }
 
+.input-box {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    border-block-start: solid .125rem var(--theme-border-color);
+    border-block-end: solid .125rem var(--theme-border-color);
+}
+
+.input-box > label {
+    grid-column: 1;
+    grid-row: 1;
+    display: block;
+    padding-block-start: .5em;
+    padding-block-end: .5em;
+    padding-inline-start: .5em;
+    padding-inline-end: .25em;
+    margin: 0;
+}
+
+.input-box > input {
+    grid-column: 2;
+    grid-row: 1;
+    display: block;
+    appearance: none;
+    background-color: transparent;
+    color: inherit;
+    margin: 0;
+    padding-block-start: .5em;
+    padding-block-end: .5em;
+    padding-inline-start: .25em;
+    padding-inline-end: .5em;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    outline: none;
+    inline-size: 100%;
+}
+
+.input-box > input::placeholder {
+    color: inherit;
+    opacity: .5;
+}
+
 :root {
     font-family: var(--theme-main-font);
     font-size: 100%;

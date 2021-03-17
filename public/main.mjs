@@ -349,8 +349,8 @@ const showReadyState = readyState => {
 const updateStatus = () => {
     const status = showReadyState(ws.readyState);
     console.log('readyState:', status);
-    connectionStatus.textContent = ws.readyState == WebSocket.OPEN ? `Online` : 'Offline';
     connectionStatus.dataset.status = status;
+    connectionStatus.title = status;
 };
 
 const getChannelKey = () => {

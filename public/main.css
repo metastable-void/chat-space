@@ -18,6 +18,7 @@
     --theme-light-border-color: #ccc;
     --theme-light-label-text-color: #888;
     --theme-light-clear-icon: url(/clear-24px.svg);
+    --theme-light-refresh-icon: url(/refresh-black-18dp.svg);
 
     /* dark theme */
     --theme-dark-text-color: #eee;
@@ -31,6 +32,7 @@
     --theme-dark-border-color: #666;
     --theme-dark-label-text-color: #999;
     --theme-dark-clear-icon: url(/clear-white-24px.svg);
+    --theme-dark-refresh-icon: url(/refresh-white-18dp.svg);
 
     --theme-main-text-color: var(--theme-light-text-color);
     --theme-main-background-color: var(--theme-light-background-color);
@@ -43,6 +45,7 @@
     --theme-label-text-color: var(--theme-light-label-text-color);
     --theme-overlay-color: var(--theme-dark-overlay-color);
     --theme-clear-icon: var(--theme-light-clear-icon);
+    --theme-refresh-icon: var(--theme-light-refresh-icon);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -58,6 +61,7 @@
         --theme-label-text-color: var(--theme-dark-label-text-color);
         --theme-overlay-color: var(--theme-light-overlay-color);
         --theme-clear-icon: var(--theme-dark-clear-icon);
+        --theme-refresh-icon: var(--theme-dark-refresh-icon);
     }
 }
 
@@ -329,23 +333,39 @@ body.flash {
 }
 
 #connection[data-status="OPEN"]::after {
-    content: ' ' attr(data-message-online-count-before) attr(data-online-count) attr(data-message-online-count-after);
+    content: attr(data-message-online-count-before) attr(data-online-count) attr(data-message-online-count-after);
 }
 
 #connection[data-status="OPEN"][data-online-count="0"]::after {
-    content: ' ' attr(data-message-only-you);
+    content: attr(data-message-only-you);
 }
 
 #connection[data-status="CONNECTING"] {
     background-color: #b89930;
 }
 
-#connection[data-status="CLOSED"] {
+#connection[data-status="CONNECTING"]::after {
+    content: attr(data-message-connecting);
+}
+
+#connection[data-status="CLOSED"], #connection[data-status="CLOSING"] {
     cursor: pointer;
 }
 
-#connection[data-status="CLOSED"]::after {
-    content: ' ' attr(data-message-closed-comment);
+#connection[data-status="CLOSED"]::before, #connection[data-status="CLOSING"]::before {
+    display: inline-block;
+    content: 'reload';
+    inline-size: 1em;
+    color: transparent;
+    text-indent: -10em;
+    overflow: hidden;
+    background-size: 1em;
+    background-position: center;
+    background-image: var(--theme-dark-refresh-icon);
+}
+
+#connection[data-status="CLOSED"]::after, #connection[data-status="CLOSING"]::after {
+    content: attr(data-message-offline);
 }
 
 #comments {

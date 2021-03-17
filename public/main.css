@@ -362,6 +362,8 @@ body.flash {
     background-size: 1em;
     background-position: center;
     background-image: var(--theme-dark-refresh-icon);
+    vertical-align: text-top;
+    margin-inline-end: .25em;
 }
 
 #connection[data-status="CLOSED"]::after, #connection[data-status="CLOSING"]::after {

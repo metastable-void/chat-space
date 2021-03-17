@@ -35,6 +35,8 @@ const randomButton = document.querySelector('#random');
 const clearButton = document.querySelector('#clear');
 const helpButton = document.querySelector('#help');
 const helpCloseButton = document.querySelector('#help-close-button');
+const settingsButton = document.querySelector('#settings-button');
+const settingsCloseButton = document.querySelector('#settings-close-button');
 
 const commentsContainer = document.querySelector('#comments');
 const membersContainer = document.querySelector('#members');
@@ -43,6 +45,7 @@ const connectionStatus = document.querySelector('#connection');
 const overlayBox = document.querySelector('#overlay');
 const helpBox = document.querySelector('#helpBox');
 const tokenListContainer = document.querySelector('#token-list');
+const settingsBox = document.querySelector('#settingsBox');
 
 /**
  * Convert Uint8Array to hex string.
@@ -649,13 +652,6 @@ const readHash = async () => {
 };
 
 let helpShown = false;
-const showHelp = () => {
-    if (helpShown) return;
-    helpShown = true;
-    console.log('showing help...');
-    overlayBox.hidden = false;
-    helpBox.hidden = false;
-};
 
 const hideHelp = () => {
     if (!helpShown) return;
@@ -663,6 +659,30 @@ const hideHelp = () => {
     console.log('hiding help...');
     overlayBox.hidden = true;
     helpBox.hidden = true;
+};
+
+const hideSettings = () => {
+    if (settingsBox.hidden) return;
+    console.log('hiding settings...');
+    overlayBox.hidden = true;
+    settingsBox.hidden = true;
+};
+
+const showHelp = () => {
+    if (helpShown) return;
+    helpShown = true;
+    console.log('showing help...');
+    hideSettings();
+    overlayBox.hidden = false;
+    helpBox.hidden = false;
+};
+
+const showSettings = () => {
+    if (!settingsBox.hidden) return;
+    console.log('showing settings...');
+    hideHelp();
+    overlayBox.hidden = false;
+    settingsBox.hidden = false;
 };
 
 const updateTokenList = async () => {
@@ -779,8 +799,20 @@ helpBox.addEventListener('click', ev => {
     ev.stopPropagation();
 });
 
+settingsButton.addEventListener('click', ev => {
+    if (settingsBox.hidden) {
+        ev.stopPropagation();
+        showSettings();
+    }
+});
+
+settingsBox.addEventListener('click', ev => {
+    ev.stopPropagation();
+});
+
 document.body.addEventListener('click', ev => {
     hideHelp();
+    hideSettings();
 });
 
 helpCloseButton.addEventListener('click', ev => {

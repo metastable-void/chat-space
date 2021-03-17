@@ -118,7 +118,7 @@ body.flash {
 
 #header {
     display: grid;
-    grid-template-columns: max-content 1fr max-content max-content;
+    grid-template-columns: max-content 1fr max-content max-content max-content;
     background-color: var(--theme-accent-color);
     color: var(--theme-highlighted-text-color);
     position: -webkit-sticky;
@@ -155,7 +155,7 @@ body.flash {
     background-color: var(--theme-light-overlay-color);
 }
 
-#random, #token, #help {
+#random, #token, #help, #settings-button {
     display: block;
     padding: .5em;
     inline-size: 100%;
@@ -184,7 +184,7 @@ body.flash {
     /*background-color: rgba(255, 255, 255, .5);*/
 }
 
-#random, #help {
+#random, #help, #settings-button {
     overflow: hidden;
     color: transparent;
     text-indent: -20em;
@@ -204,6 +204,10 @@ body.flash {
 
 #help {
     background-image: url(/help-white-18dp.svg);
+}
+
+#settings-button {
+    background-image: url(/settings-white-18dp.svg);
 }
 
 #random:active, #random:hover, #help:active, #help:hover {
@@ -449,6 +453,7 @@ body.flash {
     grid-template-columns: 75%;
     grid-template-rows: 75%;
     overflow: hidden;
+    z-index: 2;
 }
 
 #overlay > * {

@@ -25,7 +25,8 @@
 <input id="token" name="token" enterkeyhint="go" mozactionhint="go" list="token-list" placeholder="(public)" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" title="Room ID"/>
 <datalist id="token-list"></datalist>
 </div>
-<button id="random" title="New room">Random</button>
+<button id="random" title="New room">New room</button>
+<button id="settings-button" title="Settings">Settings</button>
 <button id="help" title="Help">Help</button>
 </header>
 <main id="main">
@@ -43,6 +44,14 @@
 </div>
 </div>
 <div id="overlay" hidden="">
+<div id="settingsBox" hidden="">
+<h2>Settings</h2>
+<div class="input-box">
+<label for="private-key">Private key</label>
+<input id="private-key" type="text" autocomplete="off" spellcheck="false" enterkeyhint="done" mozactionhint="done"/>
+</div>
+<div class="action-buttons"><button id="settings-close-button">Ok</button></div>
+</div>
 <div id="helpBox" hidden="">
 <h2>How to use</h2>
 <p>Menhera Chatspace is a realtime chat app where you can text like a voice call.</p>
@@ -52,7 +61,7 @@
 <li>Text disappears when you press <kbd>Enter</kbd> or you press the 'clear' button.</li>
 <li>As soon as text disappears for you, your text disappears for other users too.</li>
 <li>The top page of this app is the Public room, which has the empty room id <code>#</code>.</li>
-<li>You can create a new encrypted room with the <kbd>Random</kbd> button.</li>
+<li>You can create a new encrypted room with the (+) button.</li>
 <li>You need to know the room id (the string after '#') to access a chat room.</li>
 <li>When you use a room id, all conversations are end-to-end encrypted.</li>
 <li>Each device connected to a room is differentiated with a user id (the string after '@'). This string is tied to the user's public key and securely identifies each user.</li>

@@ -308,6 +308,7 @@ getMyKeys().then(keys => {
     const fingerprint = bytesToHex(keys.fingerprint);
     identityBox.title = fingerprint;
     identityBox.textContent = fingerprint.substr(0, 8);
+    privateKeyBox.value = encodeBase64(myKeys.privateKey);
 });
 
 const localStorageAvailability = isLocalStorageAvailable();
@@ -861,12 +862,6 @@ window.addEventListener('storage', ev => {
         privateKeyBox.value = encodeBase64(myKeys.privateKey);
     }
 });
-
-try {
-    privateKeyBox.value = encodeBase64(myKeys.privateKey);
-} catch (e) {
-    console.error(e);
-}
 
 privateKeyBox.addEventListener('change', ev => {
     setMyKeys(privateKeyBox.value);

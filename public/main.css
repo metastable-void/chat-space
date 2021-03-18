@@ -498,8 +498,8 @@ body.flash {
     grid-template-rows: 75%;
     overflow: hidden;
     z-index: 2;
-    -webkit-backdrop-filter: blur(1rem);
-    backdrop-filter: blur(1rem);
+    -webkit-backdrop-filter: blur(.5rem);
+    backdrop-filter: blur(.5rem);
 }
 
 #overlay > * {

@@ -500,7 +500,7 @@ const commit = () => {
     });
 };
 
-let textMap = globalThis.textMap = Object.create(null);
+let textMap = Object.create(null);
 
 const getOnlineCount = () => Reflect.ownKeys(textMap).filter(fingerprint => textMap[fingerprint].isActive).length;
 const getOnlineTotalCount = () => Reflect.ownKeys(textMap).length;
@@ -637,6 +637,7 @@ const openSocket = (force) => {
         ws = new WebSocket(String(wsUrl));
 
         textMap = Object.create(null);
+        console.log('textMap:', textMap);
         renderText();
         
         ws.addEventListener('open', ev => {

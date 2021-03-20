@@ -500,7 +500,7 @@ const commit = () => {
     });
 };
 
-let textMap = Object.create(null);
+let textMap = globalThis.textMap = Object.create(null);
 
 const getOnlineCount = () => Reflect.ownKeys(textMap).filter(fingerprint => textMap[fingerprint].isActive).length;
 const getOnlineTotalCount = () => Reflect.ownKeys(textMap).length;

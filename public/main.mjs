@@ -502,7 +502,8 @@ const commit = () => {
 
 let textMap = Object.create(null);
 
-const getOnlineCount = () => Reflect.ownKeys(textMap).length;
+const getOnlineCount = () => Reflect.ownKeys(textMap).filter(state => state.isActive).length;
+const getOnlineTotalCount = () => Reflect.ownKeys(textMap).length;
 
 let lastFlash = 0;
 const flash = globalThis.flash = () => {

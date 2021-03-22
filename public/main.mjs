@@ -193,10 +193,10 @@ const edVerify = async (dataObj) => {
 const x25519Generate = () => {
     const seed = new Uint8Array(32);
     crypto.getRandomValues(seed);
-    const {private, public} = x25519.generateKeyPair(seed);
+    const keyPair = x25519.generateKeyPair(seed);
     return {
-        privateKey: new Uint8Array(private.buffer, private.byteOffset, private.byteLength),
-        publicKey: new Uint8Array(public.buffer, public.byteOffset, public.byteLength),
+        privateKey: new Uint8Array(keyPair.private.buffer, keyPair.private.byteOffset, keyPair.private.byteLength),
+        publicKey: new Uint8Array(keyPair.public.buffer, keyPair.public.byteOffset, keyPair.public.byteLength),
     };
 };
 

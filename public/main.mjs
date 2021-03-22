@@ -10,6 +10,7 @@ const LOCAL_STORAGE_VISIT_COUNT = `${LOCAL_STORAGE_PREFIX}.visit_count`;
 const LOCAL_STORAGE_VISITED_ROOMS = `${LOCAL_STORAGE_PREFIX}.visited_rooms`;
 
 const VISITED_ROOMS_LIST_LENGTH = 10;
+const HISTORY_BUFFER_LENGTH = 10;
 
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js', {scope: '/'}).then(reg => {
@@ -492,6 +493,7 @@ const getCaretOffset = () => {
 
 const getMyName = () => nameBox.value.trim();
 
+const historyBuffer = [];
 let previousText = '';
 const sendUpdate = (force) => {
     if (textBox.textContent.includes('\n')) {
@@ -529,6 +531,10 @@ const commit = () => {
     const offset = getCaretOffset();
     if (previousText == '') return;
     lastUpdate = getTime();
+    historyBuffer.push(previousText);
+    while (historyBuffer.length > HISTORY_BUFFER_LENGTH) {
+        historyBuffer.shift();
+    }
     previousText = '';
     sendCommand('text_cleared', {
         text: '',
@@ -774,6 +780,7 @@ const openSocket = (force) => {
 
         ws.addEventListener('message', ev => {
             if (ev.target.readyState != WebSocket.OPEN) return;
+            if (ws != ev.target) return;
             processMessage(ev).catch(e => {
                 console.error(e);
             });

@@ -776,6 +776,11 @@ const processMessage = async ev => {
     }
 };
 
+const resetText = () => {
+    textMap = Object.create(null);
+    renderText();
+};
+
 const openSocket = (force) => {
     if (!ws || ws.readyState == WebSocket.CLOSED || ws.readyState == WebSocket.CLOSING || force) {
         if (ws && ws.readyState == WebSocket.OPEN) {
@@ -784,12 +789,11 @@ const openSocket = (force) => {
 
         ws = new WebSocket(String(wsUrl));
 
-        textMap = Object.create(null);
-        console.log('textMap:', textMap);
-        renderText();
+        resetText();
         
         ws.addEventListener('open', ev => {
             console.log('ws: open');
+            resetText();
             updateStatus();
         });
         ws.addEventListener('close', ev => {

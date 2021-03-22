@@ -291,7 +291,7 @@ body.flash {
     grid-column-end: -1;
     display: grid;
     grid-template-columns: 1fr max-content;
-    margin: .25rem;
+    margin: .5rem;
     margin-block-end: 1.25rem;
     border-radius: .75rem;
     box-shadow: 0 0 .25rem var(--theme-shadow-color);

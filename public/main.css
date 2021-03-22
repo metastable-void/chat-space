@@ -233,16 +233,15 @@ body.flash {
     overflow: hidden;
     margin: 0;
     color: inherit;
-}
-
-#token {
-    color: inherit;
     background-color: transparent;
     border: none;
     border-radius: 0;
     appearance: none;
-    padding-inline-start: .125em;
     outline: none;
+}
+
+#token {
+    padding-inline-start: .125em;
 }
 
 #token::placeholder {
@@ -251,13 +250,8 @@ body.flash {
 }
 
 #random, #help, #settings-button {
-    box-sizing: border-box;
-    padding-inline-start: .25rem;
-    padding-inline-end: .25rem;
-    border: none !important;
-    background-color: transparent;
+    padding: .25rem;
     cursor: pointer;
-    vertical-align: middle;
 }
 
 #header .header-button:active, #header .header-button:hover {

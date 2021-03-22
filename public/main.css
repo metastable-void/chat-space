@@ -282,7 +282,6 @@ body.flash {
 }
 
 #text-wrapper {
-    border: solid .125rem var(--theme-input-border-color);
     grid-column-start: 1;
     grid-column-end: -1;
     display: grid;
@@ -338,6 +337,8 @@ body.flash {
     border: solid .125rem var(--theme-input-border-color);
     background-color: var(--theme-input-background-color);
     color: var(--theme-main-text-color);
+    border-inline-start: none;
+    border-inline-end: none;
 }
 
 #name-label {

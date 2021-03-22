@@ -488,6 +488,11 @@ body.flash {
     text-align: center;
     line-height: initial;
     font-size: 1em !important;
+    opacity: .5;
+}
+
+.commentBox > .commentControls > button:hover, .commentBox > .commentControls > button:active {
+    opacity: 1;
 }
 
 .commentBox > .commentControls > button:not(:first-of-type)::before {

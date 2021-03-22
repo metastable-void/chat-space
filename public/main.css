@@ -56,7 +56,7 @@
     --theme-dark-disabled-text-color: #888;
     --theme-dark-border-color: #666;
     --theme-dark-label-text-color: #999;
-    --theme-dark-shadow-color: rgba(255, 255, 255, .5);
+    --theme-dark-shadow-color: rgba(255, 255, 255, .75);
 
     --theme-main-text-color: var(--theme-light-text-color);
     --theme-main-background-color: var(--theme-light-background-color);

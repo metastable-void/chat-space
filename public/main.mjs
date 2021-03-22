@@ -715,7 +715,7 @@ const processMessage = async ev => {
                     peerFingerprint: fingerprint,
                     publicKey: encodeBase64(publicKey),
                 });
-                const token = await getX25519SharedUuid(privateKey, data.publicKey);
+                const token = await getX25519SharedUuid(privateKey, decodeBase64(data.publicKey));
                 showRoomInvite(fingerprint, name, token);
                 break;
             }
@@ -731,7 +731,7 @@ const processMessage = async ev => {
                     break;
                 }
                 const state = keyExchangeStates.get(fingerprint);
-                const token = await getX25519SharedUuid(state.privateKey, data.publicKey);
+                const token = await getX25519SharedUuid(state.privateKey, decodeBase64(data.publicKey));
                 showRoomInvite(fingerprint, name, token);
                 break;
             }

@@ -497,7 +497,7 @@ const sendUpdate = (force) => {
     if (textBox.textContent.includes('\n')) {
         textBox.textContent = textBox.textContent.split('\n').join('').split('\r').join('');
     }
-    const text = textBox.textContent.trim();
+    const text = textBox.textContent;
     if ('' === text) {
         // make sure placeholder is shown
         textBox.textContent = '';

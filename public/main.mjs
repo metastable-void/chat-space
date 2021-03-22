@@ -532,7 +532,7 @@ const sendUpdate = (force) => {
 
 const commit = () => {
     textBox.textContent = '';
-    const name = nameBox.value.trim();
+    const name = getMyName();
     const offset = getCaretOffset();
     if (previousText == '') return;
     lastUpdate = getTime();
@@ -543,6 +543,20 @@ const commit = () => {
     previousText = '';
     sendCommand('text_cleared', {
         text: '',
+        name,
+        caretOffset: offset,
+    });
+};
+
+const historyBack = () => {
+    if (historyBuffer.length < 1) return;
+    const text = historyBuffer.pop();
+    textBox.textContent = text;
+    const name = getMyName();
+    const offset = getCaretOffset();
+    previousText = text;
+    sendCommand('text_updated', {
+        text,
         name,
         caretOffset: offset,
     });
@@ -894,6 +908,10 @@ textBox.addEventListener('keydown', ev => {
         // ENTER
         ev.preventDefault();
         commit();
+    } else if (ev.keyCode == 38) {
+        // ARROW UP
+        ev.preventDefault();
+        historyBack();
     }
 });
 

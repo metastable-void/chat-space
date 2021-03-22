@@ -457,7 +457,7 @@ body.flash {
     display: flow-root;
     margin: 0;
     margin-block-end: 1em;
-    border: solid .125rem var(--theme-border-color);
+    /*border: solid .125rem var(--theme-border-color);*/
     padding: .5em;
     background-color: var(--theme-input-background-color);
     -moz-user-select: text;

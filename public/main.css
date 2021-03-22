@@ -252,8 +252,8 @@ body.flash {
 
 #random, #help, #settings-button {
     box-sizing: border-box;
-    padding-inline-start: .5rem;
-    padding-inline-end: .5rem;
+    padding-inline-start: .25rem;
+    padding-inline-end: .25rem;
     border: none !important;
     background-color: transparent;
     cursor: pointer;
@@ -418,15 +418,12 @@ body.flash {
 }
 
 #connection[data-status="CLOSED"]::before, #connection[data-status="CLOSING"]::before {
-    display: inline-block;
     content: 'refresh';
-    vertical-align: middle;
+    vertical-align: text-bottom;
     margin-inline-end: .25rem;
     font-family: 'Material Icons';
     font-weight: normal;
     font-style: normal;
-    font-size: 1.5rem;
-    line-height: 1;
     letter-spacing: normal;
     text-transform: none;
     white-space: nowrap;

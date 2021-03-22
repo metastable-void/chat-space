@@ -78,6 +78,10 @@ input[type="text"] {
     user-select: text;
 }
 
+input[type="text"]:read-only {
+    user-select: all;
+}
+
 pre {
     white-space: pre-wrap;
 }
@@ -85,6 +89,10 @@ pre {
 a {
     text-decoration: none;
     color: var(--theme-accent-color);
+}
+
+details, summary {
+    outline: none;
 }
 
 ::selection {

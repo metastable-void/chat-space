@@ -603,7 +603,7 @@ body.flash {
     padding: .5em;
 }
 
-#overlay .action-buttons button {
+#overlay button {
     border: solid .125rem var(--theme-input-border-color);
     background-color: var(--theme-main-background-color);
     appearance: none;

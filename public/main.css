@@ -23,10 +23,10 @@
 
     /* dark theme */
     --theme-dark-text-color: #eee;
-    --theme-dark-background-color: #333;
+    --theme-dark-background-color: #000;
     --theme-dark-overlay-color: rgba(0, 0, 0, .5);
     --theme-dark-inverted-text-color: #000;
-    --theme-dark-input-background-color: #000;
+    --theme-dark-input-background-color: #333;
     --theme-dark-secondary-text-color: #666;
     --theme-dark-input-border-color: #888;
     --theme-dark-disabled-text-color: #888;

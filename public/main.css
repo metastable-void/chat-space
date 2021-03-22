@@ -474,6 +474,9 @@ body.flash {
     inline-size: max-content;
     margin-inline-start: .5em;
     text-align: end;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 .commentBox > .commentControls > button {

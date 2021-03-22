@@ -42,6 +42,7 @@ const settingsButton = document.querySelector('#settings-button');
 const settingsCloseButton = document.querySelector('#settings-close-button')
 const inviteAcceptButton = document.querySelector('#invite-accept-button');
 const inviteIgnoreButton = document.querySelector('#invite-ignore-button');
+const privateKeyRegenerateButton = document.querySelector('#private-key-regenerate-button');
 
 const commentsContainer = document.querySelector('#comments');
 const membersContainer = document.querySelector('#members');
@@ -292,6 +293,10 @@ const setMyKeys = async (base64PrivateKey) => {
         } catch (e) {
             console.warn(e);
         }
+        const hexFingerprint = bytesToHex(fingerprint);
+        myFingerprintBox.value = hexFingerprint;
+        identityBox.title = hexFingerprint;
+        identityBox.textContent = hexFingerprint.substr(0, 8);
     } catch (e) {
         console.warn('Invalid private key: not set');
     }
@@ -1010,6 +1015,11 @@ window.addEventListener('storage', ev => {
 });
 
 privateKeyBox.addEventListener('change', ev => {
+    setMyKeys(privateKeyBox.value);
+});
+
+privateKeyRegenerateButton.addEventListener('click', ev => {
+    privateKeyBox.value = encodeBase64(ed.utils.randomPrivateKey());
     setMyKeys(privateKeyBox.value);
 });
 

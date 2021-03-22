@@ -227,11 +227,12 @@ body.flash {
 
 #random, #token, #help, #settings-button {
     display: block;
-    padding: .5em;
+    padding: .5rem;
     inline-size: 100%;
     box-sizing: border-box;
     overflow: hidden;
     margin: 0;
+    color: inherit;
 }
 
 #token {

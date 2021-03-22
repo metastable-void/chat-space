@@ -35,8 +35,10 @@
 </main>
 <div id="controls">
 <div id="connection" data-online-count="0" data-message-connecting="Connecting…" data-message-offline="Offline" data-message-only-you="No viewers" data-message-online-count-before="" data-message-online-count-after=" viewer(s)"></div>
-<label for="name" class="not-displayed">Your name</label>
+<div id="name-wrapper">
+<label id="name-label" for="name" class="material-icons">Your name</label>
 <input id="name" type="text" name="name" placeholder="Your name" title="Your name" spellcheck="false" enterkeyhint="next" mozactionhint="next"/>
+</div>
 <div id="text-wrapper">
 <div id="identity"></div>
 <div id="text" contenteditable="true" enterkeyhint="done" mozactionhint="done" title="Text typed here is shown to other users. (Press enter to clear.)"></div>

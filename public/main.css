@@ -362,19 +362,38 @@ body.flash {
     opacity: 1;
 }
 
+#name-wrapper {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    border: solid .125rem var(--theme-input-border-color);
+    background-color: var(--theme-input-background-color);
+    color: var(--theme-main-text-color);
+}
+
 #name {
+    grid-column: 2;
     appearance: none;
     display: block;
-    border: solid .125rem var(--theme-input-border-color);
-    padding: .5em;
+    padding: .5rem;
+    border: none;
+    padding-inline-start: .125rem;
     box-sizing: border-box;
     overflow: hidden;
     margin: 0;
     border-radius: 0;
     box-shadow: none;
     outline: none;
-    background-color: var(--theme-input-background-color);
-    color: var(--theme-main-text-color);
+    background-color: transparent;
+    color: inherit;
+}
+
+#name-label {
+    grid-column: 1;
+    content: 'person'; /* Material icon */
+    padding-inline-start: .25rem;
+    padding-inline-end: .125rem;
+    display: grid;
+    align-content: center;
 }
 
 #text:empty::after {

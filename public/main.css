@@ -286,37 +286,8 @@ body.flash {
     grid-column-start: 1;
     grid-column-end: -1;
     display: grid;
-    grid-template-columns: max-content max-content 1fr 2rem;
-    padding-block-end: 1em;
-}
-
-#text-wrapper::before {
-    content: '@';
-    display: block;
-    margin: 0;
-    padding: .5em;
-    padding-inline-end: 0;
-    color: var(--theme-secondary-text-color);
-}
-
-#identity {
-    margin: 0;
-    display: block;
-    border: none;
-    box-sizing: border-box;
-    overflow: hidden;
-    padding: .5em;
-    padding-inline-start: 0;
-    padding-inline-end: .25em;
-    color: var(--theme-secondary-text-color);
-}
-
-#identity::after {
-    content: ' >';
-}
-
-#identity:empty::before {
-    content: '<your id>';
+    grid-template-columns: 1fr max-content;
+    padding-block-end: 1.25rem;
 }
 
 #text {
@@ -364,27 +335,10 @@ body.flash {
 
 #name-wrapper {
     display: grid;
-    grid-template-columns: max-content 1fr;
+    grid-template-columns: max-content 1fr max-content;
     border: solid .125rem var(--theme-input-border-color);
     background-color: var(--theme-input-background-color);
     color: var(--theme-main-text-color);
-}
-
-#name {
-    grid-column: 2;
-    appearance: none;
-    display: block;
-    padding: .5rem;
-    border: none;
-    padding-inline-start: .125rem;
-    box-sizing: border-box;
-    overflow: hidden;
-    margin: 0;
-    border-radius: 0;
-    box-shadow: none;
-    outline: none;
-    background-color: transparent;
-    color: inherit;
 }
 
 #name-label {
@@ -409,6 +363,44 @@ body.flash {
     direction: ltr;
     -moz-font-feature-settings: 'liga';
     -moz-osx-font-smoothing: grayscale;
+}
+
+#name {
+    grid-column: 2;
+    appearance: none;
+    display: block;
+    padding: .5rem;
+    border: none;
+    padding-inline-start: .125rem;
+    padding-inline-end: .25rem;
+    box-sizing: border-box;
+    overflow: hidden;
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+    outline: none;
+    background-color: transparent;
+    color: inherit;
+}
+
+#identity {
+    margin: 0;
+    display: block;
+    border: none;
+    box-sizing: border-box;
+    overflow: hidden;
+    padding: .5rem;
+    padding-inline-start: 0;
+    padding-inline-end: .25rem;
+    color: var(--theme-secondary-text-color);
+}
+
+#identity::before {
+    content: '@';
+}
+
+#identity:empty::after {
+    content: '<your id>';
 }
 
 #text:empty::after {

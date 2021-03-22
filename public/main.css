@@ -338,6 +338,7 @@ body.flash {
     -moz-user-select: text;
     -webkit-user-select: text;
     user-select: text;
+    overflow-wrap: break-word;
 }
 
 #text:focus {
@@ -463,15 +464,20 @@ body.flash {
     -webkit-user-select: text;
     user-select: text;
     white-space: pre-wrap;
+    overflow-wrap: break-word;
 }
 
 .commentBox > .commentControls {
     float: right;
     float: inline-end;
+    display: flow-root;
+    inline-size: max-content;
+    margin-inline-start: .5em;
+    text-align: end;
 }
 
 .commentBox > .commentControls > button {
-    display: inline;
+    display: block;
     appearance: none;
     outline: none;
     border: none;
@@ -481,6 +487,7 @@ body.flash {
     cursor: pointer;
     color: var(--theme-accent-color);
     background-color: transparent;
+    inline-size: max-content;
 }
 
 .commentBox > .commentControls > button:not(:first-of-type)::before {

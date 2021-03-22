@@ -597,7 +597,7 @@ const renderText = () => {
         controlBox.classList.add('commentControls');
         commentBox.append(controlBox);
         const inviteButton = document.createElement('button');
-        inviteButton.append('Invite to a private room');
+        inviteButton.append('Chat privately');
         inviteButton.addEventListener('click', ev => inviteToRoom(fingerprint));
         controlBox.append(inviteButton);
         if (state.caretOffset < 0) {

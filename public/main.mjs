@@ -584,7 +584,7 @@ const renderText = () => {
         if ('string' != typeof fingerprint) continue;
         const state = textMap[fingerprint];
         if (!state) continue;
-        const text = state.text;
+        const text = (state.text || '').split('\n').join('').split('\r').join('');
         const name = state.name || '';
         const isActive = !!state.isActive;
         if ('' === text && ('' === name || !isActive)) {

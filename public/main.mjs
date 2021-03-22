@@ -872,10 +872,6 @@ randomButton.addEventListener('click', ev => {
     openRandomRoom();
 });
 
-identityBox.addEventListener('click', ev => {
-    textBox.focus();
-});
-
 textBox.addEventListener('input', ev => {
     sendUpdate();
 });

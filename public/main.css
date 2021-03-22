@@ -615,6 +615,6 @@ body.flash {
     color: var(--theme-main-text-color);
 }
 
-#overlay .action-buttons button:hover, #overlay .action-buttons button:active {
+#overlay button:hover, #overlay button:active {
     background-color: var(--theme-input-background-color);
 }

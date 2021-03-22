@@ -57,6 +57,9 @@ const invitePeerFingerprintBox = document.querySelector('#invitePeerFingerprint'
 /** @type {HTMLInputElement} */
 const privateKeyBox = document.querySelector('#private-key');
 
+/** @type {HTMLInputElement} */
+const myFingerprintBox = document.querySelector('#my-fingerprint');
+
 /**
  * Convert Uint8Array to hex string.
  * @param bytes {Uint8Array}
@@ -339,6 +342,7 @@ getMyKeys().then(keys => {
     const fingerprint = bytesToHex(keys.fingerprint);
     identityBox.title = fingerprint;
     identityBox.textContent = fingerprint.substr(0, 8);
+    myFingerprintBox.value = fingerprint;
     privateKeyBox.value = encodeBase64(myKeys.privateKey);
 });
 

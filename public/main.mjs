@@ -1,5 +1,6 @@
 
 import * as ed from '/noble-ed25519-1.0.3.mjs';
+import * as x25519 from '/x25519.mjs';
 
 const LOCAL_STORAGE_PREFIX = 'menhera.chatspace';
 const LOCAL_STORAGE_PRIVATE_KEY = `${LOCAL_STORAGE_PREFIX}.private_key`;

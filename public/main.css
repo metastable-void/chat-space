@@ -466,6 +466,7 @@ body.flash {
 }
 
 .commentBox > .commentControls {
+    float: right;
     float: inline-end;
 }
 
@@ -479,6 +480,7 @@ body.flash {
     padding: 0;
     cursor: pointer;
     color: var(--theme-accent-color);
+    background-color: transparent;
 }
 
 .commentBox > .commentControls > button:not(:first-of-type)::before {

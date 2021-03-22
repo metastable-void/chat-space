@@ -389,11 +389,26 @@ body.flash {
 
 #name-label {
     grid-column: 1;
-    content: 'person'; /* Material icon */
     padding-inline-start: .25rem;
     padding-inline-end: .125rem;
     display: grid;
     align-content: center;
+    font-size: 0;
+}
+
+#name-label::before {
+    font-size: 1.5rem;
+    content: 'person';
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    letter-spacing: normal;
+    text-transform: none;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -moz-font-feature-settings: 'liga';
+    -moz-osx-font-smoothing: grayscale;
 }
 
 #text:empty::after {

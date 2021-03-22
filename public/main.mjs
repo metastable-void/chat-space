@@ -738,7 +738,8 @@ const processMessage = async ev => {
                 }
                 const state = keyExchangeStates.get(fingerprint);
                 const token = await getX25519SharedUuid(state.privateKey, decodeBase64(data.publicKey));
-                showRoomInvite(fingerprint, name, token);
+                hideModals();
+                location.hash = '#' + token;
                 break;
             }
             default: {

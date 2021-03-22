@@ -295,7 +295,6 @@ body.flash {
     display: block;
     border: none;
     padding: .5em;
-    padding-inline-start: .25em;
     appearance: none;
     box-sizing: border-box;
     overflow: hidden;
@@ -392,7 +391,7 @@ body.flash {
     padding: .5rem;
     padding-inline-start: 0;
     padding-inline-end: .25rem;
-    color: var(--theme-secondary-text-color);
+    color: var(--theme-disabled-text-color);
 }
 
 #identity::before {

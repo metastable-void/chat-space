@@ -904,6 +904,7 @@ textBox.addEventListener('blur', ev => {
 
 clearButton.addEventListener('click', ev => {
     commit();
+    textBox.focus();
 });
 
 textBox.addEventListener('focus', ev => {

@@ -1,5 +1,30 @@
 @namespace 'http://www.w3.org/1999/xhtml';
 
+/* Material Icons begin */
+@font-face {
+    font-family: 'Material Icons';
+    font-style: normal;
+    font-weight: 400;
+    src: url(/MaterialIcons-Regular.woff2) format('woff2');
+}
+
+.material-icons {
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 1.5rem;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -moz-font-feature-settings: 'liga';
+    -moz-osx-font-smoothing: grayscale;
+}
+/* Material Icons end */
+
 :root {
     --theme-main-font: system-ui, -apple-system, sans-serif;
     --theme-accent-color: #5eaf30;
@@ -18,8 +43,6 @@
     --theme-light-disabled-text-color: #888;
     --theme-light-border-color: #ccc;
     --theme-light-label-text-color: #888;
-    --theme-light-clear-icon: url(/clear-24px.svg);
-    --theme-light-refresh-icon: url(/refresh-black-18dp.svg);
 
     /* dark theme */
     --theme-dark-text-color: #eee;
@@ -32,9 +55,6 @@
     --theme-dark-disabled-text-color: #888;
     --theme-dark-border-color: #666;
     --theme-dark-label-text-color: #999;
-    --theme-dark-clear-icon: url(/clear-white-24px.svg);
-    --theme-dark-refresh-icon: url(/refresh-white-18dp.svg);
-    --theme-dark-add-icon: url(/add-white-18dp.svg);
 
     --theme-main-text-color: var(--theme-light-text-color);
     --theme-main-background-color: var(--theme-light-background-color);
@@ -46,8 +66,6 @@
     --theme-border-color: var(--theme-light-border-color);
     --theme-label-text-color: var(--theme-light-label-text-color);
     --theme-overlay-color: var(--theme-dark-overlay-color);
-    --theme-clear-icon: var(--theme-light-clear-icon);
-    --theme-refresh-icon: var(--theme-light-refresh-icon);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -62,8 +80,6 @@
         --theme-border-color: var(--theme-dark-border-color);
         --theme-label-text-color: var(--theme-dark-label-text-color);
         --theme-overlay-color: var(--theme-light-overlay-color);
-        --theme-clear-icon: var(--theme-dark-clear-icon);
-        --theme-refresh-icon: var(--theme-dark-refresh-icon);
     }
 }
 
@@ -234,29 +250,13 @@ body.flash {
 }
 
 #random, #help, #settings-button {
-    overflow: hidden;
-    color: transparent;
-    text-indent: -20em;
     box-sizing: border-box;
-    inline-size: 2em;
+    padding-inline-start: .5rem;
+    padding-inline-end: .5rem;
     border: none !important;
-    background-size: 1.5em;
-    background-position: center;
-    background-repeat: no-repeat;
     background-color: transparent;
     cursor: pointer;
-}
-
-#random {
-    background-image: url(/add-white-18dp.svg);
-}
-
-#help {
-    background-image: url(/help-white-18dp.svg);
-}
-
-#settings-button {
-    background-image: url(/settings-white-18dp.svg);
+    vertical-align: middle;
 }
 
 #header .header-button:active, #header .header-button:hover {
@@ -352,19 +352,13 @@ body.flash {
     border: none;
     appearance: none;
     box-sizing: border-box;
-    overflow: hidden;
-    text-indent: -100em;
-    color: transparent;
+    color: inherit;
     background-color: transparent;
-    background-image: var(--theme-clear-icon);
-    background-position: center center;
-    background-size: 50%;
-    background-repeat: no-repeat;
     opacity: .5;
+    outline: none !important;
 }
 
 #clear:focus, #clear:hover, #clear:active {
-    outline: none;
     opacity: 1;
 }
 
@@ -424,17 +418,21 @@ body.flash {
 
 #connection[data-status="CLOSED"]::before, #connection[data-status="CLOSING"]::before {
     display: inline-block;
-    content: 'reload';
-    inline-size: 1em;
-    color: transparent;
-    text-indent: -10em;
-    overflow: hidden;
-    background-size: 1em;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-image: var(--theme-dark-refresh-icon);
-    vertical-align: text-top;
-    margin-inline-end: .25em;
+    content: 'refresh';
+    vertical-align: middle;
+    margin-inline-end: .25rem;
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 1.5rem;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -moz-font-feature-settings: 'liga';
+    -moz-osx-font-smoothing: grayscale;
 }
 
 #connection[data-status="CLOSED"]::after, #connection[data-status="CLOSING"]::after {

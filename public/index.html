@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <title>Chatspace</title>
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; script-src 'self'; connect-src 'self' wss:; worker-src 'self'; manifest-src 'self'; img-src 'self' blob: data:;"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; script-src 'self'; connect-src 'self' wss:; worker-src 'self'; manifest-src 'self'; img-src 'self' blob: data:; font-src 'self';"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <link rel="icon" href="/favicon-256px.png"/>
 <link rel="manifest" href="/app.webmanifest"/>
@@ -25,9 +25,9 @@
 <input id="token" name="token" enterkeyhint="go" mozactionhint="go" list="token-list" placeholder="(public)" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" title="Room ID"/>
 <datalist id="token-list"></datalist>
 </div>
-<button id="random" class="header-button" title="New room">New room</button>
-<button id="settings-button" class="header-button" title="Settings">Settings</button>
-<button id="help" class="header-button" title="Help">Help</button>
+<button id="random" class="header-button material-icons" title="New room">add</button>
+<button id="settings-button" class="header-button material-icons" title="Settings">settings</button>
+<button id="help" class="header-button material-icons" title="Help">help</button>
 </header>
 <main id="main">
 <div id="comments" data-message-placeholder="No one's speaking."></div>
@@ -40,7 +40,7 @@
 <div id="text-wrapper">
 <div id="identity"></div>
 <div id="text" contenteditable="true" enterkeyhint="done" mozactionhint="done" title="Text typed here is shown to other users. (Press enter to clear.)"></div>
-<button id="clear">Clear</button>
+<button id="clear" class="material-icons">clear</button>
 </div>
 </div>
 <div id="overlay" hidden="">

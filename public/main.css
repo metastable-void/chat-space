@@ -338,7 +338,7 @@ body.flash {
     -moz-user-select: text;
     -webkit-user-select: text;
     user-select: text;
-    overflow-wrap: break-word;
+    word-break: break-all;
 }
 
 #text:focus {
@@ -464,7 +464,7 @@ body.flash {
     -webkit-user-select: text;
     user-select: text;
     white-space: pre-wrap;
-    overflow-wrap: break-word;
+    word-break: break-all;
 }
 
 .commentBox > .commentControls {

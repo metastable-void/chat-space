@@ -151,6 +151,7 @@ a {
     -webkit-user-select: none;
     -moz-user-select: none;
     user-select: none;
+    font-kerning: normal;
 }
 
 body {
@@ -199,8 +200,8 @@ body.flash {
     padding-inline-end: .125em;
 }
 
-#location:hover {
-    color: var(--theme-main-text-color);
+#location:hover, #location:focus-within {
+    color: var(--theme-light-text-color);
     background-color: var(--theme-light-overlay-color);
 }
 
@@ -226,11 +227,6 @@ body.flash {
 #token::placeholder {
     opacity: .5;
     color: inherit;
-}
-
-#token:focus {
-    color: var(--theme-light-text-color);
-    /*background-color: rgba(255, 255, 255, .5);*/
 }
 
 #random, #help, #settings-button {

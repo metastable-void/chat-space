@@ -1,6 +1,7 @@
 
 import * as ed from '/noble-ed25519-1.0.3.mjs';
 import * as x25519 from '/x25519.mjs';
+import {toUint8Array} from '/buffer.mjs';
 
 const LOCAL_STORAGE_PREFIX = 'menhera.chatspace';
 const LOCAL_STORAGE_PRIVATE_KEY = `${LOCAL_STORAGE_PREFIX}.private_key`;
@@ -37,7 +38,9 @@ const clearButton = document.querySelector('#clear');
 const helpButton = document.querySelector('#help');
 const helpCloseButton = document.querySelector('#help-close-button');
 const settingsButton = document.querySelector('#settings-button');
-const settingsCloseButton = document.querySelector('#settings-close-button');
+const settingsCloseButton = document.querySelector('#settings-close-button')
+const inviteAcceptButton = document.querySelector('#invite-accept-button');
+const inviteIgnoreButton = document.querySelector('#invite-ignore-button');
 
 const commentsContainer = document.querySelector('#comments');
 const membersContainer = document.querySelector('#members');
@@ -47,6 +50,9 @@ const overlayBox = document.querySelector('#overlay');
 const helpBox = document.querySelector('#helpBox');
 const tokenListContainer = document.querySelector('#token-list');
 const settingsBox = document.querySelector('#settingsBox');
+const inviteBox = document.querySelector('#inviteBox');
+const invitePeerNameBox = document.querySelector('#invitePeerName');
+const invitePeerFingerprintBox = document.querySelector('#invitePeerFingerprint');
 
 /** @type {HTMLInputElement} */
 const privateKeyBox = document.querySelector('#private-key');
@@ -184,9 +190,21 @@ const edVerify = async (dataObj) => {
     return data;
 };
 
-const getUuid = () => {
-    const bytes = new Uint8Array(16);
-    crypto.getRandomValues(bytes);
+const x25519Generate = () => {
+    const seed = new Uint8Array(32);
+    crypto.getRandomValues(seed);
+    const {private, public} = x25519.generateKeyPair(seed);
+    return {
+        privateKey: new Uint8Array(private.buffer, private.byteOffset, private.byteLength),
+        publicKey: new Uint8Array(public.buffer, public.byteOffset, public.byteLength),
+    };
+};
+
+const bytesToUuid = (arr) => {
+    const bytes = toUint8Array(arr).subarray(0, 16);
+    if (16 != bytes.length) {
+        throw new TypeError('Insufficient buffer length');
+    }
     bytes[6] = bytes[6] & 0x0f ^ 0x40;
     bytes[8] = bytes[8] & 0x3f ^ 0x80;
     const hex = bytesToHex(bytes);
@@ -197,6 +215,18 @@ const getUuid = () => {
         hex.substr(16, 4),
         hex.substr(20, 12),
     ].join('-');
+};
+
+const getUuid = () => {
+    const bytes = new Uint8Array(16);
+    crypto.getRandomValues(bytes);
+    return bytesToUuid(bytes);
+};
+
+const getX25519SharedUuid = async (privateKey, publicKey) => {
+    const sharedSecret = x25519.sharedKey(privateKey, publicKey);
+    const seed = await getFingerprint(sharedSecret);
+    return bytesToUuid(seed);
 };
 
 const getTime = () => +new Date;
@@ -456,6 +486,8 @@ const getCaretOffset = () => {
     return offset;
 };
 
+const getMyName = () => nameBox.value.trim();
+
 let previousText = '';
 const sendUpdate = (force) => {
     if (textBox.textContent.includes('\n')) {
@@ -466,7 +498,7 @@ const sendUpdate = (force) => {
         // make sure placeholder is shown
         textBox.textContent = '';
     }
-    const name = nameBox.value.trim();
+    const name = getMyName();
     if (text == previousText && !force) return;
     previousText = text;
     lastUpdate = getTime();
@@ -498,6 +530,26 @@ const commit = () => {
         text: '',
         name,
         caretOffset: offset,
+    });
+};
+
+// outgoing offers
+const keyExchangeStates = new Map;
+
+/**
+ * Invite a user to a new shared secret room.
+ * @param peerFingerprint {string} Hex SHA-256 fingerprint.
+ */
+const inviteToRoom = (peerFingerprint) => {
+    const {privateKey, publicKey} = x25519Generate();
+    keyExchangeStates.set(peerFingerprint, {
+        privateKey,
+        publicKey,
+    });
+    sendCommand('room_invite', {
+        name: getMyName(),
+        peerFingerprint,
+        publicKey: encodeBase64(publicKey),
     });
 };
 
@@ -541,6 +593,13 @@ const renderText = () => {
         commentBox.dataset.shortId = fingerprint.substr(0, 8);
         commentBox.title = fingerprint;
         commentBox.dataset.caretOffset = state.caretOffset;
+        const controlBox = document.createElement('div');
+        controlBox.classList.add('commentControls');
+        commentBox.append(controlBox);
+        const inviteButton = document.createElement('button');
+        inviteButton.append('Invite to a private room');
+        inviteButton.addEventListener('click', ev => inviteToRoom(fingerprint));
+        controlBox.append(inviteButton);
         if (state.caretOffset < 0) {
             if (text) {
                 commentBox.append(text);
@@ -570,6 +629,28 @@ const renderText = () => {
     }
 
     isThereComment = commentCount > 0;
+};
+
+const hideModals = () => {
+    overlayBox.hidden = true;
+    for (const box of overlayBox.children) {
+        box.hidden = true;
+    }
+};
+
+let inviteAcceptHandler = () => void 0;
+const showRoomInvite = (peerFingerprint, peerName, token) => {
+    console.log(`Room invite received from ${peerName} (@${peerFingerprint})`);
+    hideModals();
+    invitePeerFingerprintBox.title = peerFingerprint;
+    invitePeerFingerprintBox.textContent = peerFingerprint.slice(0, 8);
+    invitePeerNameBox.textContent = peerName;
+    overlayBox.hidden = false;
+    inviteBox.hidden = false;
+    inviteAcceptHandler = () => {
+        inviteAcceptHandler = () => void 0;
+        location.hash = '#' + token;
+    };
 };
 
 const processMessage = async ev => {
@@ -618,6 +699,40 @@ const processMessage = async ev => {
                     };
                     renderText();
                 }, 1000);
+                break;
+            }
+            case 'room_invite': {
+                if (!myKeys) {
+                    console.error('My keys unavailable yet!');
+                    break;
+                }
+                const myFingerprint = bytesToHex(myKeys.fingerprint);
+                if (myFingerprint != data.peerFingerprint) break;
+                console.log('Key exchange received');
+                const {privateKey, publicKey} = x25519Generate();
+                sendCommand('room_invite_reply', {
+                    name: getMyName(),
+                    peerFingerprint: fingerprint,
+                    publicKey: encodeBase64(publicKey),
+                });
+                const token = await getX25519SharedUuid(privateKey, data.publicKey);
+                showRoomInvite(fingerprint, name, token);
+                break;
+            }
+            case 'room_invite_reply': {
+                if (!myKeys) {
+                    console.error('My keys unavailable yet!');
+                    break;
+                }
+                const myFingerprint = bytesToHex(myKeys.fingerprint);
+                if (myFingerprint != data.peerFingerprint) break;
+                if (!keyExchangeStates.has(fingerprint)) {
+                    console.warn('Unknown key exchange reply');
+                    break;
+                }
+                const state = keyExchangeStates.get(fingerprint);
+                const token = await getX25519SharedUuid(state.privateKey, data.publicKey);
+                showRoomInvite(fingerprint, name, token);
                 break;
             }
             default: {
@@ -698,6 +813,7 @@ const showHelp = () => {
     helpShown = true;
     console.log('showing help...');
     hideSettings();
+    hideModals();
     overlayBox.hidden = false;
     helpBox.hidden = false;
 };
@@ -706,6 +822,7 @@ const showSettings = () => {
     if (!settingsBox.hidden) return;
     console.log('showing settings...');
     hideHelp();
+    hideModals();
     overlayBox.hidden = false;
     settingsBox.hidden = false;
 };
@@ -838,10 +955,25 @@ settingsBox.addEventListener('click', ev => {
 document.body.addEventListener('click', ev => {
     hideHelp();
     hideSettings();
+    hideModals();
 });
 
 helpCloseButton.addEventListener('click', ev => {
     hideHelp();
+});
+
+inviteAcceptButton.addEventListener('click', ev => {
+    hideModals();
+    inviteAcceptHandler();
+});
+
+inviteIgnoreButton.addEventListener('click', ev => {
+    hideModals();
+    inviteAcceptHandler = () => void 0;
+});
+
+inviteBox.addEventListener('click', ev => {
+    ev.stopPropagation();
 });
 
 settingsCloseButton.addEventListener('click', ev => {

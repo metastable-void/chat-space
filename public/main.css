@@ -453,6 +453,7 @@ body.flash {
 }
 
 .commentBox {
+    display: flow-root;
     margin: 0;
     margin-block-end: 1em;
     border: solid .125rem var(--theme-border-color);
@@ -462,6 +463,27 @@ body.flash {
     -webkit-user-select: text;
     user-select: text;
     white-space: pre-wrap;
+}
+
+.commentBox > .commentControls {
+    float: inline-end;
+}
+
+.commentBox > .commentControls > button {
+    display: inline;
+    appearance: none;
+    outline: none;
+    border: none;
+    border-radius: 0;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+    color: var(--theme-accent-color);
+}
+
+.commentBox > .commentControls > button:not(:first-of-type)::before {
+    content: ' | ';
+    color: var(--theme-disabled-text-color);
 }
 
 .commentBox::before {

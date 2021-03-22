@@ -78,10 +78,6 @@ input[type="text"] {
     user-select: text;
 }
 
-input[type="text"]:read-only {
-    user-select: all;
-}
-
 pre {
     white-space: pre-wrap;
 }
@@ -263,7 +259,7 @@ body.flash {
     background-image: url(/settings-white-18dp.svg);
 }
 
-#random:active, #random:hover, #help:active, #help:hover {
+#header .header-button:active, #header .header-button:hover {
     background-color: var(--theme-highlighted-active-color);
 }
 

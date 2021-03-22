@@ -787,7 +787,7 @@ const getChannelName = async (token) => {
 const readHash = async () => {
     const token = getToken();
     tokenBox.value = token;
-    document.title = token ? `Chatspace #${token}` : 'Chatspace (root)';
+    document.title = token ? `Chatspace #${token}` : 'Chatspace (public)';
     console.log('Opening room:', token);
     const channel = await getChannelName(token);
     setWsUrl(channel);
@@ -1032,4 +1032,8 @@ setInterval(() => {
 
 if (getVisitCount() < 2) {
     showHelp();
+}
+
+if (history.scrollRestoration) {
+    history.scrollRestoration = 'manual';
 }

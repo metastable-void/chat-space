@@ -342,8 +342,8 @@ body.flash {
 }
 
 #clear {
-    margin: 0;
-    display: block;
+    display: grid;
+    align-content: center;
     border: none;
     appearance: none;
     box-sizing: border-box;
@@ -351,6 +351,11 @@ body.flash {
     background-color: transparent;
     opacity: .5;
     outline: none !important;
+    margin: 0;
+    padding: 0;
+    font-size: 1rem;
+    padding-inline-start: .25rem;
+    padding-inline-end: .25rem;
 }
 
 #clear:focus, #clear:hover, #clear:active {
@@ -478,9 +483,11 @@ body.flash {
     margin: 0;
     padding: 0;
     cursor: pointer;
-    color: var(--theme-accent-color);
+    color: inherit;
     background-color: transparent;
-    inline-size: max-content;
+    text-align: center;
+    line-height: initial;
+    font-size: 1em !important;
 }
 
 .commentBox > .commentControls > button:not(:first-of-type)::before {

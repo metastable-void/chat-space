@@ -35,7 +35,7 @@
     /* light theme */
     --theme-light-text-color: #333;
     --theme-light-background-color: #eee;
-    --theme-light-overlay-color: rgba(255, 255, 255, .5);
+    --theme-light-overlay-color: rgba(127, 127, 127, .5);
     --theme-light-inverted-text-color: #fff;
     --theme-light-input-background-color: #fff;
     --theme-light-secondary-text-color: #ccc;
@@ -226,7 +226,7 @@ body.flash {
 
 #location:hover, #location:focus-within {
     color: var(--theme-light-text-color);
-    background-color: var(--theme-light-overlay-color);
+    background-color: var(--theme-light-input-background-color);
 }
 
 #random, #token, #help, #settings-button {

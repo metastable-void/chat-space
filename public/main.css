@@ -34,7 +34,7 @@
 
     /* light theme */
     --theme-light-text-color: #333;
-    --theme-light-background-color: #f2f2f2;
+    --theme-light-background-color: #eee;
     --theme-light-overlay-color: rgba(255, 255, 255, .5);
     --theme-light-inverted-text-color: #fff;
     --theme-light-input-background-color: #fff;
@@ -43,6 +43,7 @@
     --theme-light-disabled-text-color: #888;
     --theme-light-border-color: #ccc;
     --theme-light-label-text-color: #888;
+    --theme-light-shadow-color: rgba(0, 0, 0, .5);
 
     /* dark theme */
     --theme-dark-text-color: #eee;
@@ -55,6 +56,7 @@
     --theme-dark-disabled-text-color: #888;
     --theme-dark-border-color: #666;
     --theme-dark-label-text-color: #999;
+    --theme-dark-shadow-color: rgba(255, 255, 255, .5);
 
     --theme-main-text-color: var(--theme-light-text-color);
     --theme-main-background-color: var(--theme-light-background-color);
@@ -66,6 +68,7 @@
     --theme-border-color: var(--theme-light-border-color);
     --theme-label-text-color: var(--theme-light-label-text-color);
     --theme-overlay-color: var(--theme-dark-overlay-color);
+    --theme-shadow-color: var(--theme-light-shadow-color);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -80,6 +83,7 @@
         --theme-border-color: var(--theme-dark-border-color);
         --theme-label-text-color: var(--theme-dark-label-text-color);
         --theme-overlay-color: var(--theme-light-overlay-color);
+        --theme-shadow-color: var(--theme-dark-shadow-color);
     }
 }
 
@@ -272,7 +276,7 @@ body.flash {
     left: 0;
     right: 0;
     inline-size: 100%;
-    background-color: var(--theme-input-background-color);
+    background-color: var(--theme-main-background-color);
     display: grid;
     grid-template-columns: max-content 1fr;
 }
@@ -286,7 +290,10 @@ body.flash {
     grid-column-end: -1;
     display: grid;
     grid-template-columns: 1fr max-content;
-    padding-block-end: 1.25rem;
+    margin: .25rem;
+    margin-block-end: 1.25rem;
+    border-radius: .75rem;
+    box-shadow: 0 0 .25rem var(--theme-shadow-color);
 }
 
 #text {
@@ -486,6 +493,7 @@ body.flash {
     user-select: text;
     white-space: pre-wrap;
     overflow-wrap: break-word;
+    box-shadow: 0 0 .25rem var(--theme-shadow-color);
 }
 
 .commentBox > .commentControls {

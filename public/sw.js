@@ -41,7 +41,7 @@ self.addEventListener('fetch', ev => {
             if (!freshResponse.ok) {
                 throw 'Non-2xx response';
             }
-            await cache.put(request, freshResponse);
+            await cache.put(request, freshResponse.clone());
             return freshResponse;
         } catch (e) {
             console.warn('sw: fetch error:', e);

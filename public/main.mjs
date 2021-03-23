@@ -805,6 +805,11 @@ const openSocket = (force) => {
         ws.addEventListener('close', ev => {
             console.log('ws: close');
             updateStatus();
+            setTimeout(() => {
+                if (document.hidden || !navigator.onLine) return;
+                console.log('Trying reconnection...');
+                openSocket();
+            }, 50);
         });
 
         ws.addEventListener('message', ev => {

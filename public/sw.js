@@ -44,7 +44,7 @@ self.addEventListener('fetch', ev => {
             await cache.put(request, freshResponse.clone());
             return freshResponse;
         } catch (e) {
-            console.warn('sw: fetch error:', e);
+            console.warn('sw: fetch error:', request.url, e);
             return match;
         }
     })(ev.request));

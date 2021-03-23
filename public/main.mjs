@@ -1085,7 +1085,8 @@ if (history.scrollRestoration) {
 
 window.addEventListener('online', ev => {
     document.documentElement.dataset.onlineStatus = 'ONLINE';
-    console.log('Becoming online');
+    console.log('Becoming online, reconnecting...');
+    openSocket();
 });
 
 window.addEventListener('offline', ev => {

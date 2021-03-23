@@ -1085,10 +1085,12 @@ if (history.scrollRestoration) {
 
 window.addEventListener('online', ev => {
     document.documentElement.dataset.onlineStatus = 'ONLINE';
+    console.log('Becoming online');
 });
 
 window.addEventListener('offline', ev => {
     document.documentElement.dataset.onlineStatus = 'OFFLINE';
+    console.log('Becoming offline');
 });
 
 if ('boolean' == typeof navigator.onLine) {
@@ -1100,3 +1102,5 @@ if ('boolean' == typeof navigator.onLine) {
 } else {
     document.documentElement.dataset.onlineStatus = 'UNKNOWN';
 }
+
+console.log('Online status:', document.documentElement.dataset.onlineStatus);

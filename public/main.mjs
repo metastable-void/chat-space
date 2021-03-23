@@ -1082,3 +1082,21 @@ if (getVisitCount() < 2) {
 if (history.scrollRestoration) {
     history.scrollRestoration = 'manual';
 }
+
+window.addEventListener('online', ev => {
+    document.documentElement.dataset.onlineStatus = 'ONLINE';
+});
+
+window.addEventListener('offline', ev => {
+    document.documentElement.dataset.onlineStatus = 'OFFLINE';
+});
+
+if ('boolean' == typeof navigator.onLine) {
+    if (navigator.onLine) {
+        document.documentElement.dataset.onlineStatus = 'ONLINE';
+    } else {
+        document.documentElement.dataset.onlineStatus = 'OFFLINE';
+    }
+} else {
+    document.documentElement.dataset.onlineStatus = 'UNKNOWN';
+}

@@ -269,6 +269,12 @@ body.flash {
     padding: .5rem;
 }
 
+[data-connection-status="OFFLINE"] #main::before {
+    content: attr(data-message-offline);
+    display: block;
+    margin-block-end: 1em;
+}
+
 #controls {
     position: -webkit-sticky;
     position: sticky;

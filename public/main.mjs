@@ -20,6 +20,12 @@ if ('serviceWorker' in navigator) {
     });
 }
 
+if (location.pathname.endsWith('/index.html')) {
+    const url = new URL(location.href);
+    url.pathname = url.pathname.slice(0, -10);
+    history.replaceState({}, '', String(url));
+}
+
 const textBox = document.querySelector('#text');
 
 /**

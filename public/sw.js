@@ -5,7 +5,9 @@ const ASSETS = [
     '/app.webmanifest', // en locale
     '/main.mjs',
     '/main.css',
+    '/app-icon-192px.png',
     '/app-icon-256px.png',
+    '/app-icon-512px.png',
     '/favicon-256px.png',
     '/fullsize-icon-256px.png',
     '/MaterialIcons-Regular.woff2',

@@ -58,4 +58,8 @@ export class WindowBroadcast extends EventTarget {
             console.warn(e);
         }
     }
+
+    addEventListener(... args) {
+        return super.addEventListener.call(this, ... args);
+    }
 }

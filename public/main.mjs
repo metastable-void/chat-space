@@ -643,8 +643,19 @@ class ChatspaceCommentElement extends HTMLElement {
 
 customElements.define('chatspace-comment', ChatspaceCommentElement);
 
+let renderingPaused = false;
+globalThis.pauseRendering = () => {
+    renderingPaused = true;
+};
+
+globalThis.resumeRendering = () => {
+    renderingPaused = false;
+    renderText();
+};
+
 let isThereComment = false;
 const renderText = () => {
+    if (renderingPaused) return;
     connectionStatus.dataset.onlineCount = getOnlineCount();
     commentsContainer.textContent = '';
     membersContainer.textContent = '';

@@ -53,6 +53,9 @@ export class Settings extends EventTarget {
         return new Proxy(this, {
             get(target, key) {
                 if (key in target) {
+                    if ('function' == typeof target[key]) {
+                        return target[key].bind(target);
+                    }
                     return target[key];
                 }
                 return target.get(key);

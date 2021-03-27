@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <title>Chatspace</title>
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; script-src 'self'; connect-src 'self' wss:; worker-src 'self'; manifest-src 'self'; img-src 'self' blob: data:; font-src 'self';"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' wss:; worker-src 'self'; manifest-src 'self'; img-src 'self' blob: data:; font-src 'self';"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no"/>
 <link rel="icon" href="/favicon-256px.png"/>
 <link rel="manifest" href="/app.webmanifest"/>
@@ -18,7 +18,6 @@
 <meta name="twitter:site" content="MenheraOrg"/>
 <link rel="preload" herf="/chatspace-common.css" as="style"/>
 <template id="template-chatspace-comment">
-<link rel="stylesheet" href="/chatspace-comment.css"/>
 <div id="comment-main">
 <div id="comment-identity">
 <div id="comment-username"></div>

@@ -6,7 +6,6 @@ const ASSETS = [
     '/main.mjs',
     '/main.css',
     '/common.css',
-    '/chatspace-comment.css',
     '/app-icon-192px.png',
     '/app-icon-256px.png',
     '/app-icon-512px.png',
@@ -24,6 +23,7 @@ const ASSETS = [
     '/lib/Session.mjs',
     '/lib/noble-ed25519-1.0.3.mjs',
     '/lib/x25519.mjs',
+    '/components/chatspace-comment.mjs',
 ].map(path => String(new URL(path, location.href)));
 
 self.addEventListener('install', ev => {

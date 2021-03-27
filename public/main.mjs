@@ -11,6 +11,7 @@ import * as utf8 from '/lib/utf8.mjs';
 import {WindowBroadcast} from '/lib/WindowBroadcast.mjs';
 import {Session} from '/lib/Session.mjs';
 import '/components/chatspace-comment.mjs';
+import '/components/chatspace-comment-container.mjs';
 
 const VISITED_ROOMS_LIST_LENGTH = 10;
 const HISTORY_BUFFER_LENGTH = 10;

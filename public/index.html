@@ -16,7 +16,9 @@
 <meta property="og:description" content="Menhera Chatspace is a realtime chat app where you can text like a voice call."/>
 <meta property="og:image" content="https://menhera.io/fullsize-icon-256px.png"/>
 <meta name="twitter:site" content="MenheraOrg"/>
-<link rel="preload" herf="/chatspace-common.css" as="style"/>
+<link rel="preload" herf="/common.css" as="style"/>
+<link rel="preload" herf="/components/chatspace-comment.css" as="style"/>
+<link rel="preload" herf="/components/chatspace-comment-container.css" as="style"/>
 <template id="template-chatspace-comment">
 <link rel="stylesheet" href="/components/chatspace-comment.css"/>
 <div id="comment-main">
@@ -29,6 +31,12 @@
 <menu id="comment-menu">
 <button title="Chat privately" id="comment-invite-button" class="material-icons" part="invite-button">mail</button>
 </menu>
+</template>
+<template id="template-chatspace-comment-container">
+<link rel="stylesheet" href="/components/chatspace-comment-container.css"/>
+<div hidden="hidden"><slot></slot></div>
+<div id="comments-active"><slot name="active"></slot></div>
+<div id="comments-idle"><slot name="idle"></slot></div>
 </template>
 </head>
 <body>

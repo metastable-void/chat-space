@@ -25,6 +25,8 @@ const ASSETS = [
     '/lib/x25519.mjs',
     '/components/chatspace-comment.mjs',
     '/components/chatspace-comment.css',
+    '/components/chatspace-comment-container.mjs',
+    '/components/chatspace-comment-container.css',
 ].map(path => String(new URL(path, location.href)));
 
 self.addEventListener('install', ev => {

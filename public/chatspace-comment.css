@@ -1,8 +1,6 @@
 
 @import url(/common.css);
 
-@namespace 'http://www.w3.org/1999/xhtml';
-
 :host {
     display: grid;
     margin: 0;
@@ -35,6 +33,7 @@
     align-content: space-around;
     grid-column: 2;
     margin: 0;
+    padding: 0;
     margin-inline-end: .5em;
 }
 

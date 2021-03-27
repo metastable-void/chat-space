@@ -633,6 +633,12 @@ class ChatspaceCommentElement extends HTMLElement {
         const element = shadow.querySelector('#comment-fingerprint');
         element.dataset.sessionId = str;
     }
+
+    get inviteButton() {
+        const shadow = shadowMap.get(this);
+        const element = shadow.querySelector('#comment-invite-button');
+        return element;
+    }
 }
 
 customElements.define('chatspace-comment', ChatspaceCommentElement);
@@ -663,6 +669,8 @@ const renderText = () => {
         commentBox.userName = name || 'Anonymous';
         commentBox.caretOffset = state.caretOffset;
 
+        commentBox.inviteButton.addEventListener('click', ev => inviteToRoom(fingerprint, sessionId));
+
         if (text) {
             if (!isThereComment && commentCount < 1 && !isTextBoxFocused()) {
                 flash();
@@ -672,8 +680,6 @@ const renderText = () => {
         } else {
             membersContainer.prepend(commentBox);
         }
-
-        commentBox.querySelector('::part(invite-button)').addEventListener('click', ev => inviteToRoom(fingerprint, sessionId));
     }
 
     isThereComment = commentCount > 0;

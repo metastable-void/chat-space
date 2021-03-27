@@ -576,12 +576,12 @@ class ChatspaceCommentElement extends HTMLElement {
     get text() {
         const shadow = shadowMap.get(this);
         const element = shadow.querySelector('#comment-text');
-        return element.dataset.text;
+        return element.dataset.text || '';
     }
 
     set text(str) {
         const shadow = shadowMap.get(this);
-        const element = shadow.querySelector('#comment-username');
+        const element = shadow.querySelector('#comment-text');
         element.dataset.text = str;
         this.renderText();
     }
@@ -589,7 +589,7 @@ class ChatspaceCommentElement extends HTMLElement {
     get userName() {
         const shadow = shadowMap.get(this);
         const element = shadow.querySelector('#comment-username');
-        return element.textContent;
+        return element.textContent || '';
     }
 
     set userName(name) {
@@ -601,7 +601,7 @@ class ChatspaceCommentElement extends HTMLElement {
     get shortFingerprint() {
         const shadow = shadowMap.get(this);
         const element = shadow.querySelector('#comment-fingerprint');
-        return element.textContent;
+        return element.textContent || '';
     }
 
     set shortFingerprint(str) {

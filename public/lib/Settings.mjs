@@ -19,7 +19,7 @@ for (const key of Reflect.ownKeys(legacyMap)) {
 
 const isLocalStorageAvailable = () => {
     try {
-        const randomId = uuidUtils.random();
+        const randomId = '__localStorage_test_key';
         localStorage.setItem(randomId, 'test');
         const availability = 'test' === localStorage.getItem(randomId);
         localStorage.removeItem(randomId);

@@ -39,7 +39,7 @@ self.addEventListener('install', ev => {
         }
 
         for (const url of ASSETS) {
-            if (!cachedUrls.includes(url)) {
+            if (!cachedUrls.has(url)) {
                 promises.push(cache.add(url));
             }
         }

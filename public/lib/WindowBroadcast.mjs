@@ -5,6 +5,7 @@ const getKey = (channelName) => LOCAL_STORAGE_PREFIX + String(channelName).trim(
 
 const eventTarget = new class extends EventTarget {
     constructor() {
+        super();
         window.addEventListener('storage', ev => {
             if (null === ev.key) {
                 console.log('The storage was cleared');

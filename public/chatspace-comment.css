@@ -34,6 +34,8 @@
     display: grid;
     align-content: space-around;
     grid-column: 2;
+    margin: 0;
+    margin-inline-end: .5em;
 }
 
 #comment-menu > button {

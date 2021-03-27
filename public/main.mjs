@@ -75,6 +75,9 @@ const privateKeyBox = document.querySelector('#private-key');
 /** @type {HTMLInputElement} */
 const myFingerprintBox = document.querySelector('#my-fingerprint');
 
+const userAgentBox = document.querySelector('#user-agent');
+userAgentBox.textContent = navigator.userAgent;
+
 
 const getFingerprint = async bytes => {
     const buffer = await crypto.subtle.digest('SHA-256', bytes.slice(0).buffer);

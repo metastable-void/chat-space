@@ -16,6 +16,11 @@
 <meta property="og:description" content="Menhera Chatspace is a realtime chat app where you can text like a voice call."/>
 <meta property="og:image" content="https://menhera.io/fullsize-icon-256px.png"/>
 <meta name="twitter:site" content="MenheraOrg"/>
+<template id="template-chatspace-comment">
+<div id="wrapper">
+<menu id="comment-menu"></menu>
+</div>
+</template>
 </head>
 <body>
 <header id="header">
@@ -53,6 +58,7 @@
 </div>
 <div id="settingsBox" hidden="">
 <h2>Settings</h2>
+<p>User agent: <code id="user-agent"></code></p>
 <p>Your fingerprint securely identifies your browser. This value is tied to your private key.</p>
 <div class="input-box">
 <label for="my-fingerprint">Fingerprint</label>

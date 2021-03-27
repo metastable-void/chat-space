@@ -11,16 +11,40 @@ const ASSETS = [
     '/favicon-256px.png',
     '/fullsize-icon-256px.png',
     '/MaterialIcons-Regular.woff2',
-    '/buffer.mjs',
-    '/noble-ed25519-1.0.3.mjs',
-    '/x25519.mjs',
-];
+    '/lib/buffer.mjs',
+    '/lib/hex.mjs',
+    '/lib/base64.mjs',
+    '/lib/Settings.mjs',
+    '/lib/WindowBroadcast.mjs',
+    '/lib/random.mjs',
+    '/lib/uuid.mjs',
+    '/lib/utf8.mjs',
+    '/lib/noble-ed25519-1.0.3.mjs',
+    '/lib/x25519.mjs',
+].map(path => String(new URL(path, location.href)));
 
 self.addEventListener('install', ev => {
     ev.waitUntil((async () => {
         console.log('sw: install');
         const cache = await caches.open(ASSETS_CACHE);
-        await cache.addAll(ASSETS);
+        const keys = await cache.keys();
+        const cachedUrls = new Set;
+        const promises = [];
+
+        for (const req of keys) {
+            cachedUrls.add(req.url);
+            if (!ASSETS.includes(req.url)) {
+                promises.push(cache.delete(req));
+            }
+        }
+
+        for (const url of ASSETS) {
+            if (!cachedUrls.includes(url)) {
+                promises.push(cache.add(url));
+            }
+        }
+
+        await Promise.all(promises);
     })());
 });
 

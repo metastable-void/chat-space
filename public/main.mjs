@@ -1,13 +1,15 @@
 
-import * as ed from '/noble-ed25519-1.0.3.mjs';
-import * as x25519 from '/x25519.mjs';
-import {toUint8Array} from '/buffer.mjs';
+import * as ed from '/lib/noble-ed25519-1.0.3.mjs';
+import * as x25519 from '/lib/x25519.mjs';
+import {toUint8Array} from '/lib/buffer.mjs';
+import * as hexUtils from '/lib/hex.mjs';
+import * as base64 from '/lib/base64.mjs';
+import * as rand from '/lib/random.mjs';
+import * as uuidUtils from '/lib/uuid.mjs';
+import {Settings} from '/lib/Settings.mjs';
+import * as utf8 from '/lib/utf8.mjs';
+import {WindowBroadcast} from '/lib/WindowBroadcast.mjs';
 
-const LOCAL_STORAGE_PREFIX = 'menhera.chatspace';
-const LOCAL_STORAGE_PRIVATE_KEY = `${LOCAL_STORAGE_PREFIX}.private_key`;
-const LOCAL_STORAGE_USERNAME = `${LOCAL_STORAGE_PREFIX}.self.name`;
-const LOCAL_STORAGE_VISIT_COUNT = `${LOCAL_STORAGE_PREFIX}.visit_count`;
-const LOCAL_STORAGE_VISITED_ROOMS = `${LOCAL_STORAGE_PREFIX}.visited_rooms`;
 
 const VISITED_ROOMS_LIST_LENGTH = 10;
 const HISTORY_BUFFER_LENGTH = 10;
@@ -25,6 +27,9 @@ if (location.pathname.endsWith('/index.html')) {
     url.pathname = url.pathname.slice(0, -10);
     history.replaceState({}, '', String(url));
 }
+
+const broadcast = new WindowBroadcast('chatspace');
+const settings = new Settings;
 
 const textBox = document.querySelector('#text');
 
@@ -68,78 +73,33 @@ const privateKeyBox = document.querySelector('#private-key');
 /** @type {HTMLInputElement} */
 const myFingerprintBox = document.querySelector('#my-fingerprint');
 
-/**
- * Convert Uint8Array to hex string.
- * @param bytes {Uint8Array}
- * @returns {string}
- */
-const bytesToHex = (bytes) => Array.prototype.map.call(
-    bytes,
-    byte => (byte | 0x100).toString(0x10).slice(-2)
-).join('');
-
-/**
- * Convert hex string into Uint8Array.
- * @param hex {string}
- * @returns {Uint8Array}
- */
-const hexToBytes = (hex) => {
-    if ('string' != typeof hex) throw new TypeError('Not a string');
-    if (hex.length & 1) throw new TypeError('Invalid length');
-    if (hex.includes('.')) throw new TypeError('Invalid hex string');
-    return new Uint8Array(function* () {
-        for (let i = 0; i < (hex.length >>> 1); i++) {
-            const byteHex = hex.substr(i << 1, 2).trim();
-            if (byteHex.length != 2 || byteHex.includes('.')) {
-                throw new TypeError('Invalid hex string');
-            }
-            const byte = Number('0x' + byteHex);
-            if (isNaN(byte)) {
-                throw new TypeError('Invalid hex string');
-            }
-            yield byte;
-        }
-    }());
-};
-
-const encodeBase64 = bytes => btoa(Array.prototype.map.call(
-    bytes,
-    byte => String.fromCharCode(byte)
-).join(''));
-
-const decodeBase64 = base64 => new Uint8Array(Array.prototype.map.call(
-    atob(base64),
-    byteStr => byteStr.charCodeAt(0)
-));
 
 const getFingerprint = async bytes => {
     const buffer = await crypto.subtle.digest('SHA-256', bytes.slice(0).buffer);
     return new Uint8Array(buffer);
 };
 
-const textEncoder = new TextEncoder();
-const textDecoder = new TextDecoder();
 
 /**
  * 
  * @param obj {any}
  * @returns {Uint8Array}
  */
-const encodeObject = obj => textEncoder.encode(JSON.stringify(obj));
+const encodeObject = obj => utf8.encode(JSON.stringify(obj));
 
 /**
  * Decode object from bytes.
  * @param bytes {Uint8Array}
  * @returns {any}
  */
-const decodeObject = bytes => JSON.parse(textDecoder.decode(bytes));
+const decodeObject = bytes => JSON.parse(utf8.decode(bytes));
 
 /**
  * Get 32-bit fingerprint representation (not much secure) of the given data.
  * @param bytes {Uint8Array}
  * @returns {string}
  */
-const getShortFingerprint = bytes => bytesToHex(bytes.subarray(0, 4));
+const getShortFingerprint = bytes => hexUtils.encode(bytes.subarray(0, 4));
 
 const deriveKey = async (keyBytes) => {
     const rawKey = await crypto.subtle.importKey('raw', keyBytes, 'HKDF', false, ['deriveKey']);
@@ -153,12 +113,12 @@ const deriveKey = async (keyBytes) => {
 
 const encrypt = async (dataBytes, keyBytes) => {
     const key = await deriveKey(keyBytes);
-    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const iv = rand.fill(new Uint8Array(12));
     const ciphertext = await crypto.subtle.encrypt({name: 'AES-GCM', iv}, key, dataBytes);
     return {
         algo: 'AES-GCM',
-        ciphertext: encodeBase64(new Uint8Array(ciphertext)),
-        iv: encodeBase64(iv),
+        ciphertext: base64.encode(ciphertext),
+        iv: base64.encode(iv),
     };
 };
 
@@ -167,8 +127,8 @@ const decrypt = async (dataObj, keyBytes) => {
         throw new TypeError('Unknown algorithm');
     }
     const key = await deriveKey(keyBytes);
-    const iv = decodeBase64(dataObj.iv);
-    const ciphertext = decodeBase64(dataObj.ciphertext);
+    const iv = base64.decode(dataObj.iv);
+    const ciphertext = base64.decode(dataObj.ciphertext);
     const resultBuffer = await crypto.subtle.decrypt({name: 'AES-GCM', iv}, key, ciphertext);
     return new Uint8Array(resultBuffer);
 };
@@ -180,9 +140,9 @@ const edSign = async (data, privateKey) => {
     const publicKey = await ed.getPublicKey(privateKey);
     return {
         algo: 'sign-ed25519',
-        data: encodeBase64(data),
-        publicKey: encodeBase64(publicKey),
-        signature: encodeBase64(signature),
+        data: base64.encode(data),
+        publicKey: base64.encode(publicKey),
+        signature: base64.encode(signature),
     };
 };
 
@@ -190,11 +150,11 @@ const edVerify = async (dataObj) => {
     if ('sign-ed25519' != dataObj.algo) {
         throw new TypeError('Unknown algorithm');
     }
-    const data = decodeBase64(dataObj.data);
+    const data = base64.decode(dataObj.data);
     const digestBuffer = await crypto.subtle.digest('SHA-256', data.buffer);
     const digest = new Uint8Array(digestBuffer);
-    const publicKey = decodeBase64(dataObj.publicKey);
-    const signature = decodeBase64(dataObj.signature);
+    const publicKey = base64.decode(dataObj.publicKey);
+    const signature = base64.decode(dataObj.signature);
     if (!ed.verify(signature, digest, publicKey)) {
         throw new TypeError('Broken signature!');
     }
@@ -203,7 +163,7 @@ const edVerify = async (dataObj) => {
 
 const x25519Generate = () => {
     const seed = new Uint8Array(32);
-    crypto.getRandomValues(seed);
+    rand.fill(seed);
     const keyPair = x25519.generateKeyPair(seed);
     return {
         privateKey: new Uint8Array(keyPair.private.buffer, keyPair.private.byteOffset, keyPair.private.byteLength),
@@ -211,46 +171,21 @@ const x25519Generate = () => {
     };
 };
 
-const bytesToUuid = (arr) => {
-    const bytes = toUint8Array(arr).subarray(0, 16);
-    if (16 != bytes.length) {
-        throw new TypeError('Insufficient buffer length');
-    }
-    bytes[6] = bytes[6] & 0x0f ^ 0x40;
-    bytes[8] = bytes[8] & 0x3f ^ 0x80;
-    const hex = bytesToHex(bytes);
-    return [
-        hex.substr(0, 8),
-        hex.substr(8, 4),
-        hex.substr(12, 4),
-        hex.substr(16, 4),
-        hex.substr(20, 12),
-    ].join('-');
-};
-
-const getUuid = () => {
-    const bytes = new Uint8Array(16);
-    crypto.getRandomValues(bytes);
-    return bytesToUuid(bytes);
-};
-
 const getX25519SharedUuid = async (privateKey, publicKey) => {
     const sharedSecret = x25519.sharedKey(privateKey, publicKey);
     const seed = await getFingerprint(sharedSecret);
-    return bytesToUuid(seed);
+    return uuidUtils.fromBytes(seed);
 };
 
 const getTime = () => +new Date;
 
-const isLocalStorageAvailable = () => {
-    try {
-        const randomId = getUuid();
-        localStorage.setItem(randomId, 'test');
-        const availability = 'test' === localStorage.getItem(randomId);
-        localStorage.removeItem(randomId);
-        return availability;
-    } catch (e) {
-        return false;
+const getToken = () => decodeURIComponent(location.hash.slice(1));
+const setToken = (token) => {
+    const hash = encodeURIComponent(token);
+    if (!hash && '' != location.hash) {
+        location.hash = '';
+    } else if (location.hash.slice(1) != hash) {
+        location.hash = '#' + hash;
     }
 };
 
@@ -263,9 +198,9 @@ const getMyKeys = async () => {
 
     let fingerprint;
     try {
-        const base64PrivateKey = localStorage.getItem(LOCAL_STORAGE_PRIVATE_KEY);
+        const base64PrivateKey = settings.privateKey;
         if (!base64PrivateKey) throw void 0;
-        privateKey = decodeBase64(base64PrivateKey);
+        privateKey = base64.decode(base64PrivateKey);
         publicKey = await ed.getPublicKey(privateKey);
         fingerprint = await getFingerprint(publicKey);
         console.log('My pubkey restored');
@@ -274,12 +209,8 @@ const getMyKeys = async () => {
         privateKey = ed.utils.randomPrivateKey();
         publicKey = await ed.getPublicKey(privateKey);
         fingerprint = await getFingerprint(publicKey);
-        const base64PrivateKey = encodeBase64(privateKey);
-        try {
-            localStorage.setItem(LOCAL_STORAGE_PRIVATE_KEY, base64PrivateKey);
-        } catch (e) {
-            console.warn(e);
-        }
+        const base64PrivateKey = base64.encode(privateKey);
+        settings.privateKey = base64PrivateKey;
     }
     const shortFingerprint = getShortFingerprint(fingerprint);
     return {privateKey, publicKey, fingerprint, shortFingerprint};
@@ -288,18 +219,14 @@ const getMyKeys = async () => {
 let myKeys;
 const setMyKeys = async (base64PrivateKey) => {
     try {
-        const privateKey = decodeBase64(String(base64PrivateKey).trim());
+        const privateKey = base64.decode(String(base64PrivateKey).trim());
         if (32 != privateKey.length) throw void 0;
         const publicKey = await ed.getPublicKey(privateKey);
         const fingerprint = await getFingerprint(publicKey);
         const shortFingerprint = getShortFingerprint(fingerprint);
         myKeys = {privateKey, publicKey, fingerprint, shortFingerprint};
-        try {
-            localStorage.setItem(LOCAL_STORAGE_PRIVATE_KEY, base64PrivateKey);
-        } catch (e) {
-            console.warn(e);
-        }
-        const hexFingerprint = bytesToHex(fingerprint);
+        settings.privateKey = base64PrivateKey;
+        const hexFingerprint = hexUtils.encode(fingerprint);
         myFingerprintBox.value = hexFingerprint;
         identityBox.title = hexFingerprint;
         identityBox.textContent = hexFingerprint.substr(0, 8);
@@ -311,7 +238,7 @@ const setMyKeys = async (base64PrivateKey) => {
 const getVisitCount = () => {
     let count = 0;
     try {
-        count = 0 | localStorage.getItem(LOCAL_STORAGE_VISIT_COUNT);
+        count = 0 | settings.visitCount;
     } catch (e) {
         console.warn(e);
     }
@@ -321,7 +248,7 @@ const getVisitCount = () => {
 const getLastVisitedRooms = async () => {
     // intentionally async for future expansion
     try {
-        const rooms = JSON.parse(localStorage.getItem(LOCAL_STORAGE_VISITED_ROOMS));
+        const rooms = settings.visitedRooms;
         if (!Array.isArray(rooms)) {
             throw void 0;
         }
@@ -333,17 +260,15 @@ const getLastVisitedRooms = async () => {
 
 const addVisitedRoom = async (token) => {
     if (!token) return;
-    try {
-        const rooms = new Set(await getLastVisitedRooms());
-        rooms.delete(token);
-        rooms.add(token);
-        localStorage.setItem(LOCAL_STORAGE_VISITED_ROOMS, JSON.stringify([... rooms].slice(- VISITED_ROOMS_LIST_LENGTH)));
-    } catch (e) {}
+    const rooms = new Set(await getLastVisitedRooms());
+    rooms.delete(token);
+    rooms.add(token);
+    settings.visitedRooms = [... rooms].slice(- VISITED_ROOMS_LIST_LENGTH);
 };
 
 try {
     const prevCount = getVisitCount();
-    localStorage.setItem(LOCAL_STORAGE_VISIT_COUNT, String(prevCount + 1));
+    settings.visitCount = prevCount + 1;
     console.log (`Visited ${prevCount} time(s) before.`);
 } catch (e) {
     console.warn(e);
@@ -351,17 +276,12 @@ try {
 
 getMyKeys().then(keys => {
     myKeys = keys;
-    const fingerprint = bytesToHex(keys.fingerprint);
+    const fingerprint = hexUtils.encode(keys.fingerprint);
     identityBox.title = fingerprint;
     identityBox.textContent = fingerprint.substr(0, 8);
     myFingerprintBox.value = fingerprint;
-    privateKeyBox.value = encodeBase64(myKeys.privateKey);
+    privateKeyBox.value = base64.encode(myKeys.privateKey);
 });
-
-const localStorageAvailability = isLocalStorageAvailable();
-if (!localStorageAvailability) {
-    console.warn('LocalStorage not available');
-}
 
 let lastUpdate = 0;
 
@@ -374,7 +294,7 @@ const setWsUrl = (channel) => {
 };
 
 try {
-    const name = localStorage.getItem(LOCAL_STORAGE_USERNAME);
+    const name = settings.userName;
     if (!name) throw void 0;
     console.log('Name restored.');
     nameBox.value = name;
@@ -384,7 +304,7 @@ try {
 
 const saveUsername = () => {
     try {
-        localStorage.setItem(LOCAL_STORAGE_USERNAME, nameBox.value);
+        settings.userName = nameBox.value;
     } catch (e) {
         console.warn('Failed to save your name:', e);
     }
@@ -392,16 +312,14 @@ const saveUsername = () => {
 
 const openRandomRoom = () => {
     console.log('openRandomRoom');
-    const token = getUuid();
-    location.hash = `#${token}`;
+    const token = uuidUtils.random();
+    setToken(token);
 };
 
 /**
  * @type {WebSocket?}
  * */
 let ws;
-
-const getToken = () => decodeURIComponent(location.hash.slice(1)).trim();
 
 const showReadyState = readyState => {
     switch (readyState) {
@@ -427,7 +345,7 @@ const updateStatus = () => {
 
 const getChannelKey = () => {
     const token = getToken();
-    return textEncoder.encode(`channel_key_${token}`);
+    return utf8.encode(`channel_key_${token}`);
 };
 
 const sendMessage = data => {
@@ -584,7 +502,7 @@ const inviteToRoom = (peerFingerprint) => {
     sendCommand('room_invite', {
         name: getMyName(),
         peerFingerprint,
-        publicKey: encodeBase64(publicKey),
+        publicKey: base64.encode(publicKey),
     });
 };
 
@@ -686,7 +604,7 @@ const showRoomInvite = (peerFingerprint, peerName, token) => {
     inviteBox.hidden = false;
     inviteAcceptHandler = () => {
         inviteAcceptHandler = () => void 0;
-        location.hash = '#' + token;
+        setToken(token);
     };
 };
 
@@ -699,8 +617,8 @@ const processMessage = async ev => {
 
         const signedObj = JSON.parse(ev.data);
         const encrypted = await edVerify(signedObj);
-        const publicKey = decodeBase64(signedObj.publicKey);
-        const fingerprint = bytesToHex(await getFingerprint(publicKey));
+        const publicKey = base64.decode(signedObj.publicKey);
+        const fingerprint = hexUtils.encode(await getFingerprint(publicKey));
         const encryptedObj = decodeObject(encrypted);
         const channelKey = getChannelKey();
         const dataBytes = await decrypt(encryptedObj, channelKey);
@@ -743,16 +661,16 @@ const processMessage = async ev => {
                     console.error('My keys unavailable yet!');
                     break;
                 }
-                const myFingerprint = bytesToHex(myKeys.fingerprint);
+                const myFingerprint = hexUtils.encode(myKeys.fingerprint);
                 if (myFingerprint != data.peerFingerprint) break;
                 console.log('Key exchange received');
                 const {privateKey, publicKey} = x25519Generate();
                 sendCommand('room_invite_reply', {
                     name: getMyName(),
                     peerFingerprint: fingerprint,
-                    publicKey: encodeBase64(publicKey),
+                    publicKey: base64.encode(publicKey),
                 });
-                const token = await getX25519SharedUuid(privateKey, decodeBase64(data.publicKey));
+                const token = await getX25519SharedUuid(privateKey, base64.decode(data.publicKey));
                 showRoomInvite(fingerprint, name, token);
                 break;
             }
@@ -761,16 +679,16 @@ const processMessage = async ev => {
                     console.error('My keys unavailable yet!');
                     break;
                 }
-                const myFingerprint = bytesToHex(myKeys.fingerprint);
+                const myFingerprint = hexUtils.encode(myKeys.fingerprint);
                 if (myFingerprint != data.peerFingerprint) break;
                 if (!keyExchangeStates.has(fingerprint)) {
                     console.warn('Unknown key exchange reply');
                     break;
                 }
                 const state = keyExchangeStates.get(fingerprint);
-                const token = await getX25519SharedUuid(state.privateKey, decodeBase64(data.publicKey));
+                const token = await getX25519SharedUuid(state.privateKey, base64.decode(data.publicKey));
                 hideModals();
-                location.hash = '#' + token;
+                setToken(token);
                 break;
             }
             default: {
@@ -823,9 +741,9 @@ const openSocket = (force) => {
 };
 
 const getChannelName = async (token) => {
-    const tokenBuffer = textEncoder.encode(token).buffer;
+    const tokenBuffer = utf8.encode(token).buffer;
     const digestBuffer = await crypto.subtle.digest('SHA-256', tokenBuffer);
-    return bytesToHex(new Uint8Array(digestBuffer));
+    return hexUtils.encode(new Uint8Array(digestBuffer));
 };
 
 const readHash = async () => {
@@ -896,11 +814,7 @@ nameBox.addEventListener('change', ev => {
 
 tokenBox.addEventListener('change', ev => {
     const token = tokenBox.value.trim();
-    if (token) {
-        location.hash = `#${encodeURIComponent(token)}`;
-    } else {
-        location.hash = '';
-    }
+    setToken(token);
 });
 
 window.addEventListener('hashchange', ev => {
@@ -1037,13 +951,17 @@ window.addEventListener('pageshow', ev => {
     });
 });
 
-window.addEventListener('storage', ev => {
-    if (LOCAL_STORAGE_VISITED_ROOMS == ev.key) {
-        updateTokenList().catch(e => {
-            console.error(e);
-        });
-    } else if (LOCAL_STORAGE_PRIVATE_KEY == ev.key) {
-        privateKeyBox.value = encodeBase64(myKeys.privateKey);
+settings.addEventListener('settingschange', ev => {
+    switch (ev.key) {
+        case 'visitedRooms': {
+            updateTokenList().catch(e => {
+                console.error(e);
+            });
+            break;
+        }
+        case 'privateKey': {
+            privateKeyBox.value = base64.encode(myKeys.privateKey);
+        }
     }
 });
 
@@ -1052,7 +970,7 @@ privateKeyBox.addEventListener('change', ev => {
 });
 
 privateKeyRegenerateButton.addEventListener('click', ev => {
-    privateKeyBox.value = encodeBase64(ed.utils.randomPrivateKey());
+    privateKeyBox.value = base64.encode(ed.utils.randomPrivateKey());
     setMyKeys(privateKeyBox.value);
 });
 

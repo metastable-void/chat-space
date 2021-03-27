@@ -668,6 +668,7 @@ const renderText = () => {
         commentBox.sessionId = sessionId;
         commentBox.userName = name || 'Anonymous';
         commentBox.caretOffset = state.caretOffset;
+        commentBox.text = text;
 
         commentBox.inviteButton.addEventListener('click', ev => inviteToRoom(fingerprint, sessionId));
 

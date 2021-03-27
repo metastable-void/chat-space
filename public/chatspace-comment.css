@@ -26,6 +26,10 @@
     user-select: text;
 }
 
+#comment-identity, #comment-text {
+    display: inline;
+}
+
 #comment-menu {
     display: grid;
     align-content: space-around;

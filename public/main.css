@@ -1,6 +1,7 @@
-@namespace 'http://www.w3.org/1999/xhtml';
 
 @import url(/common.css);
+
+@namespace 'http://www.w3.org/1999/xhtml';
 
 :root {
     font-family: var(--theme-main-font);

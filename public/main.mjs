@@ -662,7 +662,6 @@ const renderText = () => {
         commentBox.sessionId = sessionId;
         commentBox.userName = name || 'Anonymous';
         commentBox.caretOffset = state.caretOffset;
-        commentBox.querySelector('::part(invite-button)').addEventListener('click', ev => inviteToRoom(fingerprint, sessionId));
 
         if (text) {
             if (!isThereComment && commentCount < 1 && !isTextBoxFocused()) {
@@ -673,6 +672,8 @@ const renderText = () => {
         } else {
             membersContainer.prepend(commentBox);
         }
+
+        commentBox.querySelector('::part(invite-button)').addEventListener('click', ev => inviteToRoom(fingerprint, sessionId));
     }
 
     isThereComment = commentCount > 0;

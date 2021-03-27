@@ -24,6 +24,7 @@ const ASSETS = [
     '/lib/noble-ed25519-1.0.3.mjs',
     '/lib/x25519.mjs',
     '/components/chatspace-comment.mjs',
+    '/components/chatspace-comment.css',
 ].map(path => String(new URL(path, location.href)));
 
 self.addEventListener('install', ev => {

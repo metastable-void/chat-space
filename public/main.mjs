@@ -9,6 +9,7 @@ import * as uuidUtils from '/lib/uuid.mjs';
 import {Settings} from '/lib/Settings.mjs';
 import * as utf8 from '/lib/utf8.mjs';
 import {WindowBroadcast} from '/lib/WindowBroadcast.mjs';
+import {Session} from '/lib/Session.mjs';
 
 
 const VISITED_ROOMS_LIST_LENGTH = 10;
@@ -30,6 +31,7 @@ if (location.pathname.endsWith('/index.html')) {
 
 const broadcast = new WindowBroadcast('chatspace');
 const settings = new Settings;
+const session = new Session;
 
 const textBox = document.querySelector('#text');
 
@@ -361,6 +363,7 @@ const sendCommand = (command, data) => {
     data.command = command;
     data.time = getTime();
     data.isActive = !document.hidden;
+    data.sessionId = session.id;
     const bytes = encodeObject(data);
     const channelKey = getChannelKey();
 
@@ -493,7 +496,7 @@ const keyExchangeStates = new Map;
  * Invite a user to a new shared secret room.
  * @param peerFingerprint {string} Hex SHA-256 fingerprint.
  */
-const inviteToRoom = (peerFingerprint) => {
+const inviteToRoom = (peerFingerprint, sessionId) => {
     const {privateKey, publicKey} = x25519Generate();
     keyExchangeStates.set(peerFingerprint, {
         privateKey,
@@ -502,6 +505,7 @@ const inviteToRoom = (peerFingerprint) => {
     sendCommand('room_invite', {
         name: getMyName(),
         peerFingerprint,
+        peerSessionId: sessionId,
         publicKey: base64.encode(publicKey),
     });
 };
@@ -529,10 +533,13 @@ const renderText = () => {
     commentsContainer.textContent = '';
     membersContainer.textContent = '';
     let commentCount = 0;
-    for (const fingerprint of Reflect.ownKeys(textMap)) {
-        if ('string' != typeof fingerprint) continue;
-        const state = textMap[fingerprint];
+    for (const cacheKey of Reflect.ownKeys(textMap)) {
+        const state = textMap[cacheKey];
         if (!state) continue;
+        const fingerprint = state.fingerprint;
+        if ('string' != typeof fingerprint) continue;
+        const sessionId = state.sessionId;
+        if ('string' != typeof sessionId) continue;
         const text = (state.text || '').split('\n').join('').split('\r').join('');
         const name = state.name || '';
         const isActive = !!state.isActive;
@@ -542,6 +549,7 @@ const renderText = () => {
         const commentBox = document.createElement('div');
         commentBox.classList.add('commentBox');
         commentBox.dataset.fingerprint = fingerprint;
+        commentBox.dataset.sessionId = sessionId;
         commentBox.dataset.name = name || 'Anonymous';
         commentBox.dataset.shortId = fingerprint.substr(0, 8);
         commentBox.title = fingerprint;
@@ -553,7 +561,7 @@ const renderText = () => {
         inviteButton.classList.add('material-icons');
         inviteButton.title = 'Chat privately';
         inviteButton.append('mail');
-        inviteButton.addEventListener('click', ev => inviteToRoom(fingerprint));
+        inviteButton.addEventListener('click', ev => inviteToRoom(fingerprint, sessionId));
         controlBox.append(inviteButton);
         if (state.caretOffset < 0) {
             if (text) {
@@ -608,6 +616,8 @@ const showRoomInvite = (peerFingerprint, peerName, token) => {
     };
 };
 
+const textClearTimers = Object.create(null);
+
 const processMessage = async ev => {
     //
     try {
@@ -630,10 +640,20 @@ const processMessage = async ev => {
         
         const text = 'string' == typeof data.text ? data.text : '';
         const caretOffset = 'number' == typeof data.caretOffset ? data.caretOffset : -1;
+        const sessionId = 'string' == typeof data.sessionId ? data.sessionId : '';
+        const cacheKey = `${fingerprint}_${sessionId}`;
         const name = data.name || '';
         switch (data.command) {
             case 'text_updated': {
-                textMap[fingerprint] = {
+                if (cacheKey in textClearTimers) {
+                    try {
+                        clearTimeout(textClearTimers[cacheKey]);
+                    } catch (e) {}
+                    delete textClearTimers[cacheKey];
+                }
+                textMap[cacheKey] = {
+                    fingerprint,
+                    sessionId,
                     text,
                     name,
                     receivedTime: getTime(),
@@ -644,8 +664,14 @@ const processMessage = async ev => {
                 break;
             }
             case 'text_cleared': {
-                setTimeout(() => {
-                    textMap[fingerprint] = {
+                if (cacheKey in textClearTimers) {
+                    break;
+                }
+                textClearTimers[cacheKey] = setTimeout(() => {
+                    delete textClearTimers[cacheKey];
+                    textMap[cacheKey] = {
+                        fingerprint,
+                        sessionId,
                         text,
                         receivedTime: getTime(),
                         name,
@@ -663,11 +689,13 @@ const processMessage = async ev => {
                 }
                 const myFingerprint = hexUtils.encode(myKeys.fingerprint);
                 if (myFingerprint != data.peerFingerprint) break;
+                if (session.id != data.peerSessionId) break;
                 console.log('Key exchange received');
                 const {privateKey, publicKey} = x25519Generate();
                 sendCommand('room_invite_reply', {
                     name: getMyName(),
                     peerFingerprint: fingerprint,
+                    peerSessionId: sessionId,
                     publicKey: base64.encode(publicKey),
                 });
                 const token = await getX25519SharedUuid(privateKey, base64.decode(data.publicKey));
@@ -681,6 +709,7 @@ const processMessage = async ev => {
                 }
                 const myFingerprint = hexUtils.encode(myKeys.fingerprint);
                 if (myFingerprint != data.peerFingerprint) break;
+                if (session.id != data.peerSessionId) break;
                 if (!keyExchangeStates.has(fingerprint)) {
                     console.warn('Unknown key exchange reply');
                     break;

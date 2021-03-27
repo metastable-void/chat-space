@@ -19,6 +19,7 @@ const ASSETS = [
     '/lib/random.mjs',
     '/lib/uuid.mjs',
     '/lib/utf8.mjs',
+    '/lib/Session.mjs',
     '/lib/noble-ed25519-1.0.3.mjs',
     '/lib/x25519.mjs',
 ].map(path => String(new URL(path, location.href)));

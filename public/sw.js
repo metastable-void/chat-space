@@ -5,6 +5,8 @@ const ASSETS = [
     '/app.webmanifest', // en locale
     '/main.mjs',
     '/main.css',
+    '/common.css',
+    '/chatspace-comment.css',
     '/app-icon-192px.png',
     '/app-icon-256px.png',
     '/app-icon-512px.png',

@@ -1,0 +1,164 @@
+@namespace 'http://www.w3.org/1999/xhtml';
+
+/* Material Icons begin */
+@font-face {
+    font-family: 'Material Icons';
+    font-style: normal;
+    font-weight: 400;
+    src: url(/MaterialIcons-Regular.woff2) format('woff2');
+}
+
+.material-icons {
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 1.5rem;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -moz-font-feature-settings: 'liga';
+    -moz-osx-font-smoothing: grayscale;
+}
+/* Material Icons end */
+
+:root {
+    --theme-main-font: system-ui, -apple-system, sans-serif;
+    --theme-accent-color: #5eaf30;
+    --theme-selection-background-color: rgba(94, 175, 48, .5);
+    --theme-highlighted-text-color: #fff;
+    --theme-highlighted-active-color: rgba(0, 0, 0, .25);
+
+    /* light theme */
+    --theme-light-text-color: #333;
+    --theme-light-background-color: #eee;
+    --theme-light-overlay-color: rgba(127, 127, 127, .5);
+    --theme-light-inverted-text-color: #fff;
+    --theme-light-input-background-color: #fff;
+    --theme-light-secondary-text-color: #ccc;
+    --theme-light-input-border-color: #aaa;
+    --theme-light-disabled-text-color: #888;
+    --theme-light-border-color: #ccc;
+    --theme-light-label-text-color: #888;
+    --theme-light-shadow-color: rgba(0, 0, 0, .5);
+
+    /* dark theme */
+    --theme-dark-text-color: #eee;
+    --theme-dark-background-color: #000;
+    --theme-dark-overlay-color: rgba(0, 0, 0, .5);
+    --theme-dark-inverted-text-color: #000;
+    --theme-dark-input-background-color: #333;
+    --theme-dark-secondary-text-color: #666;
+    --theme-dark-input-border-color: #888;
+    --theme-dark-disabled-text-color: #888;
+    --theme-dark-border-color: #666;
+    --theme-dark-label-text-color: #999;
+    --theme-dark-shadow-color: rgba(255, 255, 255, .75);
+
+    --theme-main-text-color: var(--theme-light-text-color);
+    --theme-main-background-color: var(--theme-light-background-color);
+    --theme-inverted-text-color: var(--theme-light-inverted-text-color);
+    --theme-input-background-color: var(--theme-light-input-background-color);
+    --theme-input-border-color: var(--theme-light-input-border-color);
+    --theme-secondary-text-color: var(--theme-light-secondary-text-color);
+    --theme-disabled-text-color: var(--theme-light-disabled-text-color);
+    --theme-border-color: var(--theme-light-border-color);
+    --theme-label-text-color: var(--theme-light-label-text-color);
+    --theme-overlay-color: var(--theme-dark-overlay-color);
+    --theme-shadow-color: var(--theme-light-shadow-color);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --theme-main-text-color: var(--theme-dark-text-color);
+        --theme-main-background-color: var(--theme-dark-background-color);
+        --theme-inverted-text-color: var(--theme-dark-inverted-text-color);
+        --theme-input-background-color: var(--theme-dark-input-background-color);
+        --theme-input-border-color: var(--theme-dark-input-border-color);
+        --theme-secondary-text-color: var(--theme-dark-secondary-text-color);
+        --theme-disabled-text-color: var(--theme-dark-disabled-text-color);
+        --theme-border-color: var(--theme-dark-border-color);
+        --theme-label-text-color: var(--theme-dark-label-text-color);
+        --theme-overlay-color: var(--theme-light-overlay-color);
+        --theme-shadow-color: var(--theme-dark-shadow-color);
+    }
+}
+
+body, input, textarea, button, select {
+    font: inherit;
+    border-radius: 0;
+}
+
+input[type="text"] {
+    -moz-user-select: text;
+    -webkit-user-select: text;
+    user-select: text;
+}
+
+pre {
+    white-space: pre-wrap;
+}
+
+a {
+    text-decoration: none;
+    color: var(--theme-accent-color);
+}
+
+details, summary {
+    outline: none;
+}
+
+::selection {
+    background-color: var(--theme-selection-background-color);
+}
+
+.not-displayed {
+    display: none;
+}
+
+.input-box {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    border-block-start: solid .125rem var(--theme-border-color);
+    border-block-end: solid .125rem var(--theme-border-color);
+    background-color: var(--theme-input-background-color);
+}
+
+.input-box > label {
+    grid-column: 1;
+    grid-row: 1;
+    display: block;
+    padding-block-start: .5em;
+    padding-block-end: .5em;
+    padding-inline-start: .5em;
+    padding-inline-end: .25em;
+    margin: 0;
+}
+
+.input-box > input {
+    grid-column: 2;
+    grid-row: 1;
+    display: block;
+    appearance: none;
+    background-color: transparent;
+    color: inherit;
+    margin: 0;
+    padding-block-start: .5em;
+    padding-block-end: .5em;
+    padding-inline-start: .25em;
+    padding-inline-end: .5em;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    outline: none;
+    inline-size: 100%;
+    box-sizing: border-box;
+}
+
+.input-box > input::placeholder {
+    color: inherit;
+    opacity: .5;
+}

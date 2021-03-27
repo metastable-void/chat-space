@@ -1,0 +1,80 @@
+@namespace 'http://www.w3.org/1999/xhtml';
+
+@import url(/common.css);
+
+:host {
+    display: grid;
+    margin: 0;
+    margin-block-end: 1em;
+    /*border: solid .125rem var(--theme-border-color);*/
+    background-color: var(--theme-input-background-color);
+    box-shadow: 0 0 .25rem var(--theme-shadow-color);
+    grid-template-columns: 1fr max-content;
+}
+
+#comment-main {
+    padding: .5em;
+    overflow-wrap: break-word;
+    grid-column: 1;
+}
+
+#comment-text {
+    white-space: pre-wrap;
+    -moz-user-select: text;
+    -webkit-user-select: text;
+    user-select: text;
+}
+
+#comment-menu {
+    display: grid;
+    align-content: space-around;
+    grid-column: 2;
+}
+
+#comment-menu > button {
+    display: block;
+    appearance: none;
+    outline: none;
+    border: none;
+    border-radius: 0;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+    color: inherit;
+    background-color: transparent;
+    text-align: center;
+    line-height: initial;
+    font-size: 1em !important;
+    opacity: .5;
+}
+
+#comment-menu > button:hover, #comment-menu > button:active {
+    opacity: 1;
+}
+
+#comment-username, #comment-fingerprint {
+    display: inline;
+    color: var(--theme-label-text-color);
+}
+
+#comment-fingerprint::before {
+    content: ' @';
+}
+
+#comment-fingerprint::after {
+    content: ': ';
+}
+
+#comment-text-caret-mark:not([hidden]) {
+    display: inline-block;
+    inline-size: .125rem;
+    overflow: hidden;
+    text-indent: -10em;
+    background-color: var(--theme-accent-color);
+    color: transparent;
+    vertical-align: text-top;
+}
+
+#comment-text-caret-mark::before {
+    content: '*';
+}

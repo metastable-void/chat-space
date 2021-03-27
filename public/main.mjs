@@ -530,6 +530,113 @@ const flash = globalThis.flash = () => {
     }, 100);
 };
 
+const shadowMap = new WeakMap;
+class ChatspaceCommentElement extends HTMLElement {
+    constructor() {
+        super();
+        const shadow = this.attachShadow({mode: 'open'});
+        shadowMap.set(this, shadow);
+        const template = document.querySelector('#template-chatspace-comment');
+        shadow.append(template.content.cloneNode(true));
+        const textElement = shadow.querySelector('#comment-text');
+        textElement.dataset.caretOffset = '-1';
+    }
+
+    renderText() {
+        const shadow = shadowMap.get(this);
+        const caretMark = shadow.querySelector('#comment-text-caret-mark');
+        const textBefore = shadow.querySelector('#comment-text-before-caret');
+        const textAfter = shadow.querySelector('#comment-text-after-caret');
+        const text = this.text;
+        const caretOffset = this.caretOffset;
+        if (caretOffset < 0) {
+            textAfter.textContent = '';
+            textBefore.textContent = text;
+            caretMark.hidden = true;
+        } else {
+            caretMark.hidden = false;
+            textBefore.textContent = text.slice(0, caretOffset);
+            textAfter.textContent = text.slice(caretOffset);
+        }
+    }
+
+    get caretOffset() {
+        const shadow = shadowMap.get(this);
+        const element = shadow.querySelector('#comment-text');
+        return 0 | element.dataset.caretOffset;
+    }
+
+    set caretOffset(offset) {
+        const shadow = shadowMap.get(this);
+        const element = shadow.querySelector('#comment-text');
+        element.dataset.caretOffset = '' + (0 | offset);
+        this.renderText();
+    }
+
+    get text() {
+        const shadow = shadowMap.get(this);
+        const element = shadow.querySelector('#comment-text');
+        return element.dataset.text;
+    }
+
+    set text(str) {
+        const shadow = shadowMap.get(this);
+        const element = shadow.querySelector('#comment-username');
+        element.dataset.text = str;
+        this.renderText();
+    }
+
+    get userName() {
+        const shadow = shadowMap.get(this);
+        const element = shadow.querySelector('#comment-username');
+        return element.textContent;
+    }
+
+    set userName(name) {
+        const shadow = shadowMap.get(this);
+        const element = shadow.querySelector('#comment-username');
+        element.textContent = name;
+    }
+
+    get shortFingerprint() {
+        const shadow = shadowMap.get(this);
+        const element = shadow.querySelector('#comment-fingerprint');
+        return element.textContent;
+    }
+
+    set shortFingerprint(str) {
+        const shadow = shadowMap.get(this);
+        const element = shadow.querySelector('#comment-fingerprint');
+        element.textContent = str;
+    }
+
+    get fingerprint() {
+        const shadow = shadowMap.get(this);
+        const element = shadow.querySelector('#comment-fingerprint');
+        return element.title || '';
+    }
+
+    set fingerprint(str) {
+        const shadow = shadowMap.get(this);
+        const element = shadow.querySelector('#comment-fingerprint');
+        element.title = str;
+    }
+
+    get sessionId() {
+        const shadow = shadowMap.get(this);
+        const element = shadow.querySelector('#comment-fingerprint');
+        return element.dataset.sessionId || '';
+    }
+
+    set sessionId(str) {
+        const shadow = shadowMap.get(this);
+        const element = shadow.querySelector('#comment-fingerprint');
+        element.dataset.sessionId = str;
+    }
+}
+
+customElements.define('chatspace-comment', ChatspaceCommentElement);
+
 let isThereComment = false;
 const renderText = () => {
     connectionStatus.dataset.onlineCount = getOnlineCount();
@@ -549,40 +656,14 @@ const renderText = () => {
         if ('' === text && ('' === name || !isActive)) {
             continue;
         }
-        const commentBox = document.createElement('div');
-        commentBox.classList.add('commentBox');
-        commentBox.dataset.fingerprint = fingerprint;
-        commentBox.dataset.sessionId = sessionId;
-        commentBox.dataset.name = name || 'Anonymous';
-        commentBox.dataset.shortId = fingerprint.substr(0, 8);
-        commentBox.title = fingerprint;
-        commentBox.dataset.caretOffset = state.caretOffset;
-        const controlBox = document.createElement('div');
-        controlBox.classList.add('commentControls');
-        commentBox.append(controlBox);
-        const inviteButton = document.createElement('button');
-        inviteButton.classList.add('material-icons');
-        inviteButton.title = 'Chat privately';
-        inviteButton.append('mail');
-        inviteButton.addEventListener('click', ev => inviteToRoom(fingerprint, sessionId));
-        controlBox.append(inviteButton);
-        if (state.caretOffset < 0) {
-            if (text) {
-                commentBox.append(text);
-            }
-        } else {
-            const beforeText = text.substring(0, state.caretOffset);
-            const afterText = text.substring(state.caretOffset);
-            if (beforeText) {
-                commentBox.append(beforeText);
-            }
-            const caretMark = document.createElement('span');
-            caretMark.classList.add('caretMark');
-            commentBox.append(caretMark);
-            if (afterText) {
-                commentBox.append(afterText);
-            }
-        }
+        const commentBox = new ChatspaceCommentElement;
+        commentBox.fingerprint = fingerprint;
+        commentBox.shortFingerprint = fingerprint.substr(0, 8);
+        commentBox.sessionId = sessionId;
+        commentBox.userName = name || 'Anonymous';
+        commentBox.caretOffset = state.caretOffset;
+        commentBox.querySelector('::part(invite-button)').addEventListener('click', ev => inviteToRoom(fingerprint, sessionId));
+
         if (text) {
             if (!isThereComment && commentCount < 1 && !isTextBoxFocused()) {
                 flash();

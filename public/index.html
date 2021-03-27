@@ -16,10 +16,19 @@
 <meta property="og:description" content="Menhera Chatspace is a realtime chat app where you can text like a voice call."/>
 <meta property="og:image" content="https://menhera.io/fullsize-icon-256px.png"/>
 <meta name="twitter:site" content="MenheraOrg"/>
+<link rel="preload" herf="/chatspace-common.css" as="style"/>
 <template id="template-chatspace-comment">
-<div id="wrapper">
-<menu id="comment-menu"></menu>
+<link rel="stylesheet" href="/chatspace-comment.css"/>
+<div id="comment-main">
+<div id="comment-identity">
+<div id="comment-username"></div>
+<div id="comment-fingerprint"></div>
 </div>
+<div id="comment-text"><span id="comment-text-before-caret"></span><span id="comment-text-caret-mark" hidden=""></span><span id="comment-text-after-caret"></span></div>
+</div>
+<menu id="comment-menu">
+<button title="Chat privately" id="invite-button" class="material-icons" part="invite-button">mail</button>
+</menu>
 </template>
 </head>
 <body>

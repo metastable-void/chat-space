@@ -4,7 +4,7 @@ import * as hexUtils from './hex.mjs';
 import {toUint8Array} from '/lib/buffer.mjs';
 
 
-const fromBytes = (arr) => {
+export const fromBytes = (arr) => {
     const bytes = toUint8Array(arr).subarray(0, 16);
     if (16 != bytes.length) {
         throw new TypeError('Insufficient buffer length');

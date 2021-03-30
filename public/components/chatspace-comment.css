@@ -39,10 +39,9 @@
     white-space: nowrap;
     word-wrap: normal;
     direction: ltr;
-    vertical-align: middle;
+    vertical-align: text-top;
     -moz-font-feature-settings: 'liga';
     -moz-osx-font-smoothing: grayscale;
-    margin-inline-end: .5rem;
 }
 
 #comment-menu {

@@ -29,14 +29,17 @@
 }
 
 #comment-menu {
-    display: grid;
-    align-content: space-around;
     grid-column: 2;
     margin: 0;
     padding: 0;
     margin-inline-end: .5em;
     padding-block-start: .25em;
     padding-block-end: .25em;
+    display: grid;
+    grid-template-columns: repeat(2, max-content);
+    align-content: space-around;
+    justify-content: space-around;
+    gap: 1em;
 }
 
 #comment-menu > button {

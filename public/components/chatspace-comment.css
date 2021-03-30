@@ -28,6 +28,22 @@
     display: inline;
 }
 
+#comment-identity[data-is-friend="1"]::before {
+    font-size: 1.5rem;
+    content: 'veridied_user';
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    letter-spacing: normal;
+    text-transform: none;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -moz-font-feature-settings: 'liga';
+    -moz-osx-font-smoothing: grayscale;
+    margin-inline-end: .5rem;
+}
+
 #comment-menu {
     grid-column: 2;
     margin: 0;

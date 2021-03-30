@@ -9,6 +9,8 @@ class ChatspaceCommentElement extends HTMLElement {
         shadow.append(template.content.cloneNode(true));
         const textElement = shadow.querySelector('#comment-text');
         textElement.dataset.caretOffset = '-1';
+        const identityElement = shadow.querySelector('#comment-identity');
+        identityElement.dataset.isFriend = '0';
     }
 
     renderText() {
@@ -107,6 +109,24 @@ class ChatspaceCommentElement extends HTMLElement {
         const shadow = shadowMap.get(this);
         const element = shadow.querySelector('#comment-invite-button');
         return element;
+    }
+
+    get friendButton() {
+        const shadow = shadowMap.get(this);
+        const element = shadow.querySelector('#comment-friend-button');
+        return element;
+    }
+
+    get isFriend() {
+        const shadow = shadowMap.get(this);
+        const identityElement = shadow.querySelector('#comment-identity');
+        return !!+identityElement.dataset.isFriend;
+    }
+
+    set isFriend(value) {
+        const shadow = shadowMap.get(this);
+        const identityElement = shadow.querySelector('#comment-identity');
+        identityElement.dataset.isFriend = '' + (0 | (!!value));
     }
 }
 

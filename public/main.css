@@ -245,6 +245,7 @@ body.flash {
     padding-inline-start: 0;
     padding-inline-end: .25rem;
     color: var(--theme-disabled-text-color);
+    cursor: default;
 }
 
 #identity::before {

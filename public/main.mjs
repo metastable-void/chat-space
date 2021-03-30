@@ -34,6 +34,10 @@ const broadcast = new WindowBroadcast('chatspace');
 const settings = new Settings;
 const session = new Session;
 
+if (!settings.friends) {
+    settings.friends = {};
+}
+
 const textBox = document.querySelector('#text');
 
 /**
@@ -514,6 +518,16 @@ const inviteToRoom = (peerFingerprint, sessionId) => {
     });
 };
 
+const makeFriends = (fingerprint, name) => {
+    const friends = settings.friends;
+    if (fingerprint in friends) {
+        delete friends[fingerprint];
+    } else {
+        friends[fingerprint] = name;
+    }
+    settings.friends = friends;
+};
+
 let textMap = Object.create(null);
 
 const getOnlineCount = () => Reflect.ownKeys(textMap).filter(fingerprint => textMap[fingerprint].isActive).length;
@@ -549,6 +563,7 @@ const renderText = () => {
     connectionStatus.dataset.onlineCount = getOnlineCount();
     commentsContainer.textContent = '';
     membersContainer.textContent = '';
+    const friends = settings.friends;
     let commentCount = 0;
     for (const cacheKey of Reflect.ownKeys(textMap)) {
         const state = textMap[cacheKey];
@@ -570,8 +585,10 @@ const renderText = () => {
         commentBox.userName = name || 'Anonymous';
         commentBox.caretOffset = state.caretOffset;
         commentBox.text = text;
+        commentBox.isFriend = fingerprint in friends;
 
         commentBox.inviteButton.addEventListener('click', ev => inviteToRoom(fingerprint, sessionId));
+        commentBox.friendButton.addEventListener('click', ev => makeFriends(fingerprint, name));
 
         if (text) {
             if (!isThereComment && commentCount < 1 && !isTextBoxFocused()) {

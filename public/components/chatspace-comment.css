@@ -29,7 +29,7 @@
 }
 
 #comment-identity[data-is-friend="1"]::before {
-    font-size: 1.5rem;
+    font-size: 1em;
     content: 'verified_user';
     font-family: 'Material Icons';
     font-weight: normal;
@@ -39,6 +39,7 @@
     white-space: nowrap;
     word-wrap: normal;
     direction: ltr;
+    vertical-align: middle;
     -moz-font-feature-settings: 'liga';
     -moz-osx-font-smoothing: grayscale;
     margin-inline-end: .5rem;

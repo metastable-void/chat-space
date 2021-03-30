@@ -30,7 +30,7 @@
 
 #comment-identity[data-is-friend="1"]::before {
     font-size: 1.5rem;
-    content: 'veridied_user';
+    content: 'verified_user';
     font-family: 'Material Icons';
     font-weight: normal;
     font-style: normal;

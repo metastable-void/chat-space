@@ -35,6 +35,8 @@
     margin: 0;
     padding: 0;
     margin-inline-end: .5em;
+    padding-block-start: .25em;
+    padding-block-end: .25em;
 }
 
 #comment-menu > button {

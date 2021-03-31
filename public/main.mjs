@@ -61,6 +61,7 @@ const settingsCloseButton = document.querySelector('#settings-close-button')
 const inviteAcceptButton = document.querySelector('#invite-accept-button');
 const inviteIgnoreButton = document.querySelector('#invite-ignore-button');
 const privateKeyRegenerateButton = document.querySelector('#private-key-regenerate-button');
+const settingsReloadButton = document.querySelector('#settings-reload-button');
 
 const commentsContainer = document.querySelector('#comments');
 const membersContainer = document.querySelector('#members');
@@ -83,6 +84,8 @@ const myFingerprintBox = document.querySelector('#my-fingerprint');
 /** @type {HTMLTextAreaElement} */
 const userAgentBox = document.querySelector('#user-agent');
 userAgentBox.value = navigator.userAgent;
+
+const logotypeBox = document.querySelector('#logotype');
 
 
 const getFingerprint = async bytes => {
@@ -857,6 +860,12 @@ tokenBox.addEventListener('change', ev => {
     setToken(token);
 });
 
+logotypeBox.addEventListener('click', ev => {
+    ev.preventDefault();
+    ev.stopPropagation();
+    setToken('');
+});
+
 window.addEventListener('hashchange', ev => {
     console.log('hashchange');
     readHash().catch(e => {
@@ -1016,6 +1025,10 @@ privateKeyRegenerateButton.addEventListener('click', ev => {
 
 updateTokenList().catch(e => {
     console.error(e);
+});
+
+settingsReloadButton.addEventListener('click', ev => {
+    location.reload();
 });
 
 setInterval(() => {

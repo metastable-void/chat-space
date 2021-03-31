@@ -134,7 +134,7 @@ details, summary {
     padding-block-start: .5em;
     padding-block-end: .5em;
     padding-inline-start: .5em;
-    padding-inline-end: .25em;
+    padding-inline-end: .5em;
     margin: 0;
 }
 
@@ -158,6 +158,7 @@ details, summary {
     box-sizing: border-box;
     white-space: pre-wrap;
     overflow-wrap: break-word;
+    resize: none;
 }
 
 .input-box > input::placeholder, .input-box > textarea::placeholder {

@@ -80,8 +80,9 @@ const privateKeyBox = document.querySelector('#private-key');
 /** @type {HTMLInputElement} */
 const myFingerprintBox = document.querySelector('#my-fingerprint');
 
+/** @type {HTMLTextAreaElement} */
 const userAgentBox = document.querySelector('#user-agent');
-userAgentBox.textContent = navigator.userAgent;
+userAgentBox.value = navigator.userAgent;
 
 
 const getFingerprint = async bytes => {

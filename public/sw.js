@@ -34,10 +34,20 @@ const CURRENT_CACHES = new Set([
 ]);
 
 const createFreshRequest = (req) => {
-    const originalRequest = req instanceof Request ? req : new Request(req, {
-        mode: 'cors',
-        credentials: 'same-origin',
-    });
+    const originalRequest = (req instanceof Request
+        ? (
+            req.mode == 'navigate'
+            ? new Request(req.url, {
+                mode: 'cors',
+                credentials: 'same-origin',
+            })
+            : req
+        )
+        : new Request(req, {
+            mode: 'cors',
+            credentials: 'same-origin',
+        })
+    );
 
     return new Request(originalRequest, {
         mode: originalRequest.mode,

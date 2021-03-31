@@ -29,6 +29,23 @@ const ASSETS = [
     '/components/chatspace-comment-container.css',
 ].map(path => String(new URL(path, location.href)));
 
+const CURRENT_CACHES = new Set([
+    ASSETS_CACHE,
+]);
+
+const createFreshRequest = (req) => {
+    const originalRequest = req instanceof Request ? req : new Request(req, {
+        mode: 'cors',
+        credentials: 'same-origin',
+    });
+
+    return new Request(originalRequest, {
+        mode: originalRequest.mode,
+        credentials: originalRequest.credentials,
+        cache: 'no-cache', // force revalidation
+    });
+};
+
 self.addEventListener('install', ev => {
     ev.waitUntil((async () => {
         console.log('sw: install');
@@ -46,11 +63,12 @@ self.addEventListener('install', ev => {
 
         for (const url of ASSETS) {
             if (!cachedUrls.has(url)) {
-                promises.push(cache.add(url));
+                promises.push(cache.add(createFreshRequest(url)));
             }
         }
 
         await Promise.all(promises);
+        return self.skipWaiting();
     })());
 });
 
@@ -58,6 +76,13 @@ self.addEventListener('install', ev => {
 self.addEventListener('activate', ev => {
     ev.waitUntil((async () => {
         console.log('sw: activate');
+        const keys = await caches.keys();
+        await Promise.all(keys.map(async key => {
+            if (!CURRENT_CACHES.has(key)) {
+                console.log('Clearing unused cache:', key);
+                return caches.delete(key);
+            }
+        }));
     })());
 });
 
@@ -65,15 +90,16 @@ self.addEventListener('fetch', ev => {
     ev.respondWith((async (request) => {
         const cache = await caches.open(ASSETS_CACHE);
         const match = await cache.match(request);
+        const freshRequest = createFreshRequest(request);
         if (!match) {
-            return await fetch(request);
+            return await fetch(freshRequest);
         }
         try {
-            const freshResponse = await fetch(request);
+            const freshResponse = await fetch(freshRequest);
             if (!freshResponse.ok) {
                 throw 'Non-2xx response';
             }
-            await cache.put(request, freshResponse.clone());
+            await cache.put(freshRequest, freshResponse.clone());
             return freshResponse;
         } catch (e) {
             console.warn('sw: fetch error:', request.url, e);

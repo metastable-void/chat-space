@@ -159,6 +159,7 @@ details, summary {
     white-space: pre-wrap;
     overflow-wrap: break-word;
     resize: none;
+    overflow: hidden;
 }
 
 .input-box > input::placeholder, .input-box > textarea::placeholder {

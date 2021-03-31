@@ -36,7 +36,7 @@
 <template id="template-chatspace-comment-container">
 <link rel="stylesheet" href="/components/chatspace-comment-container.css"/>
 <div hidden="hidden"><slot></slot></div>
-<div id="comments-active"><slot name="active"></slot></div>
+<div id="comments-active" data-message-placeholder="No one's speaking."><slot name="active"></slot></div>
 <div id="comments-idle"><slot name="idle"></slot></div>
 </template>
 </head>

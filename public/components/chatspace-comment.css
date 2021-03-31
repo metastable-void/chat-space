@@ -39,7 +39,7 @@
     white-space: nowrap;
     word-wrap: normal;
     direction: ltr;
-    vertical-align: text-top;
+    vertical-align: text-bottom;
     -moz-font-feature-settings: 'liga';
     -moz-osx-font-smoothing: grayscale;
 }

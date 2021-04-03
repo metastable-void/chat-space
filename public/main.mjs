@@ -656,7 +656,7 @@ const processMessage = async ev => {
         const caretOffset = 'number' == typeof data.caretOffset ? data.caretOffset : -1;
         const sessionId = 'string' == typeof data.sessionId ? data.sessionId : '';
         const cacheKey = `${fingerprint}_${sessionId}`;
-        const name = data.name || '';
+        const name = String(data.name || '').slice(0, 30);
         switch (data.command) {
             case 'text_updated': {
                 if (cacheKey in textClearTimers) {

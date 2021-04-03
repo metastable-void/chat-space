@@ -158,11 +158,34 @@ body.flash {
     -webkit-user-select: text;
     user-select: text;
     overflow-wrap: break-word;
+    cursor: text;
+    outline: none;
 }
 
 #text:focus {
     color: var(--theme-main-text-color);
-    outline: none;
+}
+
+#text strong, #text em, #text ul, #text ol, #text dl, #texrt dt, #text dd, #text li, #text pre, #text code, #text nav, #text menu, #text p, #text a, #text kbd, #text s, #text i, #text b, #text u, #text h1, #text h2, #text h3, #text h4, #text h5, #text h6, #text q, #text blockquote, #text address, #text figcaption, #textg figure, #text cite, #text dfn, #text mark, #text samp, #text small, #text sub, #text sup, #text var {
+    font: inherit;
+    text-decoration: none;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    color: inherit;
+    cursor: inherit;
+    border: none;
+}
+
+#text table, #text tr, #text tbody, #text thead {
+    display: block;
+    border: none;
+}
+
+#text th, #text td {
+    display: inline;
+    border: none;
+    padding: 0;
 }
 
 #clear {

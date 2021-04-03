@@ -160,6 +160,7 @@ body.flash {
     overflow-wrap: break-word;
     cursor: text;
     outline: none;
+    text-align: start;
 }
 
 #text:focus {
@@ -176,6 +177,7 @@ body.flash {
     color: inherit;
     cursor: inherit;
     border: none;
+    vertical-align: baseline;
 }
 
 #clear {

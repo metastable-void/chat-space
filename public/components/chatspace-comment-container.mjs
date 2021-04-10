@@ -32,6 +32,7 @@ class ChatspaceCommentContainerElement extends HTMLElement {
             commentBox.shortFingerprint = fingerprint.substr(0, 8);
             commentBox.sessionId = sessionId;
             states.set(cacheKey, commentBox);
+            this.append(commentBox);
         }
         const commentBox = states.get(cacheKey);
         commentBox.userName = name || 'Anonymous';

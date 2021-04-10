@@ -23,6 +23,8 @@ const ASSETS = [
     '/lib/Session.mjs',
     '/lib/noble-ed25519-1.0.3.mjs',
     '/lib/x25519.mjs',
+    '/lib/es-first-aid.js',
+    '/lib/Provisionality.mjs',
     '/components/chatspace-comment.mjs',
     '/components/chatspace-comment.css',
     '/components/chatspace-comment-container.mjs',

@@ -9,9 +9,11 @@ import * as uuidUtils from '/lib/uuid.mjs';
 import {Settings} from '/lib/Settings.mjs';
 import * as utf8 from '/lib/utf8.mjs';
 import {WindowBroadcast} from '/lib/WindowBroadcast.mjs';
-import {Session} from '/lib/Session.mjs';
+import {session} from '/lib/Session.mjs';
 import '/components/chatspace-comment.mjs';
 import '/components/chatspace-comment-container.mjs';
+import '/lib/es-first-aid.js';
+import '/lib/Provisionality.mjs';
 
 const VISITED_ROOMS_LIST_LENGTH = 10;
 const HISTORY_BUFFER_LENGTH = 10;
@@ -32,7 +34,6 @@ if (location.pathname.endsWith('/index.html')) {
 
 const broadcast = new WindowBroadcast('chatspace');
 const settings = new Settings;
-const session = new Session;
 
 if (!settings.friends) {
     settings.friends = {};
@@ -66,6 +67,8 @@ const settingsReloadButton = document.querySelector('#settings-reload-button');
 const commentsContainer = document.querySelector('#comments');
 const membersContainer = document.querySelector('#members');
 const connectionStatus = document.querySelector('#connection');
+const mainBox = document.querySelector('#main');
+const commentsBox = mainBox.appendChild(document.createElement('chatspace-comments-container'));
 
 const overlayBox = document.querySelector('#overlay');
 const helpBox = document.querySelector('#helpBox');

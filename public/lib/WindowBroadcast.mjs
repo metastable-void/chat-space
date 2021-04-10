@@ -1,9 +1,9 @@
 
-const LOCAL_STORAGE_PREFIX = 'menhera.broadcast.';
+const BROADCAST_LOCAL_STORAGE_PREFIX = 'menhera.broadcast.';
 
-const getKey = (channelName) => LOCAL_STORAGE_PREFIX + String(channelName).trim().toLowerCase();
+const getBroadcastKey = (channelName) => BROADCAST_LOCAL_STORAGE_PREFIX + String(channelName).trim().toLowerCase();
 
-const eventTarget = new class extends EventTarget {
+const storageEventTarget = new class extends EventTarget {
     constructor() {
         super();
         window.addEventListener('storage', ev => {
@@ -18,7 +18,11 @@ const eventTarget = new class extends EventTarget {
         });
     }
 
-    fireSelf(key, value) {
+    setItem(key, text) {
+        const value = String(text);
+        try {
+            localStorage.setItem(key, text);
+        } catch (e) {}
         const ev = new StorageEvent('storage');
         ev.initStorageEvent('storage', false, false, key, null, value, location.href, localStorage);
         this.dispatchEvent(ev);
@@ -31,9 +35,9 @@ const eventTarget = new class extends EventTarget {
 export class WindowBroadcast extends EventTarget {
     constructor(channelName) {
         super();
-        Reflect.defineProperty(this, 'channelName', {value: String(channelName)});
-        const key = getKey(this.channelName);
-        eventTarget.addEventListener('storage', ev => {
+        Reflect.defineProperty(this, 'channelName', {value: String(channelName).trim().toLowerCase()});
+        const key = getBroadcastKey(this.channelName);
+        storageEventTarget.addEventListener('storage', ev => {
             if (key != ev.key) return;
             try {
                 const data = JSON.parse(ev.newValue);
@@ -50,10 +54,9 @@ export class WindowBroadcast extends EventTarget {
 
     postMessage(data) {
         try {
-            const key = getKey(this.channelName);
+            const key = getBroadcastKey(this.channelName);
             const value = JSON.stringify(data);
-            eventTarget.fireSelf(key, value);
-            localStorage.setItem(key, value);
+            storageEventTarget.setItem(key, value);
         } catch (e) {
             console.warn(e);
         }

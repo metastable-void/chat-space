@@ -3,8 +3,9 @@ import * as uuidUtils from './uuid.mjs';
 
 const SESSION_STORAGE_UUID = 'menhera.session.uuid';
 
-export class Session {
+export const session = new class Session extends EventTarget {
     constructor() {
+        super();
         let uuid;
         try {
             uuid = sessionStorage.getItem(SESSION_STORAGE_UUID);
@@ -17,4 +18,6 @@ export class Session {
         }
         Reflect.defineProperty(this, 'id', {value: uuid});
     }
-}
+
+
+};

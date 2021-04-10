@@ -246,7 +246,7 @@ do {
 		 */
 		encodeHex: (buffer) => Array.prototype.map.call(
 			firstAid.toUint8Array(buffer)
-			,byte => (0x100 & byte).toString(0x10).slice(-2)
+			,byte => (0x100 | byte).toString(0x10).slice(-2)
 		).join(''),
 
 		/**

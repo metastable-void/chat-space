@@ -1,8 +1,7 @@
 
 @import url(/common.css);
 
-#comments-active:empty::before {
-    content: attr(data-message-placeholder);
+#comments-active-placeholder {
     opacity: .5;
     display: block;
     margin-block-end: 1em;

@@ -125,13 +125,13 @@ menhera.session.state.addPropertyObserver('chatspace.modal.invite.peer_name', (p
 menhera.session.state.addTopicReflector(menhera.session.getTopic('chatspace.showInvite'), (data, metadata) => {
     const {peerName, peerFingerprint, token} = data;
     const peerShortFingerprint = peerFingerprint.slice(0, 8);
-    return {
+    return Object.entries({
         'chatspace.modal.invite.peer_fingerprint': peerFingerprint,
         'chatspace.modal.invite.peer_short_fingerprint': peerShortFingerprint,
         'chatspace.modal.invite.peer_name': peerName,
         'chatspace.modal.invite.token': token,
         'chatspace.modal.shown': 'invite',
-    };
+    });
 });
 
 menhera.session.getTopic('chatspace.acceptInvite').addListener((data, metadata) => {
@@ -142,21 +142,21 @@ menhera.session.getTopic('chatspace.acceptInvite').addListener((data, metadata) 
 });
 
 menhera.session.state.addTopicReflector(menhera.session.getTopic('chatspace.hideModals'), (data, metadata) => {
-    return {
+    return Object.entries({
         'chatspace.modal.shown': null,
-    };
+    });
 });
 
 menhera.session.state.addTopicReflector(menhera.session.getTopic('chatspace.showHelp'), (data, metadata) => {
-    return {
+    return Object.entries({
         'chatspace.modal.shown': 'help',
-    };
+    });
 });
 
 menhera.session.state.addTopicReflector(menhera.session.getTopic('chatspace.showSettings'), (data, metadata) => {
-    return {
+    return Object.entries({
         'chatspace.modal.shown': 'settings',
-    };
+    });
 });
 
 inviteAcceptButton.addEventListener('click', ev => {

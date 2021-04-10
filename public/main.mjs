@@ -82,6 +82,88 @@ userAgentBox.value = navigator.userAgent;
 const logotypeBox = document.querySelector('#logotype');
 
 
+menhera.session.state.addPropertyObserver('chatspace.modal.shown', (shownModal) => {
+    for (const box of overlayBox.children) {
+        box.hidden = true;
+    }
+    switch (shownModal) {
+        case 'help': {
+            overlayBox.hidden = false;
+            helpBox.hidden = false;
+            break;
+        }
+
+        case 'settings': {
+            overlayBox.hidden = false;
+            settingsBox.hidden = false;
+            break;
+        }
+
+        case 'invite': {
+            overlayBox.hidden = false;
+            inviteBox.hidden = false;
+        }
+
+        default: {
+            overlayBox.hidden = true;
+        }
+    }
+});
+
+menhera.session.state.addPropertyObserver('chatspace.modal.invite.peer_fingerprint', (peerFingerprint) => {
+    invitePeerFingerprintBox.title = peerFingerprint;
+});
+
+menhera.session.state.addPropertyObserver('chatspace.modal.invite.peer_short_fingerprint', (shortFingerprint) => {
+    invitePeerFingerprintBox.textContent = shortFingerprint;
+});
+
+menhera.session.state.addPropertyObserver('chatspace.modal.invite.peer_name', (peerName) => {
+    invitePeerNameBox.textContent = peerName;
+});
+
+menhera.session.state.addTopicReflector(menhera.session.getTopic('chatspace.showInvite'), (data, metadata) => {
+    const {peerName, peerFingerprint, token} = data;
+    const peerShortFingerprint = peerFingerprint.slice(0, 8);
+    return {
+        'chatspace.modal.invite.peer_fingerprint': peerFingerprint,
+        'chatspace.modal.invite.peer_short_fingerprint': peerShortFingerprint,
+        'chatspace.modal.invite.peer_name': peerName,
+        'chatspace.modal.invite.token': token,
+        'chatspace.modal.shown': 'invite',
+    };
+});
+
+menhera.session.getTopic('chatspace.acceptInvite').addListener((data, metadata) => {
+    menhera.session.getTopic('chatspace.hideModals').dispatchMessage(null);
+    menhera.session.getTopic('chatspace.openRoom').dispatchMessage({
+        token: menhera.session.state.get('chatspace.modal.invite.token'),
+    });
+});
+
+menhera.session.state.addTopicReflector(menhera.session.getTopic('chatspace.hideModals'), (data, metadata) => {
+    return {
+        'chatspace.modal.shown': null,
+    };
+});
+
+menhera.session.state.addTopicReflector(menhera.session.getTopic('chatspace.showHelp'), (data, metadata) => {
+    return {
+        'chatspace.modal.shown': 'help',
+    };
+});
+
+menhera.session.state.addTopicReflector(menhera.session.getTopic('chatspace.showSettings'), (data, metadata) => {
+    return {
+        'chatspace.modal.shown': 'settings',
+    };
+});
+
+inviteAcceptButton.addEventListener('click', ev => {
+    menhera.session.getTopic('chatspace.acceptInvite').dispatchMessage(null);
+});
+
+
 const getFingerprint = async bytes => {
     const buffer = await crypto.subtle.digest('SHA-256', bytes.slice(0).buffer);
     return new Uint8Array(buffer);
@@ -196,6 +278,11 @@ const setToken = (token) => {
         location.hash = '#' + hash;
     }
 };
+
+menhera.session.getTopic('chatspace.openRoom').addListener((data, metadata) => {
+    const {token} = data;
+    setToken(token);
+});
 
 const getMyKeys = async () => {
     /** @type {Uint8Array} */
@@ -602,27 +689,7 @@ const renderText = () => {
     isThereComment = commentCount > 0;
 };
 
-const hideModals = () => {
-    overlayBox.hidden = true;
-    for (const box of overlayBox.children) {
-        box.hidden = true;
-    }
-};
-
 let inviteAcceptHandler = () => void 0;
-const showRoomInvite = (peerFingerprint, peerName, token) => {
-    console.log(`Room invite received from ${peerName} (@${peerFingerprint})`);
-    hideModals();
-    invitePeerFingerprintBox.title = peerFingerprint;
-    invitePeerFingerprintBox.textContent = peerFingerprint.slice(0, 8);
-    invitePeerNameBox.textContent = peerName;
-    overlayBox.hidden = false;
-    inviteBox.hidden = false;
-    inviteAcceptHandler = () => {
-        inviteAcceptHandler = () => void 0;
-        setToken(token);
-    };
-};
 
 const textClearTimers = Object.create(null);
 
@@ -707,7 +774,11 @@ const processMessage = async ev => {
                     publicKey: firstAid.encodeBase64(publicKey),
                 });
                 const token = await getX25519SharedUuid(privateKey, firstAid.decodeBase64(data.publicKey));
-                showRoomInvite(fingerprint, name, token);
+                menhera.session.getTopic('chatspace.showInvite').dispatchMessage({
+                    peerFingerprint: fingerprint,
+                    peerName: name,
+                    token,
+                })
                 break;
             }
             case 'room_invite_reply': {
@@ -724,7 +795,7 @@ const processMessage = async ev => {
                 }
                 const state = keyExchangeStates.get(fingerprint);
                 const token = await getX25519SharedUuid(state.privateKey, firstAid.decodeBase64(data.publicKey));
-                hideModals();
+                menhera.session.getTopic('chatspace.hideModals').dispatchMessage(null);
                 setToken(token);
                 break;
             }
@@ -792,42 +863,6 @@ const readHash = async () => {
     setWsUrl(channel);
     openSocket(true);
     await addVisitedRoom(token);
-};
-
-let helpShown = false;
-
-const hideHelp = () => {
-    if (!helpShown) return;
-    helpShown = false;
-    console.log('hiding help...');
-    overlayBox.hidden = true;
-    helpBox.hidden = true;
-};
-
-const hideSettings = () => {
-    if (settingsBox.hidden) return;
-    console.log('hiding settings...');
-    overlayBox.hidden = true;
-    settingsBox.hidden = true;
-};
-
-const showHelp = () => {
-    if (helpShown) return;
-    helpShown = true;
-    console.log('showing help...');
-    hideSettings();
-    hideModals();
-    overlayBox.hidden = false;
-    helpBox.hidden = false;
-};
-
-const showSettings = () => {
-    if (!settingsBox.hidden) return;
-    console.log('showing settings...');
-    hideHelp();
-    hideModals();
-    overlayBox.hidden = false;
-    settingsBox.hidden = false;
 };
 
 const updateTokenList = async () => {
@@ -937,10 +972,7 @@ connectionStatus.addEventListener('click', ev => {
 });
 
 helpButton.addEventListener('click', ev => {
-    if (!helpShown) {
-        ev.stopPropagation();
-        showHelp();
-    }
+    menhera.session.getTopic('chatspace.showHelp').dispatchMessage(null);
 });
 
 helpBox.addEventListener('click', ev => {
@@ -948,10 +980,7 @@ helpBox.addEventListener('click', ev => {
 });
 
 settingsButton.addEventListener('click', ev => {
-    if (settingsBox.hidden) {
-        ev.stopPropagation();
-        showSettings();
-    }
+    menhera.session.getTopic('chatspace.showSettings').dispatchMessage(null);
 });
 
 settingsBox.addEventListener('click', ev => {
@@ -959,23 +988,15 @@ settingsBox.addEventListener('click', ev => {
 });
 
 document.body.addEventListener('click', ev => {
-    hideHelp();
-    hideSettings();
-    hideModals();
+    menhera.session.getTopic('chatspace.hideModals').dispatchMessage(null);
 });
 
 helpCloseButton.addEventListener('click', ev => {
-    hideHelp();
-});
-
-inviteAcceptButton.addEventListener('click', ev => {
-    hideModals();
-    inviteAcceptHandler();
+    menhera.session.getTopic('chatspace.hideModals').dispatchMessage(null);
 });
 
 inviteIgnoreButton.addEventListener('click', ev => {
-    hideModals();
-    inviteAcceptHandler = () => void 0;
+    menhera.session.getTopic('chatspace.hideModals').dispatchMessage(null);
 });
 
 inviteBox.addEventListener('click', ev => {
@@ -983,7 +1004,7 @@ inviteBox.addEventListener('click', ev => {
 });
 
 settingsCloseButton.addEventListener('click', ev => {
-    hideSettings();
+    menhera.session.getTopic('chatspace.hideModals').dispatchMessage(null);
 });
 
 window.addEventListener('pageshow', ev => {
@@ -1046,7 +1067,7 @@ setInterval(() => {
 }, 4000);
 
 if (getVisitCount() < 2) {
-    showHelp();
+    menhera.session.getTopic('chatspace.showHelp').dispatchMessage(null);
 }
 
 if (history.scrollRestoration) {

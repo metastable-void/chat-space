@@ -972,6 +972,7 @@ connectionStatus.addEventListener('click', ev => {
 });
 
 helpButton.addEventListener('click', ev => {
+    ev.stopPropagation();
     menhera.session.getTopic('chatspace.showHelp').dispatchMessage(null);
 });
 
@@ -980,6 +981,7 @@ helpBox.addEventListener('click', ev => {
 });
 
 settingsButton.addEventListener('click', ev => {
+    ev.stopPropagation();
     menhera.session.getTopic('chatspace.showSettings').dispatchMessage(null);
 });
 

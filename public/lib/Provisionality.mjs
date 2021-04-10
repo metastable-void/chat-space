@@ -147,7 +147,6 @@ class CompatBroadcastChannel extends EventTarget {
 
 export class StorageImplementation {
     constructor(sessionId) {
-        super();
         this.sessionId = String(sessionId || getSessionId()).toLowerCase();
         this.storageKey = `${STORAGE_PREFIX_SESSION}.${this.sessionId}`;
         this.cachedValues = {};

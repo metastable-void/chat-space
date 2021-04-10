@@ -288,7 +288,7 @@ do {
                 	+ base64Chars.charAt(bits >> 6 & 0b111111)
 					+ base64Chars.charAt(bits & 0b111111);
 			}
-			return paddingLength ? result.slice(0, paddingLength - 3) + '==='.slice(rest) : result;
+			return paddingLength ? result.slice(0, paddingLength - 3) + '==='.slice(paddingLength) : result;
 		},
 
 		decodeBase64: (str) => new Uint8Array(function* () {

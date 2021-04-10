@@ -62,8 +62,6 @@ const inviteIgnoreButton = document.querySelector('#invite-ignore-button');
 const privateKeyRegenerateButton = document.querySelector('#private-key-regenerate-button');
 const settingsReloadButton = document.querySelector('#settings-reload-button');
 
-const commentsContainer = document.querySelector('#comments');
-const membersContainer = document.querySelector('#members');
 const connectionStatus = document.querySelector('#connection');
 const mainBox = document.querySelector('#main');
 const commentsBox = mainBox.appendChild(document.createElement('chatspace-comment-container'));

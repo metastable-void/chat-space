@@ -59,7 +59,7 @@ const commentsContainer = document.querySelector('#comments');
 const membersContainer = document.querySelector('#members');
 const connectionStatus = document.querySelector('#connection');
 const mainBox = document.querySelector('#main');
-const commentsBox = mainBox.appendChild(document.createElement('chatspace-comments-container'));
+const commentsBox = mainBox.appendChild(document.createElement('chatspace-comment-container'));
 
 const overlayBox = document.querySelector('#overlay');
 const helpBox = document.querySelector('#helpBox');
@@ -586,11 +586,8 @@ const historyBack = () => {
 // outgoing offers
 const keyExchangeStates = new Map;
 
-/**
- * Invite a user to a new shared secret room.
- * @param peerFingerprint {string} Hex SHA-256 fingerprint.
- */
-const inviteToRoom = (peerFingerprint, sessionId) => {
+menhera.session.getTopic('chatspace.inviteToRoom').addListener((data, metadata) => {
+    const {peerFingerprint, sessionId} = data;
     const {privateKey, publicKey} = x25519Generate();
     keyExchangeStates.set(peerFingerprint, {
         privateKey,
@@ -602,9 +599,10 @@ const inviteToRoom = (peerFingerprint, sessionId) => {
         peerSessionId: sessionId,
         publicKey: firstAid.encodeBase64(publicKey),
     });
-};
+});
 
-const makeFriends = (fingerprint, name) => {
+menhera.session.getTopic('chatspace.makeFriends').addListener((data, metadata) => {
+    const {fingerprint, name} = data;
     const friends = settings.friends;
     if (fingerprint in friends) {
         delete friends[fingerprint];
@@ -612,7 +610,7 @@ const makeFriends = (fingerprint, name) => {
         friends[fingerprint] = name;
     }
     settings.friends = friends;
-};
+});
 
 let textMap = Object.create(null);
 
@@ -673,8 +671,14 @@ const renderText = () => {
         commentBox.text = text;
         commentBox.isFriend = fingerprint in friends;
 
-        commentBox.inviteButton.addEventListener('click', ev => inviteToRoom(fingerprint, sessionId));
-        commentBox.friendButton.addEventListener('click', ev => makeFriends(fingerprint, name));
+        commentBox.inviteButton.addEventListener('click', ev => menhera.session.getTopic('chatspace.inviteToRoom').dispatchMessage({
+            peerFingerprint: fingerprint,
+            sessionId,
+        }));
+        commentBox.friendButton.addEventListener('click', ev => menhera.session.getTopic('chatspace.makeFriends').dispatchMessage({
+            fingerprint,
+            name,
+        }));
 
         if (text) {
             if (!isThereComment && commentCount < 1 && !isTextBoxFocused()) {

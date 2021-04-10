@@ -105,7 +105,7 @@ do {
 		 * Creates a new null-prototype object.
 		 * @returns {object}
 		 */
-		createNullPrototypeObject: () => _Object_create(null),
+		createNullPrototypeObject: () => Object.create(null),
 
 		/**
 		 * Wrap an object in a read-only Proxy.
@@ -245,7 +245,7 @@ do {
 		 * @returns {string}
 		 */
 		encodeHex: (buffer) => Array.prototype.map.call(
-			toUint8Array(buffer)
+			firstAid.toUint8Array(buffer)
 			,byte => (0x100 & byte).toString(0x10).slice(-2)
 		).join(''),
 

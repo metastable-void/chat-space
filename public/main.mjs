@@ -102,6 +102,7 @@ menhera.session.state.addPropertyObserver('chatspace.modal.shown', (shownModal) 
         case 'invite': {
             overlayBox.hidden = false;
             inviteBox.hidden = false;
+            break;
         }
 
         default: {
@@ -778,7 +779,7 @@ const processMessage = async ev => {
                     peerFingerprint: fingerprint,
                     peerName: name,
                     token,
-                })
+                });
                 break;
             }
             case 'room_invite_reply': {

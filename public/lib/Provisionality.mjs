@@ -239,44 +239,6 @@ export class StorageImplementation {
     }
 }
 
-const storageEventTarget = new class extends EventTarget {
-    constructor() {
-        super();
-        window.addEventListener('storage', ev => {
-            if (null === ev.key) {
-                console.log('The storage was cleared');
-                return;
-            }
-            if (!ev.newValue) {
-                return;
-            }
-            this.dispatchEvent(ev);
-        });
-    }
-
-    postMessage(data, targetSession) {
-        const sessionId = getSessionId();
-        const clientId = getClientId();
-        const metadata = {
-            clientId,
-            sessionId,
-            createdTime: +new Date,
-            origin: document.origin,
-        };
-        const value = JSON.stringify({metadata, data});
-        storageEventTarget.setItem(this.storageKey, value);
-    }
-    setItem(key, text) {
-        const value = String(text);
-        try {
-            localStorage.setItem(key, text);
-        } catch (e) {}
-        const ev = new StorageEvent('storage');
-        ev.initStorageEvent('storage', false, false, key, null, value, location.href, localStorage);
-        this.dispatchEvent(ev);
-    }
-};
-
 /**
  * @typedef {({clientId: string, sessionId: string, topicName: string, createdTime: number, origin: string})} TopicMetadata
  */

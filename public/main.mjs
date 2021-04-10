@@ -26,8 +26,15 @@ if (location.pathname.endsWith('/index.html')) {
 
 const settings = new Settings;
 
-if (!settings.friends) {
-    settings.friends = {};
+menhera.client.state.addTopicReflector(menhera.session.getTopic('chatspace.legacy.saveFriends'), (data, metadata) => {
+    const friends = settings.friends;
+    return Object.entries({
+        friends: friends,
+    });
+});
+
+if (!menhera.client.state.get('friends')) {
+    menhera.session.getTopic('chatspace.legacy.saveFriends').dispatchMessage(null);
 }
 
 const textBox = document.querySelector('#text');
@@ -601,15 +608,17 @@ menhera.session.getTopic('chatspace.inviteToRoom').addListener((data, metadata) 
     });
 });
 
-menhera.session.getTopic('chatspace.makeFriends').addListener((data, metadata) => {
+menhera.client.state.addTopicReflector(menhera.session.getTopic('chatspace.makeFriends'), (data, metadata) => {
     const {fingerprint, name} = data;
-    const friends = settings.friends;
+    const friends = menhera.client.state.get('friends');
     if (fingerprint in friends) {
         delete friends[fingerprint];
     } else {
         friends[fingerprint] = name;
     }
-    settings.friends = friends;
+    return Object.entries({
+        friends,
+    });
 });
 
 let textMap = Object.create(null);
@@ -618,7 +627,7 @@ const getOnlineCount = () => Reflect.ownKeys(textMap).filter(fingerprint => text
 const getOnlineTotalCount = () => Reflect.ownKeys(textMap).length;
 
 let lastFlash = 0;
-const flash = globalThis.flash = () => {
+menhera.session.getTopic('chatspace.flash').addListener((data, metadata) => {
     const time = getTime();
     if (time - lastFlash < 5000) return;
     lastFlash = time;
@@ -627,74 +636,19 @@ const flash = globalThis.flash = () => {
     setTimeout(() => {
         document.body.classList.remove('flash');
     }, 100);
-};
+});
 
+menhera.session.state.addTopicReflector(menhera.session.getTopic('chatspace.updateOnlineCount'), (data, metadata) => {
+    const {onlineCount} = data;
+    return Object.entries({
+        onlineCount,
+    });
+});
 
+menhera.session.state.addPropertyObserver('onlineCount', (onlineCount) => {
+    connectionStatus.dataset.onlineCount = 0 | onlineCount;
+});
 
-let renderingPaused = false;
-globalThis.pauseRendering = () => {
-    renderingPaused = true;
-};
-
-globalThis.resumeRendering = () => {
-    renderingPaused = false;
-    renderText();
-};
-
-let isThereComment = false;
-const renderText = () => {
-    if (renderingPaused) return;
-    connectionStatus.dataset.onlineCount = getOnlineCount();
-    commentsContainer.textContent = '';
-    membersContainer.textContent = '';
-    const friends = settings.friends;
-    let commentCount = 0;
-    for (const cacheKey of Reflect.ownKeys(textMap)) {
-        const state = textMap[cacheKey];
-        if (!state) continue;
-        const fingerprint = state.fingerprint;
-        if ('string' != typeof fingerprint) continue;
-        const sessionId = state.sessionId;
-        if ('string' != typeof sessionId) continue;
-        const text = (state.text || '').split('\n').join('').split('\r').join('');
-        const name = state.name || '';
-        const isActive = !!state.isActive;
-        if ('' === text && ('' === name || !isActive)) {
-            continue;
-        }
-        const commentBox = document.createElement('chatspace-comment');
-        commentBox.fingerprint = fingerprint;
-        commentBox.shortFingerprint = fingerprint.substr(0, 8);
-        commentBox.sessionId = sessionId;
-        commentBox.userName = name || 'Anonymous';
-        commentBox.caretOffset = state.caretOffset;
-        commentBox.text = text;
-        commentBox.isFriend = fingerprint in friends;
-
-        commentBox.inviteButton.addEventListener('click', ev => menhera.session.getTopic('chatspace.inviteToRoom').dispatchMessage({
-            peerFingerprint: fingerprint,
-            sessionId,
-        }));
-        commentBox.friendButton.addEventListener('click', ev => menhera.session.getTopic('chatspace.makeFriends').dispatchMessage({
-            fingerprint,
-            name,
-        }));
-
-        if (text) {
-            if (!isThereComment && commentCount < 1 && !isTextBoxFocused()) {
-                flash();
-            }
-            commentCount++;
-            commentsContainer.prepend(commentBox);
-        } else {
-            membersContainer.prepend(commentBox);
-        }
-    }
-
-    isThereComment = commentCount > 0;
-};
-
-let inviteAcceptHandler = () => void 0;
 
 const textClearTimers = Object.create(null);
 
@@ -731,7 +685,7 @@ const processMessage = async ev => {
                     } catch (e) {}
                     delete textClearTimers[cacheKey];
                 }
-                textMap[cacheKey] = {
+                commentsBox.update({
                     fingerprint,
                     sessionId,
                     text,
@@ -739,8 +693,7 @@ const processMessage = async ev => {
                     receivedTime: getTime(),
                     isActive: data.isActive,
                     caretOffset,
-                };
-                renderText();
+                });
                 break;
             }
             case 'text_cleared': {
@@ -749,16 +702,15 @@ const processMessage = async ev => {
                 }
                 textClearTimers[cacheKey] = setTimeout(() => {
                     delete textClearTimers[cacheKey];
-                    textMap[cacheKey] = {
+                    commentsBox.update({
                         fingerprint,
                         sessionId,
                         text,
-                        receivedTime: getTime(),
                         name,
+                        receivedTime: getTime(),
                         isActive: data.isActive,
                         caretOffset,
-                    };
-                    renderText();
+                    });
                 }, 1000);
                 break;
             }
@@ -814,8 +766,7 @@ const processMessage = async ev => {
 };
 
 const resetText = () => {
-    textMap = Object.create(null);
-    renderText();
+    commentsBox.clear();
 };
 
 const openSocket = (force) => {
@@ -1058,19 +1009,6 @@ setInterval(() => {
     if (currentTime - lastUpdate > 3000) {
         sendUpdate(true);
     }
-    for (const fingerprint of Reflect.ownKeys(textMap)) {
-        if (!textMap[fingerprint]) {
-            delete textMap[fingerprint];
-            continue;
-        }
-        const state = textMap[fingerprint];
-        if (currentTime - state.receivedTime > 10000) {
-            delete textMap[fingerprint];
-            continue;
-        }
-    }
-
-    renderText();
 }, 4000);
 
 if (getVisitCount() < 2) {

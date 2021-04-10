@@ -1,9 +1,5 @@
 
 const LOCAL_STORAGE_PREFIX = 'menhera.chatspace.';
-const LOCAL_STORAGE_PRIVATE_KEY = `${LOCAL_STORAGE_PREFIX}.private_key`;
-const LOCAL_STORAGE_USERNAME = `${LOCAL_STORAGE_PREFIX}.self.name`;
-const LOCAL_STORAGE_VISIT_COUNT = `${LOCAL_STORAGE_PREFIX}.visit_count`;
-const LOCAL_STORAGE_VISITED_ROOMS = `${LOCAL_STORAGE_PREFIX}.visited_rooms`;
 
 const legacyMap = {
     'privateKey': 'private_key',

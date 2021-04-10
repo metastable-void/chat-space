@@ -1,15 +1,7 @@
 
 import * as ed from '/lib/noble-ed25519-1.0.3.mjs';
 import * as x25519 from '/lib/x25519.mjs';
-import {toUint8Array} from '/lib/buffer.mjs';
-import * as hexUtils from '/lib/hex.mjs';
-import * as base64 from '/lib/base64.mjs';
-import * as rand from '/lib/random.mjs';
-import * as uuidUtils from '/lib/uuid.mjs';
 import {Settings} from '/lib/Settings.mjs';
-import * as utf8 from '/lib/utf8.mjs';
-import {WindowBroadcast} from '/lib/WindowBroadcast.mjs';
-import {session} from '/lib/Session.mjs';
 import '/components/chatspace-comment.mjs';
 import '/components/chatspace-comment-container.mjs';
 import '/lib/es-first-aid.js';
@@ -32,7 +24,6 @@ if (location.pathname.endsWith('/index.html')) {
     history.replaceState({}, '', String(url));
 }
 
-const broadcast = new WindowBroadcast('chatspace');
 const settings = new Settings;
 
 if (!settings.friends) {
@@ -102,21 +93,21 @@ const getFingerprint = async bytes => {
  * @param obj {any}
  * @returns {Uint8Array}
  */
-const encodeObject = obj => utf8.encode(JSON.stringify(obj));
+const encodeObject = obj => firstAid.encodeString(JSON.stringify(obj));
 
 /**
  * Decode object from bytes.
  * @param bytes {Uint8Array}
  * @returns {any}
  */
-const decodeObject = bytes => JSON.parse(utf8.decode(bytes));
+const decodeObject = bytes => JSON.parse(firstAid.decodeString(bytes));
 
 /**
  * Get 32-bit fingerprint representation (not much secure) of the given data.
  * @param bytes {Uint8Array}
  * @returns {string}
  */
-const getShortFingerprint = bytes => hexUtils.encode(bytes.subarray(0, 4));
+const getShortFingerprint = bytes => firstAid.encodeHex(bytes.subarray(0, 4));
 
 const deriveKey = async (keyBytes) => {
     const rawKey = await crypto.subtle.importKey('raw', keyBytes, 'HKDF', false, ['deriveKey']);
@@ -130,12 +121,12 @@ const deriveKey = async (keyBytes) => {
 
 const encrypt = async (dataBytes, keyBytes) => {
     const key = await deriveKey(keyBytes);
-    const iv = rand.fill(new Uint8Array(12));
+    const iv = firstAid.randomFill(new Uint8Array(12));
     const ciphertext = await crypto.subtle.encrypt({name: 'AES-GCM', iv}, key, dataBytes);
     return {
         algo: 'AES-GCM',
-        ciphertext: base64.encode(ciphertext),
-        iv: base64.encode(iv),
+        ciphertext: firstAid.encodeBase64(ciphertext),
+        iv: firstAid.encodeBase64(iv),
     };
 };
 
@@ -144,8 +135,8 @@ const decrypt = async (dataObj, keyBytes) => {
         throw new TypeError('Unknown algorithm');
     }
     const key = await deriveKey(keyBytes);
-    const iv = base64.decode(dataObj.iv);
-    const ciphertext = base64.decode(dataObj.ciphertext);
+    const iv = firstAid.decodeBase64(dataObj.iv);
+    const ciphertext = firstAid.decodeBase64(dataObj.ciphertext);
     const resultBuffer = await crypto.subtle.decrypt({name: 'AES-GCM', iv}, key, ciphertext);
     return new Uint8Array(resultBuffer);
 };
@@ -157,9 +148,9 @@ const edSign = async (data, privateKey) => {
     const publicKey = await ed.getPublicKey(privateKey);
     return {
         algo: 'sign-ed25519',
-        data: base64.encode(data),
-        publicKey: base64.encode(publicKey),
-        signature: base64.encode(signature),
+        data: firstAid.encodeBase64(data),
+        publicKey: firstAid.encodeBase64(publicKey),
+        signature: firstAid.encodeBase64(signature),
     };
 };
 
@@ -167,11 +158,11 @@ const edVerify = async (dataObj) => {
     if ('sign-ed25519' != dataObj.algo) {
         throw new TypeError('Unknown algorithm');
     }
-    const data = base64.decode(dataObj.data);
+    const data = firstAid.decodeBase64(dataObj.data);
     const digestBuffer = await crypto.subtle.digest('SHA-256', data.buffer);
     const digest = new Uint8Array(digestBuffer);
-    const publicKey = base64.decode(dataObj.publicKey);
-    const signature = base64.decode(dataObj.signature);
+    const publicKey = firstAid.decodeBase64(dataObj.publicKey);
+    const signature = firstAid.decodeBase64(dataObj.signature);
     if (!ed.verify(signature, digest, publicKey)) {
         throw new TypeError('Broken signature!');
     }
@@ -180,7 +171,7 @@ const edVerify = async (dataObj) => {
 
 const x25519Generate = () => {
     const seed = new Uint8Array(32);
-    rand.fill(seed);
+    firstAid.randomFill(seed);
     const keyPair = x25519.generateKeyPair(seed);
     return {
         privateKey: new Uint8Array(keyPair.private.buffer, keyPair.private.byteOffset, keyPair.private.byteLength),
@@ -191,7 +182,7 @@ const x25519Generate = () => {
 const getX25519SharedUuid = async (privateKey, publicKey) => {
     const sharedSecret = x25519.sharedKey(privateKey, publicKey);
     const seed = await getFingerprint(sharedSecret);
-    return uuidUtils.fromBytes(seed);
+    return firstAid.getUuidFromBytes(seed);
 };
 
 const getTime = () => +new Date;
@@ -217,7 +208,7 @@ const getMyKeys = async () => {
     try {
         const base64PrivateKey = settings.privateKey;
         if (!base64PrivateKey) throw void 0;
-        privateKey = base64.decode(base64PrivateKey);
+        privateKey = firstAid.decodeBase64(base64PrivateKey);
         publicKey = await ed.getPublicKey(privateKey);
         fingerprint = await getFingerprint(publicKey);
         console.log('My pubkey restored');
@@ -226,7 +217,7 @@ const getMyKeys = async () => {
         privateKey = ed.utils.randomPrivateKey();
         publicKey = await ed.getPublicKey(privateKey);
         fingerprint = await getFingerprint(publicKey);
-        const base64PrivateKey = base64.encode(privateKey);
+        const base64PrivateKey = firstAid.encodeBase64(privateKey);
         settings.privateKey = base64PrivateKey;
     }
     const shortFingerprint = getShortFingerprint(fingerprint);
@@ -236,14 +227,14 @@ const getMyKeys = async () => {
 let myKeys;
 const setMyKeys = async (base64PrivateKey) => {
     try {
-        const privateKey = base64.decode(String(base64PrivateKey).trim());
+        const privateKey = firstAid.decodeBase64(String(base64PrivateKey).trim());
         if (32 != privateKey.length) throw void 0;
         const publicKey = await ed.getPublicKey(privateKey);
         const fingerprint = await getFingerprint(publicKey);
         const shortFingerprint = getShortFingerprint(fingerprint);
         myKeys = {privateKey, publicKey, fingerprint, shortFingerprint};
         settings.privateKey = base64PrivateKey;
-        const hexFingerprint = hexUtils.encode(fingerprint);
+        const hexFingerprint = firstAid.encodeHex(fingerprint);
         myFingerprintBox.value = hexFingerprint;
         identityBox.title = hexFingerprint;
         identityBox.textContent = hexFingerprint.substr(0, 8);
@@ -293,11 +284,11 @@ try {
 
 getMyKeys().then(keys => {
     myKeys = keys;
-    const fingerprint = hexUtils.encode(keys.fingerprint);
+    const fingerprint = firstAid.encodeHex(keys.fingerprint);
     identityBox.title = fingerprint;
     identityBox.textContent = fingerprint.substr(0, 8);
     myFingerprintBox.value = fingerprint;
-    privateKeyBox.value = base64.encode(myKeys.privateKey);
+    privateKeyBox.value = firstAid.encodeBase64(myKeys.privateKey);
 });
 
 let lastUpdate = 0;
@@ -329,7 +320,7 @@ const saveUsername = () => {
 
 const openRandomRoom = () => {
     console.log('openRandomRoom');
-    const token = uuidUtils.random();
+    const token = firstAid.getRandomUuid();
     setToken(token);
 };
 
@@ -362,7 +353,7 @@ const updateStatus = () => {
 
 const getChannelKey = () => {
     const token = getToken();
-    return utf8.encode(`channel_key_${token}`);
+    return firstAid.encodeString(`channel_key_${token}`);
 };
 
 const sendMessage = data => {
@@ -378,7 +369,7 @@ const sendCommand = (command, data) => {
     data.command = command;
     data.time = getTime();
     data.isActive = !document.hidden;
-    data.sessionId = session.id;
+    data.sessionId = menhera.session.id;
     const bytes = encodeObject(data);
     const channelKey = getChannelKey();
 
@@ -521,7 +512,7 @@ const inviteToRoom = (peerFingerprint, sessionId) => {
         name: getMyName(),
         peerFingerprint,
         peerSessionId: sessionId,
-        publicKey: base64.encode(publicKey),
+        publicKey: firstAid.encodeBase64(publicKey),
     });
 };
 
@@ -644,8 +635,8 @@ const processMessage = async ev => {
 
         const signedObj = JSON.parse(ev.data);
         const encrypted = await edVerify(signedObj);
-        const publicKey = base64.decode(signedObj.publicKey);
-        const fingerprint = hexUtils.encode(await getFingerprint(publicKey));
+        const publicKey = firstAid.decodeBase64(signedObj.publicKey);
+        const fingerprint = firstAid.encodeHex(await getFingerprint(publicKey));
         const encryptedObj = decodeObject(encrypted);
         const channelKey = getChannelKey();
         const dataBytes = await decrypt(encryptedObj, channelKey);
@@ -704,18 +695,18 @@ const processMessage = async ev => {
                     console.error('My keys unavailable yet!');
                     break;
                 }
-                const myFingerprint = hexUtils.encode(myKeys.fingerprint);
+                const myFingerprint = firstAid.encodeHex(myKeys.fingerprint);
                 if (myFingerprint != data.peerFingerprint) break;
-                if (session.id != data.peerSessionId) break;
+                if (menhera.session.id != data.peerSessionId) break;
                 console.log('Key exchange received');
                 const {privateKey, publicKey} = x25519Generate();
                 sendCommand('room_invite_reply', {
                     name: getMyName(),
                     peerFingerprint: fingerprint,
                     peerSessionId: sessionId,
-                    publicKey: base64.encode(publicKey),
+                    publicKey: firstAid.encodeBase64(publicKey),
                 });
-                const token = await getX25519SharedUuid(privateKey, base64.decode(data.publicKey));
+                const token = await getX25519SharedUuid(privateKey, firstAid.decodeBase64(data.publicKey));
                 showRoomInvite(fingerprint, name, token);
                 break;
             }
@@ -724,15 +715,15 @@ const processMessage = async ev => {
                     console.error('My keys unavailable yet!');
                     break;
                 }
-                const myFingerprint = hexUtils.encode(myKeys.fingerprint);
+                const myFingerprint = firstAid.encodeHex(myKeys.fingerprint);
                 if (myFingerprint != data.peerFingerprint) break;
-                if (session.id != data.peerSessionId) break;
+                if (menhera.session.id != data.peerSessionId) break;
                 if (!keyExchangeStates.has(fingerprint)) {
                     console.warn('Unknown key exchange reply');
                     break;
                 }
                 const state = keyExchangeStates.get(fingerprint);
-                const token = await getX25519SharedUuid(state.privateKey, base64.decode(data.publicKey));
+                const token = await getX25519SharedUuid(state.privateKey, firstAid.decodeBase64(data.publicKey));
                 hideModals();
                 setToken(token);
                 break;
@@ -787,9 +778,9 @@ const openSocket = (force) => {
 };
 
 const getChannelName = async (token) => {
-    const tokenBuffer = utf8.encode(token).buffer;
+    const tokenBuffer = firstAid.encodeString(token).buffer;
     const digestBuffer = await crypto.subtle.digest('SHA-256', tokenBuffer);
-    return hexUtils.encode(new Uint8Array(digestBuffer));
+    return firstAid.encodeHex(new Uint8Array(digestBuffer));
 };
 
 const readHash = async () => {
@@ -1012,7 +1003,7 @@ settings.addEventListener('settingschange', ev => {
             break;
         }
         case 'privateKey': {
-            privateKeyBox.value = base64.encode(myKeys.privateKey);
+            privateKeyBox.value = firstAid.encodeBase64(myKeys.privateKey);
         }
     }
 });
@@ -1022,7 +1013,7 @@ privateKeyBox.addEventListener('change', ev => {
 });
 
 privateKeyRegenerateButton.addEventListener('click', ev => {
-    privateKeyBox.value = base64.encode(ed.utils.randomPrivateKey());
+    privateKeyBox.value = firstAid.encodeBase64(ed.utils.randomPrivateKey());
     setMyKeys(privateKeyBox.value);
 });
 

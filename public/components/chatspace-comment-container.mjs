@@ -61,8 +61,8 @@ class ChatspaceCommentContainerElement extends HTMLElement {
             states.set(cacheKey, commentBox);
             this.append(commentBox);
         }
-        commentBox.receivedTime = +new Date;
         const commentBox = states.get(cacheKey);
+        commentBox.receivedTime = +new Date;
         commentBox.isFriend = fingerprint in friends;
         commentBox.userName = name || 'Anonymous';
         commentBox.caretOffset = caretOffset;

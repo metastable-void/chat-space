@@ -176,7 +176,7 @@ do {
 		encodeString: (str) => new Uint8Array(function* () {
 			for (const codePoint of firstAid.getCodePoints(str)) {
 				if (codePoint <= 0x7f) {
-					return codePoint;
+					yield codePoint;
 				} else if (codePoint <= 0x7ff) {
 					yield 0b11000000 | (codePoint >> 6);
 					yield 0b10000000 | (0b111111 & codePoint);

@@ -199,7 +199,7 @@ do {
 			let i = 0;
 			while (i < bytes.length) {
 				if (0 == (bytes[i] >> 7)) {
-					yield byte[i];
+					yield bytes[i];
 					i += 1;
 				} else if (0b110 == (bytes[i] >> 5)) {
 					if (0b10 != (bytes[i + 1] >> 6)) throw new TypeError('Invalid UTF-8 sequence');

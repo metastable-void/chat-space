@@ -94,9 +94,13 @@ userAgentBox.value = navigator.userAgent;
 
 const logotypeBox = document.querySelector('#logotype');
 
-/** @type {HTMLTextAreaElement} */
+/** @type {HTMLInputElement} */
 const storageUsageBox = document.querySelector('#storage-usage');
 storageUsageBox.value = '-- %';
+
+/** @type {HTMLInputElement} */
+const notificationPermissionBox = document.querySelector('#notification-permission');
+notificationPermissionBox.value = '--';
 
 
 menhera.session.state.addPropertyObserver('chatspace.modal.shown', (shownModal) => {
@@ -143,6 +147,11 @@ menhera.session.state.addPropertyObserver('chatspace.modal.invite.peer_name', (p
 menhera.session.state.addPropertyObserver('chatspace.modal.storagePercent', (storagePercent) => {
     if (!storagePercent) return;
     storageUsageBox.value = storagePercent + ' %';
+});
+
+menhera.session.state.addPropertyObserver('chatspace.modal.notificationPermission', (notificationPermission) => {
+    if (!notificationPermission) return;
+    notificationPermissionBox.value = notificationPermission;
 });
 
 menhera.session.state.addTopicReflector(menhera.session.getTopic('chatspace.showInvite'), (data, metadata) => {
@@ -216,16 +225,24 @@ menhera.session.state.addTopicReflector(menhera.session.getTopic('chatspace.show
     });
 });
 
-menhera.session.state.addTopicReflector(menhera.session.getTopic('chatspace.updateStorageStats'), async (data, metadata) => {
+menhera.session.state.addTopicReflector(menhera.session.getTopic('chatspace.updatePermissionStats'), async (data, metadata) => {
+    let storagePercent = '--';
+    let notificationPermission = 'Disabled';
     try {
         const estimate = await navigator.storage.estimate();
-        const storagePercent = (estimate.usage / estimate.quota).toFixed(2);
-        return Object.entries({
-            'chatspace.modal.storagePercent': storagePercent,
-        });
-    } catch (e) {
-        return [];
-    }
+        storagePercent = (estimate.usage / estimate.quota).toFixed(2);
+    } catch (e) {}
+    try {
+        if (Notification.permission == 'granted') {
+            notificationPermission = 'Enabled';
+        } else if (Notification.permission == 'denied') {
+            notificationPermission = 'Denied';
+        }
+    } catch (e) {}
+    return Object.entries({
+        'chatspace.modal.notificationPermission': notificationPermission,
+        'chatspace.modal.storagePercent': storagePercent,
+    });
 });
 
 menhera.session.getTopic('chatspace.requestNotification').addListener(async (data, metadata) => {
@@ -248,7 +265,7 @@ menhera.session.getTopic('chatspace.requestNotification').addListener(async (dat
     }
 });
 
-setInterval(() => menhera.session.triggerTopic('chatspace.updateStorageStats'), 3000);
+setInterval(() => menhera.session.triggerTopic('chatspace.updatePermissionStats'), 3000);
 
 inviteAcceptButton.addEventListener('click', ev => {
     menhera.session.getTopic('chatspace.acceptInvite').dispatchMessage(null);

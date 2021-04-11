@@ -41,7 +41,7 @@ class ChatspaceCommentContainerElement extends HTMLElement {
         if ('object' != typeof data || !data) {
             throw new TypeError('Invalid data');
         }
-        const friends = menhera.client.state.get('friends');
+        const friends = menhera.client.state.get('friends') || {};
         const fingerprint = data.fingerprint || '';
         const sessionId = data.sessionId || '';
         const isActive = !!data.isActive;

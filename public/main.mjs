@@ -33,7 +33,8 @@ if (location.hash.slice(1) == '' && location.href.endsWith('#')) {
 const settings = new Settings;
 
 menhera.client.state.addTopicReflector(menhera.session.getTopic('chatspace.legacy.saveFriends'), (data, metadata) => {
-    const friends = settings.friends;
+    let friends = settings.friends;
+    if (!friends) return [];
     return Object.entries({
         friends: friends,
     });
@@ -720,6 +721,7 @@ const getHash = () => {
 };
 
 let lastFlash = 0;
+let lastNotification;
 menhera.session.getTopic('chatspace.flash').addListener((data, metadata) => {
     const time = getTime();
     if (time - lastFlash < 5000) return;
@@ -728,7 +730,7 @@ menhera.session.getTopic('chatspace.flash').addListener((data, metadata) => {
     const {shortFingerprint, name} = data;
     if (document.hidden && window.Notification && Notification.permission == 'granted') {
         try {
-            new Notification('New message', {
+            lastNotification = new Notification('New message', {
                 body: `${name} (@${shortFingerprint}) on ${getHash()}`,
                 tag: 'new_message',
                 requireInteraction: true,
@@ -1021,6 +1023,9 @@ nameBox.addEventListener('change', ev => {
 document.addEventListener('visibilitychange', ev => {
     if (!document.hidden) {
         console.log('Page is now visible!');
+        if (lastNotification) {
+            lastNotification.close();
+        }
         openSocket();
     }
 });

@@ -695,7 +695,7 @@ menhera.session.getTopic('chatspace.inviteToRoom').addListener((data, metadata) 
 
 menhera.client.state.addTopicReflector(menhera.session.getTopic('chatspace.makeFriends'), (data, metadata) => {
     const {fingerprint, name} = data;
-    const friends = menhera.client.state.get('friends');
+    const friends = menhera.client.state.get('friends') || {};
     if (fingerprint in friends) {
         delete friends[fingerprint];
     } else {

@@ -24,6 +24,12 @@ if (location.pathname.endsWith('/index.html')) {
     history.replaceState({}, '', String(url));
 }
 
+if (location.hash == '#') {
+    const url = new URL(location.href);
+    url.hash = '';
+    history.replaceState({}, '', String(url));
+}
+
 const settings = new Settings;
 
 menhera.client.state.addTopicReflector(menhera.session.getTopic('chatspace.legacy.saveFriends'), (data, metadata) => {

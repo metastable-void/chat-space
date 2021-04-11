@@ -86,6 +86,10 @@ userAgentBox.value = navigator.userAgent;
 
 const logotypeBox = document.querySelector('#logotype');
 
+/** @type {HTMLTextAreaElement} */
+const storageUsageBox = document.querySelector('#storage-usage');
+storageUsageBox.value = '-- %';
+
 
 menhera.session.state.addPropertyObserver('chatspace.modal.shown', (shownModal) => {
     for (const box of overlayBox.children) {
@@ -128,6 +132,11 @@ menhera.session.state.addPropertyObserver('chatspace.modal.invite.peer_name', (p
     invitePeerNameBox.textContent = peerName;
 });
 
+menhera.session.state.addPropertyObserver('chatspace.modal.storagePercent', (storagePercent) => {
+    if (!storagePercent) return;
+    storageUsageBox.value = storagePercent + ' %';
+});
+
 menhera.session.state.addTopicReflector(menhera.session.getTopic('chatspace.showInvite'), (data, metadata) => {
     const {peerName, peerFingerprint, token} = data;
     const peerShortFingerprint = peerFingerprint.slice(0, 8);
@@ -147,17 +156,39 @@ menhera.session.getTopic('chatspace.acceptInvite').addListener((data, metadata) 
     });
 });
 
-menhera.session.state.addTopicReflector(menhera.session.getTopic('chatspace.hideModals'), (data, metadata) => {
-    navigator.storage.persisted().then((persisted) => {
-        if (persisted) return true;
-        return navigator.storage.persist();
-    }).then((persisted) => {
-        if (persisted) {
-            console.log('Persistent storage available');
+menhera.client.state.addTopicReflector(menhera.session.getTopic('chatspace.askPersistence'), async (data, metadata) => {
+    if (!navigator.storage || 'function' != typeof navigator.storage.persist) {
+        console.warn('Persistent storage not supported');
+        return [];
+    }
+
+    let persisted = false;
+    try {
+        if (await navigator.storage.persisted()) {
+            persisted = true;
+            console.log('Persistent storage already granted');
         } else {
-            console.log('Persistent storage not available');
+            persisted = await navigator.storage.persist();
+            if (persisted) {
+                console.log('Persistent storage just granted');
+            }
         }
+    } catch (e) {}
+    
+    if (!persisted) {
+        console.log('Persistent storage not available');
+    }
+
+    return Object.entries({
+        'persistenceDenied': !persisted,
     });
+});
+
+menhera.session.state.addTopicReflector(menhera.session.getTopic('chatspace.hideModals'), async (data, metadata) => {
+    if (!menhera.client.state.get('persistenceDenied')) {
+        menhera.session.triggerTopic('chatspace.askPersistence');
+    }
+    
     return Object.entries({
         'chatspace.modal.shown': null,
     });
@@ -172,6 +203,14 @@ menhera.session.state.addTopicReflector(menhera.session.getTopic('chatspace.show
 menhera.session.state.addTopicReflector(menhera.session.getTopic('chatspace.showSettings'), (data, metadata) => {
     return Object.entries({
         'chatspace.modal.shown': 'settings',
+    });
+});
+
+menhera.session.state.addTopicReflector(menhera.session.getTopic('chatspace.updateStorageStats'), async (data, metadata) => {
+    const estimate = await navigator.storage.estimate();
+    const storagePercent = (estimate.usage / estimate.quota).toFixed(2);
+    return Object.entries({
+        'chatspace.modal.storagePercent': storagePercent,
     });
 });
 

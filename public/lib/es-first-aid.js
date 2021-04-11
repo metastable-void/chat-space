@@ -99,6 +99,8 @@ do {
 
 		TypedArray: TypedArray,
 
+		isTypedArray: (value) => value instanceof firstAid.TypedArray,
+
 		MINUS_ZERO: -0,
 
 		/**
@@ -148,9 +150,9 @@ do {
 
 		isInt32: (n) => Object.is(n, 0 | n),
 
-		toInt: (n) => Math.trunc(n),
+		toInt: (n) => Math.min(Number.MAX_SAFE_INTEGER, Math.max(Number.MIN_SAFE_INTEGER, Math.trunc(n))),
 
-		isInt: (n) => n === Math.trunc(n),
+		isInt: (n) => n === Math.trunc(n) && Number.MAX_SAFE_INTEGER >= n && Number.MIN_SAFE_INTEGER <= n,
 
 		isNull: (a) => null === a,
 
@@ -404,6 +406,14 @@ do {
 		validateUuid: (uuid) => !!String(uuid).match(
 			/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 		),
+
+		callAsync: (callback, thisArg, ... args) => Promise.resolve().then(
+			() => Reflect.apply(callback, thisArg || null, args)
+		),
+
+		toPromise: async (value) => await value,
+
+		getTime: () => +new Date,
 	};
 
 	/* Module finalization */

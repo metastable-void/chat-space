@@ -61,6 +61,7 @@ const inviteAcceptButton = document.querySelector('#invite-accept-button');
 const inviteIgnoreButton = document.querySelector('#invite-ignore-button');
 const privateKeyRegenerateButton = document.querySelector('#private-key-regenerate-button');
 const settingsReloadButton = document.querySelector('#settings-reload-button');
+const askPersistenceButton = document.querySelector('#ask-persistence-button');
 
 const connectionStatus = document.querySelector('#connection');
 const mainBox = document.querySelector('#main');
@@ -223,6 +224,8 @@ setInterval(() => menhera.session.triggerTopic('chatspace.updateStorageStats'), 
 inviteAcceptButton.addEventListener('click', ev => {
     menhera.session.getTopic('chatspace.acceptInvite').dispatchMessage(null);
 });
+
+askPersistenceButton.addEventListener('click', ev => menhera.session.triggerTopic('chatspace.askPersistence'));
 
 
 const getFingerprint = async bytes => {

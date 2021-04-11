@@ -431,7 +431,7 @@ body.flash {
     justify-content: center;
     align-items: center;
     justify-items: center;
-    grid-template-columns: 75%;
+    grid-template-columns: 100%;
     grid-template-rows: 75%;
     overflow: hidden;
     z-index: 2;

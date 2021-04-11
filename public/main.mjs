@@ -207,12 +207,18 @@ menhera.session.state.addTopicReflector(menhera.session.getTopic('chatspace.show
 });
 
 menhera.session.state.addTopicReflector(menhera.session.getTopic('chatspace.updateStorageStats'), async (data, metadata) => {
-    const estimate = await navigator.storage.estimate();
-    const storagePercent = (estimate.usage / estimate.quota).toFixed(2);
-    return Object.entries({
-        'chatspace.modal.storagePercent': storagePercent,
-    });
+    try {
+        const estimate = await navigator.storage.estimate();
+        const storagePercent = (estimate.usage / estimate.quota).toFixed(2);
+        return Object.entries({
+            'chatspace.modal.storagePercent': storagePercent,
+        });
+    } catch (e) {
+        return [];
+    }
 });
+
+setInterval(() => menhera.session.triggerTopic('chatspace.updateStorageStats'), 3000);
 
 inviteAcceptButton.addEventListener('click', ev => {
     menhera.session.getTopic('chatspace.acceptInvite').dispatchMessage(null);

@@ -87,6 +87,7 @@ self.addEventListener('activate', ev => {
                 return caches.delete(key);
             }
         }));
+        await clients.claim();
     })());
 });
 

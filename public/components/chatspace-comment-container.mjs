@@ -60,7 +60,17 @@ class ChatspaceCommentContainerElement extends HTMLElement {
             commentBox.sessionId = sessionId;
             states.set(cacheKey, commentBox);
             this.append(commentBox);
+
+            commentBox.inviteButton.addEventListener('click', ev => menhera.session.getTopic('chatspace.inviteToRoom').dispatchMessage({
+                peerFingerprint: fingerprint,
+                sessionId,
+            }));
+            commentBox.friendButton.addEventListener('click', ev => menhera.session.getTopic('chatspace.makeFriends').dispatchMessage({
+                fingerprint,
+                name,
+            }));
         }
+
         const commentBox = states.get(cacheKey);
         commentBox.receivedTime = +new Date;
         commentBox.isFriend = fingerprint in friends;
@@ -68,14 +78,6 @@ class ChatspaceCommentContainerElement extends HTMLElement {
         commentBox.caretOffset = caretOffset;
         commentBox.text = text;
 
-        commentBox.inviteButton.addEventListener('click', ev => menhera.session.getTopic('chatspace.inviteToRoom').dispatchMessage({
-            peerFingerprint: fingerprint,
-            sessionId,
-        }));
-        commentBox.friendButton.addEventListener('click', ev => menhera.session.getTopic('chatspace.makeFriends').dispatchMessage({
-            fingerprint,
-            name,
-        }));
 
         if (text) {
             if (this.querySelectorAll('[slot="active"]').length < 1) {

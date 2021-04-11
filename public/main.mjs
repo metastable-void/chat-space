@@ -148,6 +148,16 @@ menhera.session.getTopic('chatspace.acceptInvite').addListener((data, metadata) 
 });
 
 menhera.session.state.addTopicReflector(menhera.session.getTopic('chatspace.hideModals'), (data, metadata) => {
+    navigator.storage.persisted().then((persisted) => {
+        if (persisted) return true;
+        return navigator.storage.persist();
+    }).then((persisted) => {
+        if (persisted) {
+            console.log('Persistent storage available');
+        } else {
+            console.log('Persistent storage not available');
+        }
+    });
     return Object.entries({
         'chatspace.modal.shown': null,
     });

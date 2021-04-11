@@ -79,7 +79,10 @@ class ChatspaceCommentContainerElement extends HTMLElement {
 
         if (text) {
             if (this.querySelectorAll('[slot="active"]').length < 1) {
-                menhera.session.getTopic('chatspace.flash').dispatchMessage(null);
+                menhera.session.triggerTopic('chatspace.flash', {
+                    name: commentBox.userName,
+                    shortFingerprint: commentBox.shortFingerprint,
+                });
             }
             commentBox.slot = 'active';
         } else if ('' == name || !isActive) {

@@ -703,12 +703,28 @@ let textMap = Object.create(null);
 const getOnlineCount = () => Reflect.ownKeys(textMap).filter(fingerprint => textMap[fingerprint].isActive).length;
 const getOnlineTotalCount = () => Reflect.ownKeys(textMap).length;
 
+const getHash = () => {
+    const hash = location.hash.slice(1);
+    if (!hash) {
+        return '(public)';
+    } else {
+        return '#' + hash;
+    }
+};
+
 let lastFlash = 0;
 menhera.session.getTopic('chatspace.flash').addListener((data, metadata) => {
     const time = getTime();
     if (time - lastFlash < 5000) return;
     lastFlash = time;
     console.log('flashing the screen...');
+    const {shortFingerprint, name} = data;
+    if (document.hidden) {
+        new Notification('New message', {
+            body: `${name} (@${shortFingerprint}) on ${getHash()}`,
+            tag: 'new_message',
+        });
+    }
     document.body.classList.add('flash');
     setTimeout(() => {
         document.body.classList.remove('flash');

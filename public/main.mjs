@@ -24,7 +24,7 @@ if (location.pathname.endsWith('/index.html')) {
     history.replaceState({}, '', String(url));
 }
 
-if (location.hash == '#') {
+if (location.hash.slice(1) == '' && location.href.endsWith('#')) {
     const url = new URL(location.href);
     url.hash = '';
     history.replaceState({}, '', String(url));

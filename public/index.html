@@ -75,7 +75,7 @@
 <h2>Settings</h2>
 <section>
 <h3>Your identity</h3>
-<p>Your fingerprint securely identifies your browser. This value is tied to your private key.</p>
+<p>Your fingerprint securely identifies your browser. This value is tied to your public key.</p>
 <div class="input-box">
 <label for="my-fingerprint">Fingerprint</label>
 <input id="my-fingerprint" type="text" readonly=""/>
@@ -83,7 +83,7 @@
 <p>Keep your private key secret and never share with anyone.</p>
 <details>
 <summary>Your private key</summary>
-<p>Changing your private key also changes your ID (fingerprint). Private keys must differ between different clients or collisions will occur.</p>
+<p>Changing your private key also changes your ID (fingerprint).</p>
 <div class="input-box">
 <label for="private-key">Private key</label>
 <input id="private-key" type="text" autocomplete="off" spellcheck="false" enterkeyhint="done" mozactionhint="done"/>
@@ -120,6 +120,7 @@
 <li>The top page of this app is the Public room, which has the empty room id <code>#</code>.</li>
 <li>You can create a new encrypted room with the (+) button.</li>
 <li>You need to know the room id (the string after '#') to access a chat room.</li>
+<li>You can push the add user icon in a message to add a user to your friends list. Messages from users in your friends list is marked with a badge icon.</li>
 <li>You can push the mail icon in a message to invite a user to a new private chat.</li>
 <li>When you use a room id, all conversations are end-to-end encrypted.</li>
 <li>Each device connected to a room is differentiated with a user id (the string after '@'). This string is tied to the user's public key and securely identifies each user.</li>

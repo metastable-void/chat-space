@@ -130,6 +130,7 @@ self.addEventListener('notificationclick', ev => {
         for (const client of clients) {
             if ((!url || url == client.url) && 'function' == typeof client.focus) {
                 await client.focus();
+                notification.close();
                 break;
             }
         }

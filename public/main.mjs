@@ -1050,9 +1050,6 @@ nameBox.addEventListener('change', ev => {
 document.addEventListener('visibilitychange', ev => {
     if (!document.hidden) {
         console.log('Page is now visible!');
-        if (lastNotification) {
-            lastNotification.close();
-        }
         openSocket();
     }
 });

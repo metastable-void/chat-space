@@ -323,7 +323,7 @@ export class State {
      * @param implementation {StorageImplementation?}
      */
     constructor(implementation) {
-        if (!implementation) {
+        if (!implementation || !(implementation instanceof StorageImplementation)) {
             implementation = new StorageImplementation;
         }
         stateImplementationMap.set(this, implementation);
@@ -373,6 +373,10 @@ export class Session {
     getTopic(topicName) {
         return new Topic(topicName, this.id);
     }
+
+    triggerTopic(topicName, data) {
+        this.getTopic(topicName).dispatchMessage(data || null);
+    }
 }
 
 export class Client {
@@ -385,6 +389,10 @@ export class Client {
     getTopic(topicName) {
         return new Topic(topicName, SESSION_ID_GLOBAL);
     }
+
+    triggerTopic(topicName, data) {
+        this.getTopic(topicName).dispatchMessage(data || null);
+    }
 }
 
 globalThis.menhera = {
@@ -392,4 +400,10 @@ globalThis.menhera = {
     clientId: getClientId(),
     session: new Session,
     client: new Client,
+    getSession(sessionId) {
+        if (sessionId == menhera.sessionId) {
+            return menhera.session;
+        }
+        return new Session(sessionId);
+    },
 };

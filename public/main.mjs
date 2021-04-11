@@ -822,8 +822,10 @@ const processMessage = async ev => {
                 if (cacheKey in textClearTimers) {
                     break;
                 }
+                const cachedToken = getToken();
                 textClearTimers[cacheKey] = setTimeout(() => {
                     delete textClearTimers[cacheKey];
+                    if (getToken() != cachedToken) return;
                     commentsBox.update({
                         fingerprint,
                         sessionId,

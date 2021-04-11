@@ -73,20 +73,7 @@
 </div>
 <div id="settingsBox" hidden="">
 <h2>Settings</h2>
-<h3>System information</h3>
-<div class="input-box">
-<label for="user-agent">User agent</label>
-<textarea id="user-agent" readonly=""></textarea>
-</div>
-<div class="input-box">
-<label for="storage-usage">Storage usage</label>
-<input id="storage-usage" type="text" readonly=""/>
-</div>
-<div class="input-box">
-<label for="notification-permission">Notification</label>
-<input id="notification-permission" type="text" readonly=""/>
-</div>
-<p><button id="ask-persistence-button">Enable persistent storage</button></p>
+<section>
 <h3>Your identity</h3>
 <p>Your fingerprint securely identifies your browser. This value is tied to your private key.</p>
 <div class="input-box">
@@ -103,6 +90,23 @@
 </div>
 <p><button id="private-key-regenerate-button">Regenerate</button></p>
 </details>
+</section>
+<section>
+<h3>System information</h3>
+<div class="input-box">
+<label for="user-agent">User agent</label>
+<textarea id="user-agent" readonly=""></textarea>
+</div>
+<div class="input-box">
+<label for="storage-usage">Storage usage</label>
+<input id="storage-usage" type="text" readonly=""/>
+</div>
+<div class="input-box">
+<label for="notification-permission">Notification</label>
+<input id="notification-permission" type="text" readonly=""/>
+</div>
+<p><button id="ask-persistence-button">Enable persistent storage</button></p>
+</section>
 <div class="action-buttons"><button id="settings-close-button">Ok</button><button id="settings-reload-button">Reload app</button></div>
 </div>
 <div id="helpBox" hidden="">

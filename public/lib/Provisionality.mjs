@@ -406,4 +406,5 @@ globalThis.menhera = {
         }
         return new Session(sessionId);
     },
+    [Symbol.toStringTag]: 'Menhera',
 };

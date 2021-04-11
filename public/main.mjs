@@ -239,6 +239,7 @@ menhera.session.getTopic('chatspace.requestNotification').addListener(async (dat
         if (permission == 'granted') {
             const notification = new Notification('Notification enabled!', {
                 body: 'You are in full control of which notification is shown.',
+                requireInteraction: false,
             });
         } else if (permission == 'denied') {
             console.log('Notification just denied by user');
@@ -730,6 +731,7 @@ menhera.session.getTopic('chatspace.flash').addListener((data, metadata) => {
             new Notification('New message', {
                 body: `${name} (@${shortFingerprint}) on ${getHash()}`,
                 tag: 'new_message',
+                requireInteraction: true,
             });
         } catch (e) {}
     }

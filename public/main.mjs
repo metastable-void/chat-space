@@ -189,6 +189,8 @@ menhera.session.state.addTopicReflector(menhera.session.getTopic('chatspace.hide
     if (!menhera.client.state.get('persistenceDenied')) {
         menhera.session.triggerTopic('chatspace.askPersistence');
     }
+
+    menhera.session.triggerTopic('chatspace.requestNotification');
     
     return Object.entries({
         'chatspace.modal.shown': null,
@@ -216,6 +218,25 @@ menhera.session.state.addTopicReflector(menhera.session.getTopic('chatspace.upda
         });
     } catch (e) {
         return [];
+    }
+});
+
+menhera.session.getTopic('chatspace.requestNotification').addListener(async (data, metadata) => {
+    if (!window.Notification) {
+        console.warn('Notification not supported');
+    } else if (Notification.permission == 'granted') {
+        console.log('Notification already granted');
+    } else if (Notification.permission == 'denied') {
+        console.log('Notification already denied by user');
+    } else {
+        const permission = await Notification.requestPermission();
+        if (permission == 'granted') {
+            const notification = new Notification('Notification enabled!', {
+                body: 'You are in full control of which notification is shown.',
+            });
+        } else if (permission == 'denied') {
+            console.log('Notification just denied by user');
+        }
     }
 });
 

@@ -719,11 +719,13 @@ menhera.session.getTopic('chatspace.flash').addListener((data, metadata) => {
     lastFlash = time;
     console.log('flashing the screen...');
     const {shortFingerprint, name} = data;
-    if (document.hidden) {
-        new Notification('New message', {
-            body: `${name} (@${shortFingerprint}) on ${getHash()}`,
-            tag: 'new_message',
-        });
+    if (document.hidden && window.Notification && Notification.permission == 'granted') {
+        try {
+            new Notification('New message', {
+                body: `${name} (@${shortFingerprint}) on ${getHash()}`,
+                tag: 'new_message',
+            });
+        } catch (e) {}
     }
     document.body.classList.add('flash');
     setTimeout(() => {

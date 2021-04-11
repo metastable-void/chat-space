@@ -112,3 +112,26 @@ self.addEventListener('fetch', ev => {
         }
     })(ev.request));
 });
+
+self.addEventListener('notificationclick', ev => {
+    ev.waitUntil((async (notification) => {
+        console.log('notificationclick', {
+            title: notification.title,
+            tag: notification.tag,
+            body: notification.body,
+            data: notification.data,
+        });
+        const data = notification.data || {};
+        const url = data.url || '';
+        const clients = await clients.matchAll({
+            includeUncontrolled: true,
+            type: 'window',
+        });
+        for (const client of clients) {
+            if ((!url || url == client.url) && 'function' == typeof client.focus) {
+                await client.focus();
+                break;
+            }
+        }
+    })(ev.notification));
+});

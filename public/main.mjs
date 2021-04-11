@@ -10,9 +10,12 @@ import '/lib/Provisionality.mjs';
 const VISITED_ROOMS_LIST_LENGTH = 10;
 const HISTORY_BUFFER_LENGTH = 10;
 
+/** @type {ServiceWorkerRegistration} */
+let serviceWorkerRegistration;
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js', {scope: '/'}).then(reg => {
         console.log('ServiceWorker registered:', reg);
+        serviceWorkerRegistration = reg;
     }).catch(e => {
         console.error('ServiceWorker registration failed:', e);
     });
@@ -738,21 +741,26 @@ const getHash = () => {
 };
 
 let lastFlash = 0;
-let lastNotification;
-menhera.session.getTopic('chatspace.flash').addListener((data, metadata) => {
+menhera.session.getTopic('chatspace.flash').addListener(async (data, metadata) => {
     const time = getTime();
     if (time - lastFlash < 5000) return;
     lastFlash = time;
     console.log('flashing the screen...');
     const {shortFingerprint, name} = data;
-    if (document.hidden && window.Notification && Notification.permission == 'granted') {
+    if (document.hidden && window.Notification && Notification.permission == 'granted' && serviceWorkerRegistration) {
         try {
-            lastNotification = new Notification('New message', {
+            await serviceWorkerRegistration.showNotification('New message', {
                 body: `${name} (@${shortFingerprint}) on ${getHash()}`,
                 tag: 'new_message',
                 requireInteraction: true,
+                data: {
+                    roomToken: getToken(),
+                    url: location.href,
+                },
             });
-        } catch (e) {}
+        } catch (e) {
+            console.error(e);
+        }
     }
     document.body.classList.add('flash');
     setTimeout(() => {

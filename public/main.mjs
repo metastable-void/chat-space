@@ -51,6 +51,7 @@ if ('serviceWorker' in navigator) {
             case 'sw_hello': {
                 clientId = data.clientId;
                 console.log(`Learned: my clientId=${clientId}`);
+                console.log('Current ServiceWorker clients:', data.clients);
                 break;
             }
 

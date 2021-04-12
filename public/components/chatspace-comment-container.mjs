@@ -60,6 +60,11 @@ class ChatspaceCommentContainerElement extends HTMLElement {
             commentBox.sessionId = sessionId;
             states.set(cacheKey, commentBox);
             this.append(commentBox);
+            commentBox.classList.add('fade-in');
+            commentBox.classList.add('fade-in-start');
+            setTimeout(() => {
+                commentBox.classList.remove('fade-in-start');
+            }, 50);
 
             commentBox.inviteButton.addEventListener('click', ev => menhera.session.getTopic('chatspace.inviteToRoom').dispatchMessage({
                 peerFingerprint: fingerprint,

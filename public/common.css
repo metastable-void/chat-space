@@ -119,6 +119,10 @@ details, summary {
     display: none;
 }
 
+.transparent {
+    opacity: 0;
+}
+
 .input-box {
     display: grid;
     grid-template-columns: max-content 1fr;

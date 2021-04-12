@@ -10,3 +10,11 @@
 #comments-idle {
     opacity: .75;
 }
+
+::slotted(.fade-in) {
+    transition: opacity ease-in .1s;
+}
+
+::slotted(.fade-in-start) {
+    opacity: 0;
+}

@@ -146,6 +146,13 @@ storageUsageBox.value = '-- %';
 const notificationPermissionBox = document.querySelector('#notification-permission');
 notificationPermissionBox.value = '--';
 
+try {
+    document.querySelector('#client-id').value = menhera.client.id;
+    document.querySelector('#session-id').value = menhera.session.id;
+} catch (e) {
+    console.error(e);
+}
+
 
 menhera.session.state.addPropertyObserver('chatspace.modal.shown', (shownModal) => {
     for (const box of overlayBox.children) {

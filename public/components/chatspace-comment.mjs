@@ -58,14 +58,17 @@ class ChatspaceCommentElement extends HTMLElement {
             let entityTextContainer;
             try {
                 const anchor = document.createElement('a');
+                anchor.classList.add('entity');
                 if (match[2]) {
                     // hashtag
                     anchor.href = new URL(match[2], location.href).toString();
+                    anchor.classList.add('hashtag');
                 } else if (match[3]) {
                     // link
                     anchor.href = new URL(match[3]).toString();
                     anchor.rel = 'nofollow';
                     anchor.target = '_blank';
+                    anchor.classList.add('external-link');
                 } else {
                     throw 'this should not happen';
                 }
@@ -94,7 +97,7 @@ class ChatspaceCommentElement extends HTMLElement {
         } else {
             container.append(text.slice(index, text.length));
         }
-        if (0 < caretOffset && caretOffset == text.length) {
+        if (index < caretOffset && caretOffset == text.length) {
             container.append(createCaretMark());
         }
     }

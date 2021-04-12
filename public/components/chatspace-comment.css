@@ -96,12 +96,13 @@
     display: inline-block;
     inline-size: .125rem;
     overflow: hidden;
-    text-indent: -10em;
     background-color: var(--theme-accent-color);
     color: transparent;
     vertical-align: text-top;
+    word-break: keep-all;
+    white-space: nowrap;
 }
 
 .caret-mark::before {
-    content: '*';
+    content: '\2060';
 }

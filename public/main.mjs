@@ -22,23 +22,10 @@ let clientId;
 const newServiceWorkerCallback = (sw) => {
     if (sw == activeServiceWorker) return;
     activeServiceWorker = sw;
+    console.log('New ServiceWorker:', sw);
     sw.postMessage({
         command: 'client_hello',
         sessionId: menhera.session.id,
-    });
-    sw.addEventListener('message', ev => {
-        const data = ev.data || {};
-        switch (data.command) {
-            case 'sw_hello': {
-                clientId = data.clientId;
-                console.log(`Learned: my clientId=${clientId}`);
-                break;
-            }
-
-            default: {
-                console.warn('Unknown command received');
-            }
-        }
     });
 };
 
@@ -56,6 +43,21 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.addEventListener('controllerchange', ev => {
         if (!navigator.serviceWorker.controller) return;
         newServiceWorkerCallback(navigator.serviceWorker.controller);
+    });
+    navigator.serviceWorker.addEventListener('message', ev => {
+        const data = ev.data || {};
+        console.log('Message received from ServiceWorker:', ev.source);
+        switch (data.command) {
+            case 'sw_hello': {
+                clientId = data.clientId;
+                console.log(`Learned: my clientId=${clientId}`);
+                break;
+            }
+
+            default: {
+                console.warn('Unknown command received');
+            }
+        }
     });
 }
 

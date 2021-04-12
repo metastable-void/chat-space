@@ -108,8 +108,11 @@ class ChatspaceCommentElement extends HTMLElement {
     set caretOffset(offset) {
         const shadow = shadowMap.get(this);
         const element = shadow.querySelector('#comment-text');
-        element.dataset.caretOffset = '' + (0 | offset);
-        this.renderText();
+        const caretOffset = 0 | offset;
+        if (caretOffset !== this.caretOffset) {
+            element.dataset.caretOffset = String(caretOffset);
+            this.renderText();
+        }
     }
 
     get text() {
@@ -121,8 +124,11 @@ class ChatspaceCommentElement extends HTMLElement {
     set text(str) {
         const shadow = shadowMap.get(this);
         const element = shadow.querySelector('#comment-text');
-        element.dataset.text = str;
-        this.renderText();
+        const text = String(str || '');
+        if (text !== this.text) {
+            element.dataset.text = text;
+            this.renderText();
+        }
     }
 
     get userName() {

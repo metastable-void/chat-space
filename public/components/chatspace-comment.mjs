@@ -94,7 +94,7 @@ class ChatspaceCommentElement extends HTMLElement {
         } else {
             container.append(text.slice(index, text.length));
         }
-        if (caretOffset == text.length) {
+        if (0 < caretOffset && caretOffset == text.length) {
             container.append(createCaretMark());
         }
     }

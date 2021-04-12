@@ -83,7 +83,7 @@ self.addEventListener('activate', ev => {
         const keys = await caches.keys();
         await Promise.all(keys.map(async key => {
             if (!CURRENT_CACHES.has(key)) {
-                console.log('Clearing unused cache:', key);
+                console.log('sw: Clearing unused cache:', key);
                 return caches.delete(key);
             }
         }));
@@ -115,7 +115,7 @@ self.addEventListener('fetch', ev => {
 
 self.addEventListener('notificationclick', ev => {
     ev.waitUntil((async (notification) => {
-        console.log('notificationclick', {
+        console.log('sw: notificationclick', {
             title: notification.title,
             tag: notification.tag,
             body: notification.body,
@@ -136,3 +136,22 @@ self.addEventListener('notificationclick', ev => {
         }
     })(ev.notification));
 });
+
+self.addEventListener('message', ev => void ev.waitUntil((async () => {
+    console.log('sw: message received:', ev.data);
+    const data = ev.data || {};
+    switch (data.command) {
+        case 'client_hello': {
+            console.log(`sw: client(${ev.source.id}) = session(${data.sessionId})`);
+            ev.source.postMessage({
+                command: 'sw_hello',
+                clientId: ev.source.id,
+            });
+            break;
+        }
+
+        default: {
+            console.warn('sw: Unknown command received');
+        }
+    }
+})()));

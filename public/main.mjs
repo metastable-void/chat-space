@@ -12,12 +12,50 @@ const HISTORY_BUFFER_LENGTH = 10;
 
 /** @type {ServiceWorkerRegistration} */
 let serviceWorkerRegistration;
+
+/** @type {ServiceWorker} */
+let activeServiceWorker;
+
+let clientId;
+
+/** @param {ServiceWorker} sw */
+const newServiceWorkerCallback = (sw) => {
+    if (sw == activeServiceWorker) return;
+    activeServiceWorker = sw;
+    sw.postMessage({
+        command: 'client_hello',
+        sessionId: menhera.session.id,
+    });
+    sw.addEventListener('message', ev => {
+        const data = ev.data || {};
+        switch (data.command) {
+            case 'sw_hello': {
+                clientId = data.clientId;
+                console.log(`Learned: my clientId=${clientId}`);
+                break;
+            }
+
+            default: {
+                console.warn('Unknown command received');
+            }
+        }
+    });
+};
+
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js', {scope: '/'}).then(reg => {
         console.log('ServiceWorker registered:', reg);
         serviceWorkerRegistration = reg;
     }).catch(e => {
         console.error('ServiceWorker registration failed:', e);
+    });
+    navigator.serviceWorker.ready.then(reg => {
+        if (!reg.active) return;
+        newServiceWorkerCallback(reg.active);
+    });
+    navigator.serviceWorker.addEventListener('controllerchange', ev => {
+        if (!navigator.serviceWorker.controller) return;
+        newServiceWorkerCallback(navigator.serviceWorker.controller);
     });
 }
 

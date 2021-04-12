@@ -34,35 +34,36 @@ class ChatspaceCommentElement extends HTMLElement {
         const container = shadow.querySelector('#comment-text');
         const text = this.text;
         const caretOffset = this.caretOffset;
-        const regex = /(?<=^|[^\p{L}\p{N}])(?:(#[-_.\p{L}\p{N}]+)|(https?:\/\/(?:[\p{L}\p{N}](?:[-\p{L}\p{N}]*[\p{L}\p{N}])?(?:\.[\p{L}\p{N}](?:[-\p{L}\p{N}]*[\p{L}\p{N}])?)*|\[[:0-9a-f]+\])(?::[0-9]{1,5})?(?:\/[-_!@$%&=+|~/.,\[\]:;\p{L}\p{N}]*)?(?:\?[-_!@$%&=+|~/.,\[\]:;?\p{L}\p{N}]*)?(?:#[-_!@$%&=+|~/.,\[\]:;?#\p{L}\p{N}]*)?))/gui;
+        const regex = /(^|[^\p{L}\p{N}])(?:(#[-_.\p{L}\p{N}]+)|(https?:\/\/(?:[\p{L}\p{N}](?:[-\p{L}\p{N}]*[\p{L}\p{N}])?(?:\.[\p{L}\p{N}](?:[-\p{L}\p{N}]*[\p{L}\p{N}])?)*|\[[:0-9a-f]+\])(?::[0-9]{1,5})?(?:\/[-_!@$%&=+|~/.,\[\]:;\p{L}\p{N}]*)?(?:\?[-_!@$%&=+|~/.,\[\]:;?\p{L}\p{N}]*)?(?:#[-_!@$%&=+|~/.,\[\]:;?#\p{L}\p{N}]*)?))/gui;
         let index = 0;
         container.textContent = '';
         if (0 == caretOffset) {
             container.append(createCaretMark());
         }
         for (const match of text.matchAll(regex)) {
+            const startIndex = match.index + String(match[1] || '').length;
             const endIndex = match.index + match[0].length;
-            if (index < match.index) {
-                if (index < caretOffset && caretOffset < match.index) {
+            if (index < startIndex) {
+                if (index < caretOffset && caretOffset < startIndex) {
                     container.append(text.slice(index, caretOffset));
                     container.append(createCaretMark());
-                    container.append(text.slice(caretOffset, match.index));
+                    container.append(text.slice(caretOffset, startIndex));
                 } else {
-                    container.append(text.slice(index, match.index));
+                    container.append(text.slice(index, startIndex));
                 }
             }
-            if (caretOffset == match.index) {
+            if (caretOffset == startIndex) {
                 container.append(createCaretMark());
             }
             let entityTextContainer;
             try {
                 const anchor = document.createElement('a');
-                if (match[1]) {
+                if (match[2]) {
                     // hashtag
-                    anchor.href = new URL(match[1], location.href).toString();
-                } else if (match[2]) {
+                    anchor.href = new URL(match[2], location.href).toString();
+                } else if (match[3]) {
                     // link
-                    anchor.href = new URL(match[2]).toString();
+                    anchor.href = new URL(match[3]).toString();
                     anchor.rel = 'nofollow';
                     anchor.target = '_blank';
                 } else {
@@ -73,12 +74,12 @@ class ChatspaceCommentElement extends HTMLElement {
             } catch (e) {
                 entityTextContainer = container;
             } finally {
-                if (match.index < caretOffset && caretOffset < endIndex) {
-                    entityTextContainer.append(text.slice(match.index, caretOffset));
+                if (startIndex < caretOffset && caretOffset < endIndex) {
+                    entityTextContainer.append(text.slice(startIndex, caretOffset));
                     entityTextContainer.append(createCaretMark());
                     entityTextContainer.append(text.slice(caretOffset, endIndex));
                 } else {
-                    entityTextContainer.append(text.slice(match.index, endIndex));
+                    entityTextContainer.append(text.slice(startIndex, endIndex));
                 }
             }
             if (endIndex == caretOffset) {

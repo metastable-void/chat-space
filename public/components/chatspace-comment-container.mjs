@@ -91,13 +91,19 @@ class ChatspaceCommentContainerElement extends HTMLElement {
                 });
             }
             commentBox.slot = 'active';
-            delete commentBox.dataset.transparent;
+            setTimeout(() => {
+                if ('' == commentBox.slot) return;
+                delete commentBox.dataset.transparent;
+            }, 50);
         } else if ('' == name || !isActive) {
             commentBox.slot = '';
             commentBox.dataset.transparent = '1';
         } else {
             commentBox.slot = 'idle';
-            delete commentBox.dataset.transparent;
+            setTimeout(() => {
+                if ('' == commentBox.slot) return;
+                delete commentBox.dataset.transparent;
+            }, 50);
         }
         menhera.session.getTopic('chatspace.updateOnlineCount').dispatchMessage({
             onlineCount: this.onlineCount,

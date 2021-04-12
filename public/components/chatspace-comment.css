@@ -92,7 +92,7 @@
     content: ': ';
 }
 
-#comment-text-caret-mark:not([hidden]) {
+.caret-mark:not([hidden]) {
     display: inline-block;
     inline-size: .125rem;
     overflow: hidden;
@@ -102,6 +102,6 @@
     vertical-align: text-top;
 }
 
-#comment-text-caret-mark::before {
+.caret-mark::before {
     content: '*';
 }

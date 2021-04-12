@@ -1,4 +1,20 @@
 
+const createCaretMark = () => {
+    const element = document.createElement('span');
+    element.classList.add('caret-mark');
+    return element;
+};
+
+/**
+ * 
+ * @param container {HTMLElement}
+ * @param text {string}
+ * @param caretOffset {number}
+ */
+const setParsedText = (container, text, caretOffset) => {
+    
+};
+
 const shadowMap = new WeakMap;
 class ChatspaceCommentElement extends HTMLElement {
     constructor() {
@@ -15,19 +31,70 @@ class ChatspaceCommentElement extends HTMLElement {
 
     renderText() {
         const shadow = shadowMap.get(this);
-        const caretMark = shadow.querySelector('#comment-text-caret-mark');
-        const textBefore = shadow.querySelector('#comment-text-before-caret');
-        const textAfter = shadow.querySelector('#comment-text-after-caret');
+        const container = shadow.querySelector('#comment-text');
         const text = this.text;
         const caretOffset = this.caretOffset;
-        if (caretOffset < 0) {
-            textAfter.textContent = '';
-            textBefore.textContent = text;
-            caretMark.hidden = true;
+        const regex = /(?<=^|[^\p{L}\p{N}])(?:(#[-_.\p{L}\p{N}]+)|(https?:\/\/(?:[\p{L}\p{N}](?:[-\p{L}\p{N}]*[\p{L}\p{N}])?(?:\.[\p{L}\p{N}](?:[-\p{L}\p{N}]*[\p{L}\p{N}])?)*|\[[:0-9a-f]+\])(?::[0-9]{1,5})?(?:\/[-_!@$%&=+|~/.,\[\]:;\p{L}\p{N}]*)?(?:\?[-_!@$%&=+|~/.,\[\]:;?\p{L}\p{N}]*)?(?:#[-_!@$%&=+|~/.,\[\]:;?#\p{L}\p{N}]*)?))/gui;
+        let index = 0;
+        container.textContent = '';
+        if (0 == caretOffset) {
+            container.append(createCaretMark());
+        }
+        for (const match of text.matchAll(regex)) {
+            const endIndex = match.index + match[0].length;
+            if (index < match.index) {
+                if (index < caretOffset && caretOffset < match.index) {
+                    container.append(text.slice(index, caretOffset));
+                    container.append(createCaretMark());
+                    container.append(text.slice(caretOffset, match.index));
+                } else {
+                    container.append(text.slice(index, match.index));
+                }
+            }
+            if (caretOffset == match.index) {
+                container.append(createCaretMark());
+            }
+            let entityTextContainer;
+            try {
+                const anchor = document.createElement('a');
+                if (match[1]) {
+                    // hashtag
+                    anchor.href = new URL(match[1], location.href).toString();
+                } else if (match[2]) {
+                    // link
+                    anchor.href = new URL(match[2]).toString();
+                    anchor.rel = 'nofollow';
+                    anchor.target = '_blank';
+                } else {
+                    throw 'this should not happen';
+                }
+                container.append(anchor);
+                entityTextContainer = anchor;
+            } catch (e) {
+                entityTextContainer = container;
+            } finally {
+                if (match.index < caretOffset && caretOffset < endIndex) {
+                    entityTextContainer.append(text.slice(match.index, caretOffset));
+                    entityTextContainer.append(createCaretMark());
+                    entityTextContainer.append(text.slice(caretOffset, endIndex));
+                } else {
+                    entityTextContainer.append(text.slice(match.index, endIndex));
+                }
+            }
+            if (endIndex == caretOffset) {
+                container.append(createCaretMark());
+            }
+            index = endIndex;
+        }
+        if (index < caretOffset && caretOffset < text.length) {
+            container.append(text.slice(index, caretOffset));
+            container.append(createCaretMark());
+            container.append(text.slice(caretOffset, text.length));
         } else {
-            caretMark.hidden = false;
-            textBefore.textContent = text.slice(0, caretOffset);
-            textAfter.textContent = text.slice(caretOffset);
+            container.append(text.slice(index, text.length));
+        }
+        if (caretOffset == text.length) {
+            container.append(createCaretMark());
         }
     }
 
@@ -47,7 +114,7 @@ class ChatspaceCommentElement extends HTMLElement {
     get text() {
         const shadow = shadowMap.get(this);
         const element = shadow.querySelector('#comment-text');
-        return element.dataset.text || '';
+        return String(element.dataset.text || '');
     }
 
     set text(str) {

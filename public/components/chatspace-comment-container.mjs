@@ -83,7 +83,6 @@ class ChatspaceCommentContainerElement extends HTMLElement {
         commentBox.caretOffset = caretOffset;
         commentBox.text = text;
 
-
         if (text) {
             if (this.querySelectorAll('[slot="active"]').length < 1) {
                 menhera.session.triggerTopic('chatspace.flash', {
@@ -92,10 +91,13 @@ class ChatspaceCommentContainerElement extends HTMLElement {
                 });
             }
             commentBox.slot = 'active';
+            delete commentBox.dataset.transparent;
         } else if ('' == name || !isActive) {
             commentBox.slot = '';
+            commentBox.dataset.transparent = '1';
         } else {
             commentBox.slot = 'idle';
+            delete commentBox.dataset.transparent;
         }
         menhera.session.getTopic('chatspace.updateOnlineCount').dispatchMessage({
             onlineCount: this.onlineCount,

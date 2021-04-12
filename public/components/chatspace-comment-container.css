@@ -15,6 +15,6 @@
     transition: opacity ease-in .25s;
 }
 
-::slotted(.fade-in-start) {
+::slotted(.fade-in-start), ::slotted([data-transparent]) {
     opacity: 0;
 }

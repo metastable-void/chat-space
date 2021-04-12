@@ -131,6 +131,10 @@ details, summary {
     background-color: var(--theme-input-background-color);
 }
 
+.input-box + .input-box {
+    border-block-start: none;
+}
+
 .input-box > label {
     grid-column: 1;
     grid-row: 1;

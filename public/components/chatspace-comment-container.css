@@ -12,7 +12,7 @@
 }
 
 ::slotted(.fade-in) {
-    transition: opacity ease-in .1s;
+    transition: opacity ease-in .25s;
 }
 
 ::slotted(.fade-in-start) {

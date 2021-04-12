@@ -143,27 +143,33 @@ self.addEventListener('message', ev => void ev.waitUntil((async () => {
     switch (data.command) {
         case 'client_hello': {
             console.log(`sw: client(${ev.source.id}) = session(${data.sessionId})`);
-            const allClients = await clients.matchAll({
-                includeUncontrolled: true,
-                type: 'any',
-            });
+            
             const workers = [];
             const sharedWorkers = [];
             const windows = [];
-            for (const client of allClients) {
-                const clientData = {
-                    id: client.id,
-                    url: client.url,
-                    type: client.type,
-                };
-                if (client.type == 'window') {
-                    windows.push(clientData);
-                } else if (client.type == 'worker') {
-                    workers.push(clientData);
-                } else if (client.type == 'sharedworker') {
-                    sharedWorkers.push(clientData);
+
+            try {
+                const allClients = await clients.matchAll({
+                    includeUncontrolled: true,
+                    type: 'all',
+                });
+                
+                for (const client of allClients) {
+                    const clientData = {
+                        id: client.id,
+                        url: client.url,
+                        type: client.type,
+                    };
+                    if (client.type == 'window') {
+                        windows.push(clientData);
+                    } else if (client.type == 'worker') {
+                        workers.push(clientData);
+                    } else if (client.type == 'sharedworker') {
+                        sharedWorkers.push(clientData);
+                    }
                 }
-            }
+            } catch (e) {}
+            
             ev.source.postMessage({
                 command: 'sw_hello',
                 clientId: ev.source.id,

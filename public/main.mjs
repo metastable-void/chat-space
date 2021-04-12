@@ -16,7 +16,7 @@ let serviceWorkerRegistration;
 /** @type {ServiceWorker} */
 let activeServiceWorker;
 
-let clientId;
+let swClientId;
 
 /** @param {ServiceWorker} sw */
 const newServiceWorkerCallback = (sw) => {
@@ -49,8 +49,8 @@ if ('serviceWorker' in navigator) {
         console.log('Message received from ServiceWorker:', ev.source);
         switch (data.command) {
             case 'sw_hello': {
-                clientId = data.clientId;
-                console.log(`Learned: my clientId=${clientId}`);
+                swClientId = data.clientId;
+                console.log(`Learned: my clientId=${swClientId}`);
                 console.log('Current ServiceWorker clients:', data.clients);
                 break;
             }

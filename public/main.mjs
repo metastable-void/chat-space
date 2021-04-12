@@ -18,6 +18,14 @@ let activeServiceWorker;
 
 let swClientId;
 
+// watchdog
+let scriptCompleted = false;
+window.addEventListener('error', ev => {
+    if (!scriptCompleted) {
+        setTimeout(() => location.reload(), 10000);
+    }
+});
+
 /** @param {ServiceWorker} sw */
 const newServiceWorkerCallback = (sw) => {
     if (sw == activeServiceWorker) return;
@@ -1221,3 +1229,5 @@ if ('boolean' == typeof navigator.onLine) {
 }
 
 console.log('Online status:', document.documentElement.dataset.onlineStatus);
+
+scriptCompleted = true;

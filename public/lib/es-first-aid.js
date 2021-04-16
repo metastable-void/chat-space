@@ -241,6 +241,11 @@ do {
 			return bytes;
 		},
 
+		getCopyBuffer: (buffer) => {
+			const bytes = firstAid.toUint8Array(buffer);
+			return bytes.slice(0).buffer;
+		},
+
 		/**
 		 * Encodes bytes into a hex string.
 		 * @param {Uint8Array | ArrayBuffer | DataView} buffer 
@@ -414,6 +419,10 @@ do {
 		toPromise: async (value) => await value,
 
 		getTime: () => +new Date,
+
+		encodeJson: (obj) => firstAid.encodeString(JSON.stringify(obj)),
+
+		decodeJson: (bytes) => JSON.parse(firstAid.decodeString(bytes)),
 	};
 
 	/* Module finalization */

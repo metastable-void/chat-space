@@ -441,7 +441,7 @@ const getTime = () => +new Date;
 const getToken = () => decodeURIComponent(location.hash.slice(1));
 const setToken = (token) => {
     const hash = encodeURIComponent(token);
-    if (!hash && '' != location.hash) {
+    if (!hash) {
         location.hash = '';
     } else if (location.hash.slice(1) != hash) {
         location.hash = '#' + hash;

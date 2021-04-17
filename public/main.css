@@ -101,7 +101,6 @@ label[for="token"] {
     justify-self: start;
     inline-size: 20%;
     transition: inline-size .5s ease;
-    border-inline-end: solid .125rem;
     z-index: 2;
 }
 

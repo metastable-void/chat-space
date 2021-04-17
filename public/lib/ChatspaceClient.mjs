@@ -1,6 +1,6 @@
 
 export class ChatspaceClient {
-    constructor() {
+    constructor(privateKey) {
         //
     }
 

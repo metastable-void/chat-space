@@ -106,6 +106,8 @@ label[for="token"] {
 
 #token:focus {
     inline-size: 20%;
+    color: var(--theme-light-text-color);
+    background-color: var(--theme-light-input-background-color);
 }
 
 #room-name {

@@ -102,12 +102,14 @@ label[for="token"] {
     inline-size: 20%;
     transition: inline-size .5s ease;
     border-inline-end: solid .125rem;
+    z-index: 2;
 }
 
 #token:focus {
     inline-size: 80%;
     color: var(--theme-light-text-color);
     background-color: var(--theme-light-input-background-color);
+    box-shadow: inset 0 0 .25rem #ccc;
 }
 
 #room-name {
@@ -461,7 +463,7 @@ label[for="token"] {
     grid-template-columns: 100%;
     grid-template-rows: 75%;
     overflow: hidden;
-    z-index: 2;
+    z-index: 20;
     -webkit-backdrop-filter: blur(.5rem);
     backdrop-filter: blur(.5rem);
 }

@@ -56,6 +56,11 @@ body.flash {
     grid-template-columns: max-content 1fr;
 }
 
+#location ::placeholder {
+    color: inherit;
+    opacity: .5;
+}
+
 label[for="token"] {
     display: block;
     padding: .5rem;
@@ -96,14 +101,16 @@ label[for="token"] {
     justify-self: start;
     inline-size: 0;
     transition: inline-size .5s ease;
+    border-inline-end: solid .125rem;
 }
 
 #token:focus {
-    inline-size: 80%;
+    inline-size: 20%;
 }
 
 #room-name {
     justify-self: end;
+    inline-size: 80%;
 }
 
 #token::placeholder {

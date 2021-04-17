@@ -414,7 +414,7 @@ const edVerify = async (dataObj) => {
     const digest = new Uint8Array(digestBuffer);
     const publicKey = firstAid.decodeBase64(dataObj.publicKey);
     const signature = firstAid.decodeBase64(dataObj.signature);
-    if (!ed.verify(signature, digest, publicKey)) {
+    if (!await ed.verify(signature, digest, publicKey)) {
         throw new TypeError('Broken signature!');
     }
     return data;

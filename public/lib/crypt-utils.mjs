@@ -114,5 +114,19 @@ export class MessageSigner {
 
     static async verifyMessage(dataObj) {
         //
+        if ('sign-ed25519' != dataObj.algo) {
+            throw new TypeError('Unknown algorithm');
+        }
+        const data = firstAid.decodeBase64(dataObj.data);
+        const digest = await sha256(data);
+        const publicKey = firstAid.decodeBase64(dataObj.publicKey);
+        const signature = firstAid.decodeBase64(dataObj.signature);
+        if (!await ed.verify(signature, digest, publicKey)) {
+            throw new TypeError('Broken signature!');
+        }
+        return {
+            message: firstAid.decodeJson(data),
+            publicKey: buildPublicKeyObject(publicKey),
+        };
     }
 }

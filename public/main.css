@@ -99,13 +99,13 @@ label[for="token"] {
 
 #token {
     justify-self: start;
-    inline-size: 0;
+    inline-size: 20%;
     transition: inline-size .5s ease;
     border-inline-end: solid .125rem;
 }
 
 #token:focus {
-    inline-size: 20%;
+    inline-size: 80%;
     color: var(--theme-light-text-color);
     background-color: var(--theme-light-input-background-color);
 }

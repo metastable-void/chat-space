@@ -105,6 +105,7 @@ label[for="token"] {
     inline-size: 15%;
     transition: inline-size .5s ease;
     z-index: 2;
+    background-color: var(--theme-accent-color);
 }
 
 #token:focus {

@@ -71,7 +71,7 @@ label[for="token"] {
     text-align: end;
 }
 
-#location:hover, #location:focus-within {
+#location:hover > label[for="token"], #location:focus-within > label[for="token"] {
     color: var(--theme-light-text-color);
     background-color: var(--theme-light-input-background-color);
 }
@@ -106,14 +106,17 @@ label[for="token"] {
 
 #token:focus {
     inline-size: 80%;
-    color: var(--theme-light-text-color);
-    background-color: var(--theme-light-input-background-color);
-    box-shadow: inset 0 0 .25rem #ccc;
 }
 
 #room-name {
     justify-self: end;
     inline-size: 80%;
+}
+
+#room-name:focus, #token:focus {
+    color: var(--theme-light-text-color);
+    background-color: var(--theme-light-input-background-color);
+    box-shadow: inset 0 0 .25rem #ccc;
 }
 
 #token::placeholder {

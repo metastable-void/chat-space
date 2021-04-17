@@ -56,12 +56,14 @@ body.flash {
     grid-template-columns: max-content 1fr;
 }
 
-#location::before {
+label[for="token"] {
     display: block;
-    padding: .5em;
-    content: '#';
-    padding-inline-start: .25em;
-    padding-inline-end: .125em;
+    padding: .5rem;
+    padding-inline-start: 0;
+    padding-inline-end: 0;
+    box-sizing: border-box;
+    inline-size: 1rem;
+    text-align: end;
 }
 
 #location:hover, #location:focus-within {
@@ -69,7 +71,7 @@ body.flash {
     background-color: var(--theme-light-input-background-color);
 }
 
-#random, #token, #help, #settings-button {
+#random, #token, #room-name, #help, #settings-button {
     display: block;
     padding: .5rem;
     inline-size: 100%;
@@ -84,8 +86,24 @@ body.flash {
     outline: none;
 }
 
+#token, #room-name {
+    padding-inline-start: .125rem;
+    grid-column: 2;
+    grid-row: 1;
+}
+
 #token {
-    padding-inline-start: .125em;
+    justify-self: start;
+    inline-size: 0;
+    transition: inline-size .5s ease;
+}
+
+#token:focus {
+    inline-size: 80%;
+}
+
+#room-name {
+    justify-self: end;
 }
 
 #token::placeholder {

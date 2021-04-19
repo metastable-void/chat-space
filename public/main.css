@@ -135,6 +135,7 @@ body.flash {
     grid-row: 2;
     max-block-size: calc(100vmin - 6rem);
     overflow: auto;
+    -webkit-appearance: none;
     appearance: none;
     box-sizing: border-box;
     border-block-start: solid .125rem var(--theme-border-color);
@@ -144,6 +145,7 @@ body.flash {
     display: block;
     text-align: start;
     padding: .5rem;
+    -webkit-appearance: none;
     appearance: none;
     box-sizing: border-box;
     inline-size: 100%;

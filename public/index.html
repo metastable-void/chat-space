@@ -45,9 +45,11 @@
 <button id="drawer-open-button" class="header-button material-icons" title="Menu">menu</button>
 <div id="location">
 <input id="room-name" name="room-name" enterkeyhint="done" mozactionhint="done" placeholder="([value of #token])" autocomplete="off" title="Room name"/>
-<input id="token" name="token" enterkeyhint="go" mozactionhint="go" list="token-list" placeholder="(public)" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" title="Room ID"/>
+<div id="location-popup">
 <label for="token">#</label>
+<input id="token" name="token" enterkeyhint="go" mozactionhint="go" list="token-list" placeholder="(public)" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" title="Room ID"/>
 <datalist id="token-list"></datalist>
+</div>
 </div>
 <button id="random" class="header-button material-icons" title="New room">add</button>
 <button id="settings-button" class="header-button material-icons" title="Settings">settings</button>

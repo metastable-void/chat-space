@@ -37,10 +37,10 @@ body {
     grid-column: drawer-start / drawer-end;
     inline-size: 80vmin;
     max-inline-size: 15rem;
-    transition: all .5s ease;
+    transition: all .25s ease;
     z-index: 10;
     background-color: var(--theme-main-background-color);
-    box-shadow: 0 0 4rem 1rem var(--theme-shadow-color);
+    box-shadow: 0 0 4rem 30rem var(--theme-overlay-color);
     overflow: hidden;
     opacity: 1;
 }

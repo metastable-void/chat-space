@@ -44,7 +44,7 @@ body {
     max-inline-size: 15rem;
     transition: all .25s ease;
     z-index: 10;
-    background-color: var(--theme-main-background-color);
+    background-color: var(--theme-input-background-color);
     box-shadow: 0 0 .5rem var(--theme-shadow-color);
     overflow: hidden;
     opacity: 1;

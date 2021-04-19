@@ -111,7 +111,7 @@ body.flash {
 
 #location-popup {
     display: grid;
-    position: absolute;
+    position: fixed;
     top: 100%;
     inline-size: 100%;
     grid-template-columns: max-content 1fr;
@@ -134,8 +134,9 @@ body.flash {
     grid-column: 1 / -1;
     grid-row: 2;
     display: grid;
-    max-block-size: calc(100vmin - 4.5rem);
+    max-block-size: calc(100vmin - 6rem);
     overflow: auto;
+    appearance: none;
 }
 
 #token-list option {
@@ -143,11 +144,15 @@ body.flash {
     justify-content: start;
     align-content: center;
     padding: .5rem;
+    appearance: none;
+    box-sizing: border-box;
+    inline-size: 100%;
+    block-size: max-content;
 }
 
 #token-list option::after {
     display: grid;
-    content: attr(value);
+    content: '#' attr(value);
     opacity: .75;
 }
 

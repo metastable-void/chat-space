@@ -130,6 +130,27 @@ body.flash {
     opacity: .5;
 }
 
+#token-list {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    display: grid;
+    max-block-size: calc(100vmin - 4.5rem);
+    overflow: auto;
+}
+
+#token-list option {
+    display: grid;
+    justify-content: start;
+    align-content: center;
+    padding: .5rem;
+}
+
+#token-list option::after {
+    display: grid;
+    content: attr(value);
+    opacity: .75;
+}
+
 label[for="token"] {
     display: grid;
     align-content: center;

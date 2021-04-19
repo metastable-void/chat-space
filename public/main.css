@@ -139,7 +139,7 @@ body.flash {
     appearance: none;
 }
 
-#token-list option {
+#token-list button {
     display: grid;
     justify-content: start;
     align-content: center;
@@ -152,9 +152,9 @@ body.flash {
     text-overflow: ellipsis;
 }
 
-#token-list option::after {
+#token-list button::after {
     display: grid;
-    content: '#' attr(value);
+    content: '#' attr(data-value);
     opacity: .75;
     overflow: hidden;
     text-overflow: ellipsis;

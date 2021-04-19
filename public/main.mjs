@@ -1054,13 +1054,13 @@ const updateTokenList = async () => {
     tokenListContainer.textContent = '';
     for (const token of rooms) {
         const option = document.createElement('option');
-        option.append('#' + token);
-        option.value = token;
+        option.append('Room #' + token);
+        option.dataset.value = token;
         tokenListContainer.prepend(option);
     }
-    const option = document.createElement('option');
+    const option = document.createElement('button');
     option.append('(public)');
-    option.value = '';
+    option.dataset.value = '';
     tokenListContainer.prepend(option);
 };
 

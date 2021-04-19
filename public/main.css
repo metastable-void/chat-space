@@ -38,6 +38,9 @@ body {
     inline-size: 80vmin;
     max-inline-size: 15rem;
     transition: all .5s ease;
+    z-index: 10;
+    background-color: var(--theme-main-background-color);
+    box-shadow: inset 0 0 .5rem var(--theme-shadow-color);
 }
 
 .drawer-collapsed #drawer {

@@ -136,6 +136,8 @@ body.flash {
     max-block-size: calc(100vmin - 6rem);
     overflow: auto;
     appearance: none;
+    box-sizing: border-box;
+    border-block-start: solid .125rem var(--theme-border-color);
 }
 
 #token-list option {

@@ -112,9 +112,9 @@ const identityBox = document.querySelector('#identity');
 
 const randomButton = document.querySelector('#random');
 const clearButton = document.querySelector('#clear');
-const helpButton = document.querySelector('#help');
+const helpButton = document.querySelector('#drawer-menu-home');
 const helpCloseButton = document.querySelector('#help-close-button');
-const settingsButton = document.querySelector('#settings-button');
+const settingsButton = document.querySelector('#drawer-menu-settings');
 const settingsCloseButton = document.querySelector('#settings-close-button')
 const inviteAcceptButton = document.querySelector('#invite-accept-button');
 const inviteIgnoreButton = document.querySelector('#invite-ignore-button');

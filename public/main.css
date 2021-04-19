@@ -95,7 +95,7 @@ body.flash {
 
 #header {
     display: grid;
-    grid-template-columns: max-content 1fr max-content max-content max-content;
+    grid-template-columns: max-content 1fr max-content;
     background-color: var(--theme-accent-color);
     color: var(--theme-highlighted-text-color);
     position: -webkit-sticky;

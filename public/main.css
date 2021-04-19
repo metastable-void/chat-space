@@ -147,18 +147,16 @@ body.flash {
     inline-size: 100%;
     block-size: max-content;
     overflow: hidden;
-    text-overflow: ellipsis;
     background-color: transparent;
     color: inherit;
     font: inherit;
     border: none;
     border-radius: 0;
-    white-space: nowrap;
+    outline: none;
 }
 
-#token-list button::first-line {
-    overflow: hidden;
-    text-overflow: ellipsis;
+#token-list button:hover, #token-list button:active, #token-list button:focus {
+    background-color: var(--theme-selection-background-color);
 }
 
 #token-list button::after {

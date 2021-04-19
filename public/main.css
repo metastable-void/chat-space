@@ -156,6 +156,11 @@ body.flash {
     white-space: nowrap;
 }
 
+#token-list button::first-line {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 #token-list button::after {
     display: block;
     content: '#' attr(data-value);

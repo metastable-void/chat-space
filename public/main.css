@@ -100,9 +100,7 @@ body.flash {
 
 #logotype {
     font-weight: 500;
-    padding: .5rem;
-    display: block;
-    color: var(--theme-highlighted-text-color);
+    color: inherit;
 }
 
 #location {
@@ -116,7 +114,8 @@ body.flash {
 }
 
 label[for="token"] {
-    display: block;
+    display: grid;
+    align-content: center;
     padding: .5rem;
     padding-inline-start: 0;
     padding-inline-end: 0;
@@ -133,7 +132,8 @@ label[for="token"] {
 }
 
 #token, #room-name, .header-button {
-    display: block;
+    display: grid;
+    align-content: center;
     padding: .5rem;
     inline-size: 100%;
     box-sizing: border-box;

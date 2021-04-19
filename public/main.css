@@ -150,6 +150,11 @@ body.flash {
     block-size: max-content;
     overflow: hidden;
     text-overflow: ellipsis;
+    background-color: transparent;
+    color: inherit;
+    font: inherit;
+    border: none;
+    border-radius: 0;
 }
 
 #token-list button::after {

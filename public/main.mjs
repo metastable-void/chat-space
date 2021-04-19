@@ -1053,7 +1053,7 @@ const updateTokenList = async () => {
     const rooms = await getLastVisitedRooms();
     tokenListContainer.textContent = '';
     for (const token of rooms) {
-        const option = document.createElement('option');
+        const option = document.createElement('button');
         option.append('Room #' + token);
         option.dataset.value = token;
         tokenListContainer.prepend(option);

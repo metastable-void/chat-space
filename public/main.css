@@ -75,6 +75,13 @@ body {
     display: grid;
     align-content: center;
     padding: .5rem;
+    color: inherit;
+    grid-template-columns: max-content 1fr;
+    column-gap: .5rem;
+}
+
+#drawer-menu a.selected {
+    color: var(--theme-accent-color);
 }
 
 #drawer-menu a:hover, #drawer-menu a:active, #drawer-menu a:focus {

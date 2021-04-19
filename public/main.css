@@ -148,12 +148,16 @@ body.flash {
     box-sizing: border-box;
     inline-size: 100%;
     block-size: max-content;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 #token-list option::after {
     display: grid;
     content: '#' attr(value);
     opacity: .75;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 label[for="token"] {

@@ -123,7 +123,7 @@ const settingsReloadButton = document.querySelector('#settings-reload-button');
 const askPersistenceButton = document.querySelector('#ask-persistence-button');
 const drawerOpenButton = document.querySelector('#drawer-open-button');
 const drawerCloseButton = document.querySelector('#drawer-close-button');
-const drawer = document.querySelector('#drawer');
+const drawerBackdrop = document.querySelector('#drawer-backdrop');
 
 const connectionStatus = document.querySelector('#connection');
 const mainBox = document.querySelector('#main');
@@ -185,12 +185,21 @@ menhera.session.state.addTopicReflector(menhera.session.getTopic('chatspace.hide
     });
 });
 
+drawerBackdrop.addEventListener('click', ev => {
+    menhera.session.triggerTopic('chatspace.hideDrawer');
+});
+
 drawerCloseButton.addEventListener('click', ev => {
     menhera.session.triggerTopic('chatspace.hideDrawer');
 });
 
 drawerOpenButton.addEventListener('click', ev => {
-    menhera.session.triggerTopic('chatspace.showDrawer');
+    const drawerShown = menhera.session.state.get('chatspace.drawer.shown');
+    if (drawerShown) {
+        menhera.session.triggerTopic('chatspace.hideDrawer');
+    } else {
+        menhera.session.triggerTopic('chatspace.showDrawer');
+    }
 });
 
 menhera.session.state.addPropertyObserver('chatspace.modal.shown', (shownModal) => {

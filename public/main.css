@@ -133,7 +133,6 @@ body.flash {
 #token-list {
     grid-column: 1 / -1;
     grid-row: 2;
-    display: grid;
     max-block-size: calc(100vmin - 6rem);
     overflow: auto;
     appearance: none;
@@ -155,6 +154,7 @@ body.flash {
     font: inherit;
     border: none;
     border-radius: 0;
+    white-space: nowrap;
 }
 
 #token-list button::after {

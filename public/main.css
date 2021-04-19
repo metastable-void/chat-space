@@ -16,6 +16,7 @@
     -moz-user-select: none;
     user-select: none;
     font-kerning: normal;
+    caret-color: var(--theme-accent-color);
 }
 
 body {
@@ -115,6 +116,7 @@ body.flash {
     inline-size: 100%;
     grid-template-columns: max-content 1fr;
     visibility: hidden;
+    box-shadow: inset 0 0 .25rem #ccc, 0 0 .25rem var(--theme-shadow-color);
 }
 
 #location:hover #location-popup, #location:focus-within #location-popup {
@@ -161,7 +163,7 @@ label[for="token"] {
     padding-inline-start: .125rem;
 }
 
-#location:hover #room-name, #location:focus-within #room-name, #location:hover #location-popup, #location:focus-within #location-popup {
+#location:hover #room-name, #location:focus-within #room-name {
     color: var(--theme-light-text-color);
     background-color: var(--theme-light-input-background-color);
     box-shadow: inset 0 0 .25rem #ccc;
@@ -243,7 +245,6 @@ label[for="token"] {
     cursor: text;
     outline: none;
     text-align: start;
-    caret-color: var(--theme-accent-color);
 }
 
 #text:focus {

@@ -116,9 +116,9 @@ body.flash {
     inline-size: 100%;
     grid-template-columns: max-content 1fr;
     visibility: hidden;
-    box-shadow: inset 0 0 .25rem #ccc, 0 0 .25rem var(--theme-shadow-color);
-    color: var(--theme-light-text-color);
-    background-color: var(--theme-light-input-background-color);
+    box-shadow: 0 0 .25rem var(--theme-shadow-color);
+    color: var(--theme-main-text-color);
+    background-color: var(--theme-input-background-color);
 }
 
 #location:hover #location-popup, #location:focus-within #location-popup {
@@ -166,9 +166,9 @@ label[for="token"] {
 }
 
 #location:hover #room-name, #location:focus-within #room-name {
-    color: var(--theme-light-text-color);
-    background-color: var(--theme-light-input-background-color);
-    box-shadow: inset 0 0 .25rem #ccc;
+    color: var(--theme-main-text-color);
+    background-color: var(--theme-input-background-color);
+    box-shadow: inset 0 0 .25rem var(--theme-shadow-color);
 }
 
 #token::placeholder {

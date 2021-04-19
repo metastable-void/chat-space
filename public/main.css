@@ -139,9 +139,8 @@ body.flash {
 }
 
 #token-list button {
-    display: grid;
-    justify-content: start;
-    align-content: center;
+    display: block;
+    text-align: start;
     padding: .5rem;
     appearance: none;
     box-sizing: border-box;
@@ -158,11 +157,13 @@ body.flash {
 }
 
 #token-list button::after {
-    display: grid;
+    display: block;
     content: '#' attr(data-value);
     opacity: .75;
     overflow: hidden;
     text-overflow: ellipsis;
+    inline-size: 100%;
+    white-space: nowrap;
 }
 
 label[for="token"] {

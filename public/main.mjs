@@ -1053,14 +1053,14 @@ const updateTokenList = async () => {
     const rooms = await getLastVisitedRooms();
     tokenListContainer.textContent = '';
     for (const token of rooms) {
-        const option = document.createElement('button');
-        option.append('Room #' + token);
-        option.dataset.value = token;
+        const option = document.createElement('option');
+        option.append('Room #' + token.split('-')[0]);
+        option.value = token;
         tokenListContainer.prepend(option);
     }
-    const option = document.createElement('button');
+    const option = document.createElement('option');
     option.append('(public)');
-    option.dataset.value = '';
+    option.value = '';
     tokenListContainer.prepend(option);
 };
 

@@ -138,7 +138,7 @@ body.flash {
     appearance: none;
 }
 
-#token-list button {
+#token-list option {
     display: block;
     text-align: start;
     padding: .5rem;
@@ -155,13 +155,13 @@ body.flash {
     outline: none;
 }
 
-#token-list button:hover, #token-list button:active, #token-list button:focus {
+#token-list option:hover, #token-list option:active, #token-list option:focus {
     background-color: var(--theme-selection-background-color);
 }
 
-#token-list button::after {
+#token-list option::after {
     display: block;
-    content: '#' attr(data-value);
+    content: '#' attr(value);
     opacity: .75;
     overflow: hidden;
     text-overflow: ellipsis;

@@ -131,6 +131,7 @@ body.flash {
 }
 
 #token-list {
+    display: block;
     grid-column: 1 / -1;
     grid-row: 2;
     max-block-size: calc(100vmin - 6rem);

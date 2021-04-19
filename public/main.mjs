@@ -121,6 +121,9 @@ const inviteIgnoreButton = document.querySelector('#invite-ignore-button');
 const privateKeyRegenerateButton = document.querySelector('#private-key-regenerate-button');
 const settingsReloadButton = document.querySelector('#settings-reload-button');
 const askPersistenceButton = document.querySelector('#ask-persistence-button');
+const drawerOpenButton = document.querySelector('#drawer-open-button');
+const drawerCloseButton = document.querySelector('#drawer-close-button');
+const drawer = document.querySelector('#drawer');
 
 const connectionStatus = document.querySelector('#connection');
 const mainBox = document.querySelector('#main');
@@ -161,6 +164,39 @@ try {
     console.error(e);
 }
 
+
+menhera.session.state.addPropertyObserver('chatspace.drawer.shown', (drawerShown) => {
+    if (drawerShown) {
+        document.body.classList.remove('drawer-collapsed');
+    } else {
+        document.body.classList.add('drawer-collapsed');
+    }
+});
+
+menhera.session.state.addTopicReflector(menhera.session.getTopic('chatspace.showDrawer'), (data, metadata) => {
+    return Object.entries({
+        'chatspace.drawer.shown': true,
+    });
+});
+
+menhera.session.state.addTopicReflector(menhera.session.getTopic('chatspace.hideDrawer'), (data, metadata) => {
+    return Object.entries({
+        'chatspace.drawer.shown': false,
+    });
+});
+
+drawerCloseButton.addEventListener('click', ev => {
+    menhera.session.triggerTopic('chatspace.hideDrawer');
+});
+
+drawerOpenButton.addEventListener('click', ev => {
+    menhera.session.triggerTopic('chatspace.showDrawer');
+    ev.stopPropagation();
+});
+
+drawer.addEventListener('click', ev => {
+    ev.stopPropagation();
+});
 
 menhera.session.state.addPropertyObserver('chatspace.modal.shown', (shownModal) => {
     for (const box of overlayBox.children) {
@@ -1134,7 +1170,8 @@ settingsBox.addEventListener('click', ev => {
 });
 
 document.body.addEventListener('click', ev => {
-    menhera.session.getTopic('chatspace.hideModals').dispatchMessage(null);
+    menhera.session.triggerTopic('chatspace.hideModals');
+    menhera.session.triggerTopic('chatspace.hideDrawer');
 });
 
 helpCloseButton.addEventListener('click', ev => {

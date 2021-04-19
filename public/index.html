@@ -42,7 +42,7 @@
 </head>
 <body class="drawer-collapsed">
 <header id="header">
-<a id="logotype" href="/" title="Public channel">Chatspace</a>
+<button id="drawer-open-button" class="header-button material-icons" title="Menu">menu</button>
 <div id="location">
 <input id="room-name" name="room-name" enterkeyhint="done" mozactionhint="done" placeholder="([value of #token])" autocomplete="off" title="Room name"/>
 <input id="token" name="token" enterkeyhint="go" mozactionhint="go" list="token-list" placeholder="(public)" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" title="Room ID"/>
@@ -66,7 +66,12 @@
 <button id="clear" class="material-icons">clear</button>
 </div>
 </div>
-<div id="drawer"></div>
+<div id="drawer">
+<div id="drawer-header">
+<button id="drawer-close-button" class="material-icons header-button" title="Back">arrow_back</button>
+<a id="logotype" href="/" title="Public channel">Chatspace</a>
+</div>
+</div>
 <div id="overlay" hidden="">
 <div id="inviteBox" hidden="">
 <h2>Room invite received</h2>

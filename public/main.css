@@ -26,7 +26,7 @@ body {
     transition: opacity linear .5s;
 }
 
-@media (min-width: 30rem) {
+@media (min-width: 35rem) {
     body {
         grid-template-columns: [drawer-start] max-content [drawer-end content-start] 1fr [content-end];
     }

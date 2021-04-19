@@ -71,6 +71,16 @@ body {
     opacity: 0;
 }
 
+#drawer-menu a {
+    display: grid;
+    align-content: center;
+    padding: .5rem;
+}
+
+#drawer-menu a:hover, #drawer-menu a:active, #drawer-menu a:focus {
+    background-color: var(--theme-selection-background-color);
+}
+
 body.flash {
     opacity: .25;
     transition: none;

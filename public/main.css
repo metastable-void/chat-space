@@ -105,6 +105,7 @@ body.flash {
 
 #location {
     display: grid;
+    position: relative;
 }
 
 #location-popup {
@@ -134,11 +135,6 @@ label[for="token"] {
     box-sizing: border-box;
     inline-size: 1rem;
     text-align: end;
-}
-
-#location:hover label[for="token"], #location:focus-within label[for="token"] {
-    color: var(--theme-light-text-color);
-    background-color: var(--theme-light-input-background-color);
 }
 
 #token, #room-name, .header-button {

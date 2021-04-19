@@ -40,11 +40,12 @@ body {
     transition: all .5s ease;
     z-index: 10;
     background-color: var(--theme-main-background-color);
-    box-shadow: inset 0 0 .5rem var(--theme-shadow-color);
+    box-shadow: 0 0 4rem 1rem var(--theme-shadow-color);
 }
 
 .drawer-collapsed #drawer {
     inline-size: 0;
+    box-shadow: 0 0 4rem 1rem transparent;
 }
 
 body.flash {

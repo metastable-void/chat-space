@@ -30,6 +30,10 @@ body {
     body {
         grid-template-columns: [drawer-start] max-content [drawer-end content-start] 1fr [content-end];
     }
+
+    #drawer {
+        box-shadow: 0 0 .5rem var(--theme-shadow-color);
+    }
 }
 
 #drawer {

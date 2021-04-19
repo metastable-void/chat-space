@@ -191,11 +191,6 @@ drawerCloseButton.addEventListener('click', ev => {
 
 drawerOpenButton.addEventListener('click', ev => {
     menhera.session.triggerTopic('chatspace.showDrawer');
-    ev.stopPropagation();
-});
-
-drawer.addEventListener('click', ev => {
-    ev.stopPropagation();
 });
 
 menhera.session.state.addPropertyObserver('chatspace.modal.shown', (shownModal) => {
@@ -1171,7 +1166,6 @@ settingsBox.addEventListener('click', ev => {
 
 document.body.addEventListener('click', ev => {
     menhera.session.triggerTopic('chatspace.hideModals');
-    menhera.session.triggerTopic('chatspace.hideDrawer');
 });
 
 helpCloseButton.addEventListener('click', ev => {

@@ -140,9 +140,11 @@ body.flash {
     appearance: none;
     box-sizing: border-box;
     border-block-start: solid .125rem var(--theme-border-color);
+    margin: 0;
+    padding: 0;
 }
 
-#token-list option {
+#token-list button {
     display: block;
     text-align: start;
     padding: .5rem;
@@ -160,11 +162,11 @@ body.flash {
     outline: none;
 }
 
-#token-list option:hover, #token-list option:active, #token-list option:focus {
+#token-list button:hover, #token-list button:active, #token-list button:focus {
     background-color: var(--theme-selection-background-color);
 }
 
-#token-list option::after {
+#token-list button::after {
     display: block;
     content: '#' attr(value);
     opacity: .75;

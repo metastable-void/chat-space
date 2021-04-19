@@ -42,11 +42,12 @@ body {
     background-color: var(--theme-main-background-color);
     box-shadow: 0 0 4rem 1rem var(--theme-shadow-color);
     overflow: hidden;
+    opacity: 1;
 }
 
 .drawer-collapsed #drawer {
     inline-size: 0;
-    box-shadow: 0 0 4rem 1rem transparent;
+    opacity: 0;
 }
 
 body.flash {

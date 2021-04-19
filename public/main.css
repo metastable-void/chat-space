@@ -31,8 +31,8 @@ body {
         grid-template-columns: [drawer-start] max-content [drawer-end content-start] 1fr [content-end];
     }
 
-    #drawer {
-        box-shadow: 0 0 .5rem var(--theme-shadow-color);
+    #drawer-backdrop {
+        visibility: hidden;
     }
 }
 
@@ -44,13 +44,29 @@ body {
     transition: all .25s ease;
     z-index: 10;
     background-color: var(--theme-main-background-color);
-    box-shadow: 0 0 4rem 30rem var(--theme-overlay-color);
+    box-shadow: 0 0 .5rem var(--theme-shadow-color);
     overflow: hidden;
     opacity: 1;
 }
 
+#drawer-backdrop {
+    grid-row: 1 / -1;
+    grid-column: 1 / -1;
+    z-index: 10;
+    background-color: var(--theme-overlay-color);
+    -webkit-backdrop-filter: blur(.5rem);
+    backdrop-filter: blur(.5rem);
+    opacity: 1;
+    transition: opacity .25s ease-in;
+}
+
 .drawer-collapsed #drawer {
     inline-size: 0;
+    opacity: 0;
+}
+
+.drawer-collapsed #drawer-backdrop {
+    visibility: hidden;
     opacity: 0;
 }
 

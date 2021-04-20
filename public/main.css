@@ -397,6 +397,7 @@ label[for="token"] {
     outline: none;
     background-color: transparent;
     color: inherit;
+    text-overflow: ellipsis;
 }
 
 #identity {

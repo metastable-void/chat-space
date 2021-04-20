@@ -312,7 +312,7 @@ menhera.client.state.addTopicReflector(menhera.session.getTopic('chatspace.askPe
         }
 
         let persisted = await navigator.storage.persisted();
-        if (!persisted && !menhera.client.state.get('persistenceDenied')) {
+        if (!persisted && true !== menhera.client.state.get('persistenceDenied')) {
             const toast = document.createElement('chatspace-toast');
             toast.text = 'Allow persistent storage to avoid losing your data in the app.';
             toast.actionText = 'Allow';

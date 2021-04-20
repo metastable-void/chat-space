@@ -1,6 +1,8 @@
 
+importScripts('/lib/fetch-utils.js');
+
 const ASSETS_CACHE = 'assets-v1';
-const ASSETS = [
+const ASSETS = new URLSet([
     '/',
     '/app.webmanifest', // en locale
     '/main.mjs',
@@ -17,38 +19,19 @@ const ASSETS = [
     '/lib/x25519.mjs',
     '/lib/es-first-aid.js',
     '/lib/Provisionality.mjs',
+    '/lib/components-utils.mjs',
+    '/lib/fetch-utils.js',
+    '/components/chatspace-toast.mjs',
+    '/components/chatspace-toast.css',
     '/components/chatspace-comment.mjs',
     '/components/chatspace-comment.css',
     '/components/chatspace-comment-container.mjs',
     '/components/chatspace-comment-container.css',
-].map(path => String(new URL(path, location.href)));
+]);
 
 const CURRENT_CACHES = new Set([
     ASSETS_CACHE,
 ]);
-
-const createFreshRequest = (req) => {
-    const originalRequest = (req instanceof Request
-        ? (
-            req.mode == 'navigate'
-            ? new Request(req.url, {
-                mode: 'cors',
-                credentials: 'same-origin',
-            })
-            : req
-        )
-        : new Request(req, {
-            mode: 'cors',
-            credentials: 'same-origin',
-        })
-    );
-
-    return new Request(originalRequest, {
-        mode: originalRequest.mode,
-        credentials: originalRequest.credentials,
-        cache: 'no-cache', // force revalidation
-    });
-};
 
 self.addEventListener('install', ev => {
     ev.waitUntil((async () => {
@@ -59,15 +42,19 @@ self.addEventListener('install', ev => {
         const promises = [];
 
         for (const req of keys) {
-            cachedUrls.add(req.url);
-            if (!ASSETS.includes(req.url)) {
+            if (!ASSETS.has(req.url)) {
                 promises.push(cache.delete(req));
+            } else {
+                cachedUrls.add(req.url);
             }
         }
 
         for (const url of ASSETS) {
             if (!cachedUrls.has(url)) {
-                promises.push(cache.add(createFreshRequest(url)));
+                const req = createFreshRequest(url);
+                promises.push(rawFetch(req).then((res) => {
+                    return cache.put(req, res);
+                }));
             }
         }
 
@@ -107,7 +94,11 @@ self.addEventListener('fetch', ev => {
             await cache.put(freshRequest, freshResponse.clone());
             return freshResponse;
         } catch (e) {
-            console.warn('sw: fetch error:', request.url, e);
+            if (!match.ok) {
+                console.error('sw: Request failed, but we do not have a valid cached response:', request.url, e);
+            } else {
+                console.warn('sw: fetch error:', request.url, e);
+            }
             return match;
         }
     })(ev.request));

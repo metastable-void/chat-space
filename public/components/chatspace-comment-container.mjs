@@ -1,4 +1,6 @@
 
+import '/components/chatspace-comment.mjs';
+
 const removeNewlines = (str) => String(str || '').split('\n').join('').split('\r').join('');
 
 const statesMap = new WeakMap;

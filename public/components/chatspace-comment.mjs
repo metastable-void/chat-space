@@ -5,16 +5,6 @@ const createCaretMark = () => {
     return element;
 };
 
-/**
- * 
- * @param container {HTMLElement}
- * @param text {string}
- * @param caretOffset {number}
- */
-const setParsedText = (container, text, caretOffset) => {
-    
-};
-
 const shadowMap = new WeakMap;
 class ChatspaceCommentElement extends HTMLElement {
     constructor() {

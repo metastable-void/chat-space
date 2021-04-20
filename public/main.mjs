@@ -2,8 +2,8 @@
 import * as ed from '/lib/noble-ed25519-1.0.3.mjs';
 import * as x25519 from '/lib/x25519.mjs';
 import {Settings} from '/lib/Settings.mjs';
-import '/components/chatspace-comment.mjs';
 import '/components/chatspace-comment-container.mjs';
+import '/components/chatspace-toast.mjs';
 import '/lib/es-first-aid.js';
 import '/lib/Provisionality.mjs';
 

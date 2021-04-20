@@ -485,7 +485,7 @@ label[for="token"] {
     max-inline-size: 30rem;
     margin-inline-start: auto;
     margin-inline-end: auto;
-    font-size: 75%;
+    font-size: 87.5%;
 }
 
 #overlay:not([hidden]) {

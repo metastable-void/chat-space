@@ -13,7 +13,7 @@
 #action {
     grid-column: 2;
     grid-row: 1;
-    align-self: start;
+    align-self: end;
     display: block;
     box-sizing: border-box;
     inline-size: min-content;
@@ -26,8 +26,8 @@
     -webkit-appearance: none;
     appearance: none;
     outline: none;
-    margin: 0;
-    padding: 1rem;
+    margin: 1rem;
+    padding: 0;
     cursor: pointer;
 }
 

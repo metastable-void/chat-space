@@ -29,6 +29,7 @@
     margin: 1rem;
     padding: 0;
     cursor: pointer;
+    text-transform: uppercase;
 }
 
 #text {

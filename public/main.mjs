@@ -304,13 +304,48 @@ menhera.client.state.addTopicReflector(menhera.session.getTopic('chatspace.askPe
     });
 });
 
-menhera.session.state.addTopicReflector(menhera.session.getTopic('chatspace.hideModals'), async (data, metadata) => {
-    if (!menhera.client.state.get('persistenceDenied')) {
-        menhera.session.triggerTopic('chatspace.askPersistence');
-    }
+(async () => {
+    try {
+        if (!navigator.storage || 'function' != typeof navigator.storage.persist) {
+            console.warn('Persistent storage not supported');
+            throw null;
+        }
 
-    menhera.session.triggerTopic('chatspace.requestNotification');
-    
+        let persisted = await navigator.storage.persisted();
+        if (!persisted && !menhera.client.state.get('persistenceDenied')) {
+            const toast = document.createElement('chatspace-toast');
+            toast.text = 'Allow persistent storage to avoid losing your data in the app.';
+            toast.actionText = 'Allow';
+            toast.actionButton.addEventListener('click', ev => {
+                menhera.session.triggerTopic('chatspace.askPersistence');
+            });
+            mainBox.prepend(toast);
+        }
+    } catch (e) {}
+
+    try {
+        if (!window.Notification) {
+            console.warn('Notification not supported');
+            throw null;
+        }
+
+        if ('denied' == Notification.permission) {
+            console.warn('Notification denied');
+            throw null;
+        }
+        if ('granted' != Notification.permission) {
+            const toast = document.createElement('chatspace-toast');
+            toast.text = 'Allow notifications to get notified about new messages. Notifications are only shown when the app is open.';
+            toast.actionText = 'Allow';
+            toast.actionButton.addEventListener('click', ev => {
+                menhera.session.triggerTopic('chatspace.requestNotification');
+            });
+            mainBox.prepend(toast);
+        }
+    } catch (e) {}
+})();
+
+menhera.session.state.addTopicReflector(menhera.session.getTopic('chatspace.hideModals'), async (data, metadata) => {
     return Object.entries({
         'chatspace.modal.shown': null,
     });

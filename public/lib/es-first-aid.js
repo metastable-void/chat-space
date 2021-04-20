@@ -28,7 +28,7 @@
 'use strict'; // Since this can be loaded as a non-ES-module.
 do {
 	const MODULE_ID = '530b6b81-58ab-44cc-8212-ceb2c74ef1c5';
-	if ('firstAid' in globalThis && globalThis.firstAid && globalThis.firstAid.MODULE_ID == MODULE_ID) {
+	if ('firstAid' in globalThis && globalThis.firstAid && globalThis.firstAid._MODULE_ID == MODULE_ID) {
 		// Already loaded
 		break;
 	}
@@ -88,14 +88,118 @@ do {
 		nodeCrypto = require('crypto');
 	} catch (e) {}
 
+	const FirstAid = function FirstAid () {
+		if (!new.target) {
+			throw new TypeError(`FirstAid constructor called without 'new'`);
+		}
+	};
+
+	Reflect.defineProperty(FirstAid, Symbol.hasInstance, {
+		value: function hasInstance (obj) {
+			return obj && '_MODULE_ID' in obj && obj._MODULE_ID == MODULE_ID;
+		},
+	});
+
+	const PromiseComposition = function PromiseComposition (... values) {
+		if (!new.target) {
+			throw new TypeError(`PromiseComposition constructor called without 'new'`);
+		}
+
+		const promises = values.map((value) => Promise.resolve(value));
+		Object.freeze(promises);
+
+		const allSettled = Promise.allSettled(promises);
+		const _this = Reflect.construct(Promise, [(resolve, reject) => {
+			allSettled.then((results) => resolve(results));
+		}], new.target);
+
+		Reflect.defineProperty(_this, 'promises', {value: promises});
+		return _this;
+	};
+
+	PromiseComposition.prototype = Object.create(Promise.prototype);
+	PromiseComposition.prototype.constructor = PromiseComposition;
+
+	PromiseComposition.prototype.rejections = function rejections () {
+		if (!(this instanceof PromiseComposition)) {
+			throw new TypeError('PromiseComposition.rejections called on an object not implementing PromiseComposition');
+		}
+		return new Promise((resolve, reject) => {
+			this.then((results) => void resolve(
+				results.filter(result => 'rejected' == result.status)
+				.map(result => result.reason)
+			));
+		});
+	};
+
+	PromiseComposition.prototype.results = function results () {
+		if (!(this instanceof PromiseComposition)) {
+			throw new TypeError('PromiseComposition.results called on an object not implementing PromiseComposition');
+		}
+		return new Promise((resolve, reject) => {
+			this.then((results) => void resolve(
+				results.filter(result => 'fulfilled' == result.status)
+				.map(result => result.value)
+			));
+		});
+	};
+
+	PromiseComposition.prototype.fulfilled = function fulfilled (callback) {
+		if (!(this instanceof PromiseComposition)) {
+			throw new TypeError('PromiseComposition.fulfilled called on an object not implementing PromiseComposition');
+		}
+		if ('function' != typeof callback) {
+			throw new TypeError('Callback must be a function');
+		}
+
+		return new PromiseComposition(
+			... [... this.promises]
+			.map((value) => Promise.resolve(value))
+			.map((promise) => promise.then((value) => callback(value)))
+		);
+	};
+
+	PromiseComposition.prototype.rejected = function rejected (callback) {
+		if (!(this instanceof PromiseComposition)) {
+			throw new TypeError('PromiseComposition.rejected called on an object not implementing PromiseComposition');
+		}
+		if ('function' != typeof callback) {
+			throw new TypeError('Callback must be a function');
+		}
+
+		return new PromiseComposition(
+			... [... this.promises]
+			.map((value) => Promise.resolve(value))
+			.map((promise) => promise.catch((value) => callback(value)))
+		);
+	};
+
+	PromiseComposition.prototype[Symbol.iterator] = function getIterator () {
+		if (!(this instanceof PromiseComposition)) {
+			throw new TypeError('PromiseComposition.rejected called on an object not implementing PromiseComposition');
+		}
+		return [... this.promises].values();
+	};
+
 	/**
 	 * The First Aid global object (module).
 	 * @global
 	 */
-	const firstAid = {
+	const firstAid = FirstAid.prototype = {
 		__proto__: null,
 
-		MODULE_ID: MODULE_ID,
+		// private
+		_MODULE_ID: MODULE_ID,
+
+		VERSION: '1.5.0',
+
+		get firstAid() {
+			return this;
+		},
+
+		constructor: FirstAid,
+
+		PromiseComposition: PromiseComposition,
 
 		TypedArray: TypedArray,
 
@@ -123,6 +227,18 @@ do {
 			setPrototypeOf: () => false,
 		}),
 
+		checkForError: (f) => {
+			if ('function' != typeof f) {
+				throw new TypeError('Not a function');
+			}
+			try {
+				f();
+				return false;
+			} catch (e) {
+				return true;
+			}
+		},
+
 		/**
 		 * Check if a value is a revoked Proxy.
 		 * @param {*} a 
@@ -131,9 +247,16 @@ do {
 		isRevokedProxy: (a) => {
 			try {
 				new Proxy(a, {});
+
+				try {
+					a[Symbol()];
+				} catch (e) {
+					Reflect.getPrototypeOf(a);
+				}
+				
 				return false;
 			} catch (e) {
-				return ('function' == typeof a || 'object' == typeof a && a);
+				return ('function' == typeof a || a && 'object' == typeof a);
 			}
 		},
 
@@ -334,6 +457,12 @@ do {
 			return crc ^ -1;
 		},
 
+		crc32Bytes: (buffer) => {
+			const view = new DataView(new ArrayBuffer(4));
+			view.setInt32(0, firstAid.crc32(buffer), false);
+			return firstAid.toUint8Array(view);
+		},
+
 		randomFillInsecure: (buffer) => {
 			const bytes = firstAid.toUint8Array(buffer);
 			for (let i = 0; i < bytes.length; i++) {
@@ -364,18 +493,23 @@ do {
 			return (new DataView(buffer)).getFloat64(0, false) - 1;
 		},
 
-		randomNormal: (isInsecure) => {
-			let a, b;
+		// Random number in (0, 1].
+		randomNonZero: (isInsecure) => {
+			let a;
 			do {
-				a = firstAid.random(isInsecure);
+				// This loop should execute only once since we are using (1 - [random number in [0, 1)]).
+				a = 1 - firstAid.random(isInsecure);
 			} while (a === 0);
-			do {
-				b = firstAid.random(isInsecure);
-			} while (b === 0);
+			return a;
+		},
+
+		randomNormal: (isInsecure) => {
+			const a = firstAid.randomNonZero(isInsecure);
+			const b = firstAid.random(isInsecure);
 			return Math.sqrt(-2 * Math.log(a)) * Math.sin(2 * Math.PI * b);
 		},
 
-		randomExponential: (isInsecure) => -Math.log(1 - firstAid.random(isInsecure)),
+		randomExponential: (isInsecure) => -Math.log(firstAid.randomNonZero(isInsecure)),
 
 		randomXenakis: (isInsecure) => 1 - Math.sqrt(firstAid.random(isInsecure)),
 
@@ -423,9 +557,24 @@ do {
 		encodeJson: (obj) => firstAid.encodeString(JSON.stringify(obj)),
 
 		decodeJson: (bytes) => JSON.parse(firstAid.decodeString(bytes)),
+
+		assert: (assertion, message) => {
+			if (assertion) {
+				return;
+			}
+			let error = new Error('Assertion failed');
+			try {
+				if (!message) throw void 0;
+				error = new Error('Assertion failed: ' + message);
+			} finally {
+				throw error;
+			}
+		},
 	};
 
 	/* Module finalization */
-	const firstAidProxy = firstAid.createReadOnlyProxy(firstAid);
-	Reflect.defineProperty(globalThis, 'firstAid', {value: firstAidProxy});
+	Object.freeze(firstAid);
+
+	const firstAidInstance = new FirstAid;
+	Reflect.defineProperty(globalThis, 'firstAid', {get: () => firstAidInstance.firstAid});
 } while (false);

@@ -12,6 +12,7 @@
 
 #action {
     grid-column: 2;
+    grid-row: 1;
     align-self: start;
     display: block;
     box-sizing: border-box;
@@ -27,10 +28,12 @@
     outline: none;
     margin: 0;
     padding: .5rem;
+    cursor: pointer;
 }
 
 #text {
     grid-column: 1;
+    grid-row: 1;
     display: grid;
     align-content: center;
     justify-content: start;

@@ -19,6 +19,10 @@ class ChatspaceToastElement extends HTMLElement {
         if (actionText) {
             this.actionButton.textContent = actionText;
         }
+        this.actionButton.addEventListener('click', ev => {
+            if (!this.parentElement) return;
+            this.remove();
+        });
     }
 
     get actionButton() {

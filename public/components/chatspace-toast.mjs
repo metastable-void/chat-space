@@ -34,6 +34,14 @@ class ChatspaceToastElement extends HTMLElement {
         const textElement = this.shadowRoot.querySelector('#text');
         textElement.textContent = value;
     }
+
+    get actionText() {
+        return this.actionButton.textContent;
+    }
+
+    set actionText(value) {
+        this.actionButton.textContent = value;
+    }
 }
 
 customElements.define('chatspace-toast', ChatspaceToastElement);

@@ -26,6 +26,10 @@ window.addEventListener('error', ev => {
     }
 });
 
+window.addEventListener('unhandledrejection', ev => {
+    console.error('Unhandled Promise rejection: ', ev.reason);
+});
+
 /** @param {ServiceWorker} sw */
 const newServiceWorkerCallback = (sw) => {
     if (sw == activeServiceWorker) return;

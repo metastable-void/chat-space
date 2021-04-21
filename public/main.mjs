@@ -1297,6 +1297,10 @@ window.addEventListener('offline', ev => {
     console.log('Becoming offline');
 });
 
+document.addEventListener('dblclick', ev => {
+    ev.preventDefault();
+});
+
 if ('boolean' == typeof navigator.onLine) {
     if (navigator.onLine) {
         document.documentElement.dataset.onlineStatus = 'ONLINE';

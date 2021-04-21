@@ -138,7 +138,7 @@ body.flash {
     background-color: var(--theme-input-background-color);
 }
 
-#location:hover #location-popup, #location:focus-within #location-popup {
+#location:focus-within #location-popup {
     visibility: visible;
 }
 

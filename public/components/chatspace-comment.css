@@ -79,6 +79,14 @@
     opacity: 1;
 }
 
+#comment-friend-button::before {
+    content: 'person_add';
+}
+
+#comment-friend-button[data-is-friend="1"]::before {
+    content: 'person_remove';
+}
+
 #comment-username, #comment-fingerprint {
     display: inline;
     color: var(--theme-label-text-color);

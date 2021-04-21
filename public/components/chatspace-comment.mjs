@@ -193,7 +193,10 @@ class ChatspaceCommentElement extends HTMLElement {
     set isFriend(value) {
         const shadow = shadowMap.get(this);
         const identityElement = shadow.querySelector('#comment-identity');
-        identityElement.dataset.isFriend = '' + (0 | (!!value));
+        const friendButton = shadow.querySelector('#comment-friend-button');
+        const isFriendValue = '' + (0 | (!!value));
+        friendButton.dataset.isFriend = isFriendValue;
+        identityElement.dataset.isFriend = isFriendValue;
     }
 }
 

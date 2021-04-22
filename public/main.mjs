@@ -1100,6 +1100,7 @@ const updateTokenList = async () => {
         option.value = token;
         option.addEventListener('click', ev => {
             setToken(ev.target.value);
+            textBox.focus();
         });
         tokenListContainer.prepend(option);
     }
@@ -1108,6 +1109,7 @@ const updateTokenList = async () => {
     option.value = '';
     option.addEventListener('click', ev => {
         setToken(ev.target.value);
+        textBox.focus();
     });
     tokenListContainer.prepend(option);
 };

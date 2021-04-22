@@ -112,6 +112,9 @@ const nameBox = document.querySelector('#name');
  * */
 const tokenBox = document.querySelector('#token');
 
+/** @type {HTMLInputElement} */
+const roomNameBox = document.querySelector('#room-name');
+
 const identityBox = document.querySelector('#identity');
 
 const randomButton = document.querySelector('#random');
@@ -1095,11 +1098,17 @@ const updateTokenList = async () => {
         const option = document.createElement('button');
         option.append('Room #' + token.split('-')[0]);
         option.value = token;
+        option.addEventListener('click', ev => {
+            setToken(ev.target.value);
+        });
         tokenListContainer.prepend(option);
     }
     const option = document.createElement('button');
     option.append('(public)');
     option.value = '';
+    option.addEventListener('click', ev => {
+        setToken(ev.target.value);
+    });
     tokenListContainer.prepend(option);
 };
 
@@ -1110,6 +1119,25 @@ nameBox.addEventListener('change', ev => {
 tokenBox.addEventListener('change', ev => {
     const token = tokenBox.value.trim();
     setToken(token);
+    tokenBox.blur();
+});
+
+tokenBox.addEventListener('keydown', ev => {
+    if (ev.keyCode == 13) {
+        // ENTER
+        tokenBox.blur();
+    }
+});
+
+roomNameBox.addEventListener('change', ev => {
+    roomNameBox.blur();
+});
+
+roomNameBox.addEventListener('keydown', ev => {
+    if (ev.keyCode == 13) {
+        // ENTER
+        roomNameBox.blur();
+    }
 });
 
 logotypeBox.addEventListener('click', ev => {

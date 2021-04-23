@@ -1098,22 +1098,22 @@ const updateTokenList = async () => {
         const option = document.createElement('button');
         option.append('Room #' + token.split('-')[0]);
         option.value = token;
+        tokenListContainer.prepend(option);
         option.addEventListener('click', ev => {
             console.log('token list click:', ev.target.value);
             setToken(ev.target.value);
             textBox.focus();
         });
-        tokenListContainer.prepend(option);
     }
     const option = document.createElement('button');
     option.append('(public)');
     option.value = '';
+    tokenListContainer.prepend(option);
     option.addEventListener('click', ev => {
         console.log('token list click:', ev.target.value);
         setToken(ev.target.value);
         textBox.focus();
     });
-    tokenListContainer.prepend(option);
 };
 
 nameBox.addEventListener('change', ev => {

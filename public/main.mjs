@@ -422,20 +422,6 @@ const getFingerprint = async bytes => {
 
 
 /**
- * 
- * @param obj {any}
- * @returns {Uint8Array}
- */
-const encodeObject = obj => firstAid.encodeString(JSON.stringify(obj));
-
-/**
- * Decode object from bytes.
- * @param bytes {Uint8Array}
- * @returns {any}
- */
-const decodeObject = bytes => JSON.parse(firstAid.decodeString(bytes));
-
-/**
  * Get 32-bit fingerprint representation (not much secure) of the given data.
  * @param bytes {Uint8Array}
  * @returns {string}
@@ -708,13 +694,13 @@ const sendCommand = (command, data) => {
     data.time = getTime();
     data.isActive = !document.hidden;
     data.sessionId = menhera.session.id;
-    const bytes = encodeObject(data);
+    const bytes = firstAid.encodeJson(data);
     const channelKey = getChannelKey();
 
     (async () => {
         try {
             const encryptedObj = await encrypt(bytes, channelKey);
-            const encrypted = encodeObject(encryptedObj);
+            const encrypted = firstAid.encodeJson(encryptedObj);
             if (!myKeys) {
                 throw new Error('My keys not found');
             }
@@ -931,11 +917,11 @@ const processMessage = async ev => {
         const encrypted = await edVerify(signedObj);
         const publicKey = firstAid.decodeBase64(signedObj.publicKey);
         const fingerprint = firstAid.encodeHex(await getFingerprint(publicKey));
-        const encryptedObj = decodeObject(encrypted);
+        const encryptedObj = firstAid.decodeJson(encrypted);
         const channelKey = getChannelKey();
         const dataBytes = await decrypt(encryptedObj, channelKey);
 
-        const data = decodeObject(dataBytes);
+        const data = firstAid.decodeJson(dataBytes);
         if ('object' != typeof data || !data) throw 'Invalid data';
         if ('number' != typeof data.time) throw 'Invalid time';
         if ('string' != typeof data.command) throw 'Invalid command';
@@ -1228,7 +1214,8 @@ connectionStatus.addEventListener('click', ev => {
 
 helpButton.addEventListener('click', ev => {
     ev.stopPropagation();
-    menhera.session.getTopic('chatspace.showHelp').dispatchMessage(null);
+    ev.preventDefault();
+    menhera.session.triggerTopic('chatspace.showHelp');
 });
 
 helpBox.addEventListener('click', ev => {
@@ -1237,7 +1224,8 @@ helpBox.addEventListener('click', ev => {
 
 settingsButton.addEventListener('click', ev => {
     ev.stopPropagation();
-    menhera.session.getTopic('chatspace.showSettings').dispatchMessage(null);
+    ev.preventDefault();
+    menhera.session.triggerTopic('chatspace.showSettings');
 });
 
 settingsBox.addEventListener('click', ev => {

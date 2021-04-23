@@ -1099,6 +1099,7 @@ const updateTokenList = async () => {
         option.append('Room #' + token.split('-')[0]);
         option.value = token;
         option.addEventListener('click', ev => {
+            console.log('token list click:', ev.target.value);
             setToken(ev.target.value);
             textBox.focus();
         });
@@ -1108,6 +1109,7 @@ const updateTokenList = async () => {
     option.append('(public)');
     option.value = '';
     option.addEventListener('click', ev => {
+        console.log('token list click:', ev.target.value);
         setToken(ev.target.value);
         textBox.focus();
     });

@@ -251,12 +251,12 @@ label[for="token"] {
     grid-column: content-start / content-end;
     grid-row: content-start / content-end;
     display: grid;
+    background-color: var(--theme-main-background-color);
 }
 
 #view-container > * {
     grid-column: 1;
     grid-row: 1;
-    background-color: var(--theme-main-background-color);
 }
 
 #about-view:not([hidden]) {

@@ -510,7 +510,7 @@ const getToken = () => {
 
 const setToken = (token) => {
     const strToken = String(token).trim();
-    navigation.hash = strToken;
+    navigation.navigate({}, strToken);
 };
 
 menhera.session.getTopic('chatspace.openRoom').addListener((data, metadata) => {
@@ -852,12 +852,11 @@ let textMap = Object.create(null);
 const getOnlineCount = () => Reflect.ownKeys(textMap).filter(fingerprint => textMap[fingerprint].isActive).length;
 const getOnlineTotalCount = () => Reflect.ownKeys(textMap).length;
 
-const getHash = () => {
-    const hash = location.hash.slice(1);
+const getRoomName = (hash) => {
     if (!hash) {
         return '(public)';
     } else {
-        return '#' + hash;
+        return 'Room #' + hash;
     }
 };
 
@@ -870,12 +869,14 @@ menhera.session.getTopic('chatspace.flash').addListener(async (data, metadata) =
     const {shortFingerprint, name} = data;
     if (document.hidden && window.Notification && Notification.permission == 'granted' && serviceWorkerRegistration) {
         try {
+            const token = getToken();
+            const roomName = getRoomName(token);
             await serviceWorkerRegistration.showNotification('New message', {
-                body: `${name} (@${shortFingerprint}) on ${getHash()}`,
+                body: `${name} (@${shortFingerprint}) on ${roomName}`,
                 tag: 'new_message',
                 requireInteraction: true,
                 data: {
-                    roomToken: getToken(),
+                    roomToken: token,
                     url: location.href,
                 },
             });
@@ -1134,6 +1135,34 @@ logotypeBox.addEventListener('click', ev => {
     setToken('');
 });
 
+navigation.addEventListener('navigation', ev => {
+    const params = navigation.getParams();
+    switch (params.view) {
+        case 'settings': {
+            break;
+        }
+
+        case 'console': {
+            break;
+        }
+
+        case 'contacts': {
+            break;
+        }
+
+        default: {
+            const hash = navigation.hash;
+            if (!hash) {
+                // start page
+            } else {
+                readHash().catch(e => {
+                    console.error(e);
+                });
+            }
+        }
+    }
+});
+
 window.addEventListener('hashchange', ev => {
     console.log('hashchange');
     readHash().catch(e => {
@@ -1253,9 +1282,6 @@ settingsCloseButton.addEventListener('click', ev => {
 window.addEventListener('pageshow', ev => {
     console.log('pageshow');
     saveUsername();
-    readHash().catch(e => {
-        console.error(e);
-    });
 });
 
 settings.addEventListener('settingschange', ev => {

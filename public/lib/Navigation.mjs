@@ -52,35 +52,30 @@ export class Navigation extends EventTarget {
             setUrlState(location.href);
             this.dispatchEvent(new Event('navigation'));
         });
-        setTimeout(() => {
+        window.addEventListener('pageshow', (ev) => {
+            setUrlState(location.href);
             this.dispatchEvent(new Event('navigation'));
-        }, 0);
+        });
     }
 
     get hash() {
         return decodeURIComponent(location.hash.slice(1));
     }
 
-    set hash(value) {
-        const url = new URL(location.href);
-        const hash = encodeURIComponent(value);
-        if (!hash) {
-            url.hash = '';
-        } else {
-            url.hash = '#' + hash;
-        }
-        setUrlState(url);
-        this.dispatchEvent(new Event('navigation'));
-    }
-
     getParams() {
         return getSearchRecord(location.href);
     }
 
-    setParams(record) {
-        const params = new URLSearchParams(record);
+    navigate(record, hash) {
+        const params = new URLSearchParams(record || {});
         const url = new URL(location.href);
         url.search = params.toString();
+        const encodedHash = encodeURIComponent(hash || '');
+        if (!encodedHash) {
+            url.hash = '';
+        } else {
+            url.hash = '#' + encodedHash;
+        }
         setUrlState(url);
         this.dispatchEvent(new Event('navigation'));
     }

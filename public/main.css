@@ -22,7 +22,7 @@
 body {
     display: grid;
     margin: 0;
-    grid-template-rows: [viewport-start header-start] max-content [header-end content-start] auto [content-end controls-start] max-content [controls-end viewport-end];
+    grid-template-rows: [viewport-start header-start] max-content [header-end content-start] auto [content-end viewport-end];
     grid-template-columns: [viewport-start drawer-start content-start] max-content [drawer-end] 1fr [content-end viewport-end];
     transition: opacity linear .5s;
 }
@@ -247,12 +247,27 @@ label[for="token"] {
     background-color: var(--theme-highlighted-active-color);
 }
 
+#view-container {
+    grid-column: content-start / content-end;
+    grid-row: content-start / content-end;
+    display: grid;
+}
+
+#view-container > * {
+    grid-column: 1;
+    grid-row: 1;
+}
+
+#chat-view {
+    display: grid;
+    grid-template-rows: [content-start] 1fr [content-end controls-start] max-content [controls-end];
+}
+
 #main {
     display: grid;
     align-content: end;
     background-color: var(--theme-main-background-color);
     padding: .5rem;
-    grid-column: content-start / content-end;
     grid-row: content-start / content-end;
 }
 
@@ -273,7 +288,6 @@ label[for="token"] {
     display: grid;
     grid-template-columns: max-content 1fr;
     box-shadow: 0 0 .25rem var(--theme-shadow-color);
-    grid-column: content-start / content-end;
     grid-row: controls-start / controls-end;
 }
 

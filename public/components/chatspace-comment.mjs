@@ -1,4 +1,8 @@
 
+import {Navigation} from '/lib/Navigation.mjs';
+
+const navigation = new Navigation;
+
 const createCaretMark = () => {
     const element = document.createElement('span');
     element.classList.add('caret-mark');
@@ -51,8 +55,13 @@ class ChatspaceCommentElement extends HTMLElement {
                 anchor.classList.add('entity');
                 if (match[2]) {
                     // hashtag
-                    anchor.href = new URL(match[2], location.href).toString();
+                    anchor.href = new URL(match[2], location.href).hash;
                     anchor.classList.add('hashtag');
+                    const hashtag = String(match[2]).slice(1);
+                    anchor.addEventListener('click', ev => {
+                        ev.preventDefault();
+                        navigation.navigate({}, hashtag);
+                    });
                 } else if (match[3]) {
                     // link
                     anchor.href = new URL(match[3]).toString();

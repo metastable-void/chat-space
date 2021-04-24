@@ -259,6 +259,27 @@ label[for="token"] {
     background-color: var(--theme-main-background-color);
 }
 
+#about-view:not([hidden]) {
+    align-self: center;
+    justify-self: center;
+    max-inline-size: 32rem;
+    padding: .5rem;
+}
+
+#get-started-button {
+    display: block;
+    color: var(--theme-highlighted-text-color);
+    background-color: var(--theme-accent-color);
+    font-size: 125%;
+    padding: .5rem;
+    margin: auto;
+    box-sizing: border-box;
+    inline-size: max-content;
+    max-inline-size: 100%;
+    margin-block-start: .5rem;
+    margin-block-end: .5rem;
+}
+
 #chat-view:not([hidden]) {
     display: grid;
     grid-template-rows: [content-start] 1fr [content-end controls-start] max-content [controls-end];

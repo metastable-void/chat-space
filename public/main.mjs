@@ -1383,10 +1383,6 @@ setInterval(() => {
     }
 }, 4000);
 
-if (getVisitCount() < 2) {
-    menhera.session.getTopic('chatspace.showHelp').dispatchMessage(null);
-}
-
 if (history.scrollRestoration) {
     history.scrollRestoration = 'manual';
 }

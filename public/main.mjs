@@ -678,6 +678,7 @@ try {
 
 getStartedNameBox.addEventListener('change', ev => {
     settings.userName = getStartedNameBox.value;
+    nameBox.value = getStartedNameBox.value;
 });
 
 getStartedButton.addEventListener('click', ev => {
@@ -692,6 +693,7 @@ drawerChatButton.addEventListener('click', ev => {
 const saveUsername = () => {
     try {
         settings.userName = nameBox.value;
+        getStartedNameBox.value = nameBox.value;
     } catch (e) {
         console.warn('Failed to save your name:', e);
     }

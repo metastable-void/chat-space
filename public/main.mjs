@@ -295,6 +295,7 @@ menhera.session.state.addPropertyObserver('chatspace.modal.notificationPermissio
 });
 
 menhera.session.state.addTopicReflector(menhera.session.getTopic('chatspace.showAbout'), (data, metadata) => {
+    document.title = 'Chatspace - Text like a voice call';
     return Object.entries({
         'chatspace.view.shown': 'about',
     });

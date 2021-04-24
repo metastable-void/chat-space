@@ -738,7 +738,7 @@ const getChannelKey = () => {
 };
 
 const sendMessage = data => {
-    if (ws.readyState == WebSocket.OPEN) {
+    if (ws && ws.readyState == WebSocket.OPEN) {
         ws.send(JSON.stringify(data));
         return true;
     } else {
@@ -1195,7 +1195,7 @@ roomNameBox.addEventListener('keydown', ev => {
 logotypeBox.addEventListener('click', ev => {
     ev.preventDefault();
     ev.stopPropagation();
-    setToken('');
+    navigation.navigate({}, '');
 });
 
 navigation.addEventListener('navigation', ev => {

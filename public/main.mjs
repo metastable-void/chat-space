@@ -161,6 +161,10 @@ storageUsageBox.value = '-- %';
 const notificationPermissionBox = document.querySelector('#notification-permission');
 notificationPermissionBox.value = '--';
 
+const viewContainer = document.querySelector('#view-container');
+const aboutView = document.querySelector('#about-view');
+const chatView = document.querySelector('#chat-view');
+
 try {
     document.querySelector('#client-id').value = menhera.client.id;
     document.querySelector('#session-id').value = menhera.session.id;
@@ -235,6 +239,33 @@ menhera.session.state.addPropertyObserver('chatspace.modal.shown', (shownModal) 
     }
 });
 
+menhera.session.state.addPropertyObserver('chatspace.view.shown', (shownView) => {
+    for (const view of viewContainer.children) {
+        view.hidden = true;
+    }
+    switch (shownView) {
+        case 'chat': {
+            chatView.hidden = false;
+            break;
+        }
+
+        case 'settings': {
+            //
+            break;
+        }
+
+        case 'contacts': {
+            //
+            break;
+        }
+
+        default: {
+            // about
+            aboutView.hidden = false;
+        }
+    }
+});
+
 menhera.session.state.addPropertyObserver('chatspace.modal.invite.peer_fingerprint', (peerFingerprint) => {
     invitePeerFingerprintBox.title = peerFingerprint;
 });
@@ -255,6 +286,18 @@ menhera.session.state.addPropertyObserver('chatspace.modal.storagePercent', (sto
 menhera.session.state.addPropertyObserver('chatspace.modal.notificationPermission', (notificationPermission) => {
     if (!notificationPermission) return;
     notificationPermissionBox.value = notificationPermission;
+});
+
+menhera.session.state.addTopicReflector(menhera.session.getTopic('chatspace.showAbout'), (data, metadata) => {
+    return Object.entries({
+        'chatspace.view.shown': 'about',
+    });
+});
+
+menhera.session.state.addTopicReflector(menhera.session.getTopic('chatspace.showChat'), (data, metadata) => {
+    return Object.entries({
+        'chatspace.view.shown': 'chat',
+    });
 });
 
 menhera.session.state.addTopicReflector(menhera.session.getTopic('chatspace.showInvite'), (data, metadata) => {
@@ -1091,7 +1134,7 @@ const updateTokenList = async () => {
     }
     const option = document.createElement('button');
     option.append('(public)');
-    option.value = '';
+    option.value = DEFAULT_TOKEN;
     tokenListContainer.prepend(option);
     option.addEventListener('mousedown', ev => {
         console.log('token list click:', ev.target.value);
@@ -1154,7 +1197,9 @@ navigation.addEventListener('navigation', ev => {
             const hash = navigation.hash;
             if (!hash) {
                 // start page
+                menhera.session.triggerTopic('chatspace.showAbout');
             } else {
+                menhera.session.triggerTopic('chatspace.showChat');
                 readHash().catch(e => {
                     console.error(e);
                 });

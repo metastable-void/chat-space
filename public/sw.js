@@ -21,6 +21,7 @@ const ASSETS = new URLSet([
     '/lib/Provisionality.mjs',
     '/lib/components-utils.mjs',
     '/lib/fetch-utils.js',
+    '/lib/Navigation.mjs',
     '/components/chatspace-toast.mjs',
     '/components/chatspace-toast.css',
     '/components/chatspace-comment.mjs',

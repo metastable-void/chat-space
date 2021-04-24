@@ -2,6 +2,7 @@
 import * as ed from '/lib/noble-ed25519-1.0.3.mjs';
 import * as x25519 from '/lib/x25519.mjs';
 import {Settings} from '/lib/Settings.mjs';
+import {Navigation} from '/lib/Navigation.mjs';
 import '/components/chatspace-comment-container.mjs';
 import '/components/chatspace-toast.mjs';
 import '/lib/es-first-aid.js';
@@ -80,11 +81,7 @@ if (location.pathname.endsWith('/index.html')) {
     history.replaceState({}, '', String(url));
 }
 
-if (location.hash.slice(1) == '' && location.href.endsWith('#')) {
-    const url = new URL(location.href);
-    url.hash = '';
-    history.replaceState({}, '', String(url));
-}
+const navigation = new Navigation;
 
 const settings = new Settings;
 
@@ -506,14 +503,14 @@ const getX25519SharedUuid = async (privateKey, publicKey) => {
 
 const getTime = () => +new Date;
 
-const getToken = () => decodeURIComponent(location.hash.slice(1));
+const DEFAULT_TOKEN = '00000000-0000-0000-0000-000000000000';
+const getToken = () => {
+    return navigation.hash;
+};
+
 const setToken = (token) => {
-    const hash = encodeURIComponent(token);
-    if (!hash && '' != location.hash) {
-        location.hash = '';
-    } else if (location.hash.slice(1) != hash) {
-        location.hash = '#' + hash;
-    }
+    const strToken = String(token).trim();
+    navigation.hash = strToken;
 };
 
 menhera.session.getTopic('chatspace.openRoom').addListener((data, metadata) => {
@@ -1107,7 +1104,8 @@ nameBox.addEventListener('change', ev => {
 });
 
 tokenBox.addEventListener('change', ev => {
-    const token = tokenBox.value.trim();
+    const token = tokenBox.value.split('#').join('').trim();
+    tokenBox.value = token;
     setToken(token);
     tokenBox.blur();
 });

@@ -256,9 +256,10 @@ label[for="token"] {
 #view-container > * {
     grid-column: 1;
     grid-row: 1;
+    background-color: var(--theme-main-background-color);
 }
 
-#chat-view {
+#chat-view:not([hidden]) {
     display: grid;
     grid-template-rows: [content-start] 1fr [content-end controls-start] max-content [controls-end];
 }

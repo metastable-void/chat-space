@@ -128,6 +128,7 @@ const askPersistenceButton = document.querySelector('#ask-persistence-button');
 const drawerOpenButton = document.querySelector('#drawer-open-button');
 const drawerCloseButton = document.querySelector('#drawer-close-button');
 const drawerBackdrop = document.querySelector('#drawer-backdrop');
+const drawerChatButton = document.querySelector('#drawer-menu-chat');
 
 const connectionStatus = document.querySelector('#connection');
 const mainBox = document.querySelector('#main');
@@ -164,6 +165,11 @@ notificationPermissionBox.value = '--';
 const viewContainer = document.querySelector('#view-container');
 const aboutView = document.querySelector('#about-view');
 const chatView = document.querySelector('#chat-view');
+
+/** @type {HTMLInputElement} */
+const getStartedNameBox = document.querySelector('#get-started-name');
+
+const getStartedButton = document.querySelector('#get-started-button');
 
 try {
     document.querySelector('#client-id').value = menhera.client.id;
@@ -291,12 +297,6 @@ menhera.session.state.addPropertyObserver('chatspace.modal.notificationPermissio
 menhera.session.state.addTopicReflector(menhera.session.getTopic('chatspace.showAbout'), (data, metadata) => {
     return Object.entries({
         'chatspace.view.shown': 'about',
-    });
-});
-
-menhera.session.state.addTopicReflector(menhera.session.getTopic('chatspace.showChat'), (data, metadata) => {
-    return Object.entries({
-        'chatspace.view.shown': 'chat',
     });
 });
 
@@ -670,9 +670,23 @@ try {
     if (!name) throw void 0;
     console.log('Name restored.');
     nameBox.value = name;
+    getStartedNameBox.value = name;
 } catch (e) {
     console.log('Name not restored.');
 }
+
+getStartedNameBox.addEventListener('change', ev => {
+    settings.userName = getStartedNameBox.value;
+});
+
+getStartedButton.addEventListener('click', ev => {
+    navigation.navigate({}, DEFAULT_TOKEN);
+});
+
+drawerChatButton.addEventListener('click', ev => {
+    ev.preventDefault();
+    navigation.navigate({}, DEFAULT_TOKEN);
+});
 
 const saveUsername = () => {
     try {
@@ -1107,8 +1121,8 @@ const getChannelName = async (token) => {
     return firstAid.encodeHex(new Uint8Array(digestBuffer));
 };
 
-const readHash = async () => {
-    const token = getToken();
+menhera.session.state.addTopicReflector(menhera.session.getTopic('chatspace.showChat'), async (data, metadata) => {
+    const token = data && data.token || DEFAULT_TOKEN;
     tokenBox.value = token;
     document.title = token ? `Chatspace #${token}` : 'Chatspace (public)';
     console.log('Opening room:', token);
@@ -1116,7 +1130,10 @@ const readHash = async () => {
     setWsUrl(channel);
     openSocket(true);
     await addVisitedRoom(token);
-};
+    return Object.entries({
+        'chatspace.view.shown': 'chat',
+    });
+});
 
 const updateTokenList = async () => {
     const rooms = await getLastVisitedRooms();
@@ -1199,9 +1216,8 @@ navigation.addEventListener('navigation', ev => {
                 // start page
                 menhera.session.triggerTopic('chatspace.showAbout');
             } else {
-                menhera.session.triggerTopic('chatspace.showChat');
-                readHash().catch(e => {
-                    console.error(e);
+                menhera.session.triggerTopic('chatspace.showChat', {
+                    token: hash,
                 });
             }
         }
@@ -1210,9 +1226,6 @@ navigation.addEventListener('navigation', ev => {
 
 window.addEventListener('hashchange', ev => {
     console.log('hashchange');
-    readHash().catch(e => {
-        console.error(e);
-    });
 });
 
 randomButton.addEventListener('click', ev => {
@@ -1287,7 +1300,7 @@ connectionStatus.addEventListener('click', ev => {
 helpButton.addEventListener('click', ev => {
     ev.stopPropagation();
     ev.preventDefault();
-    menhera.session.triggerTopic('chatspace.showHelp');
+    navigation.navigate({}, '');
 });
 
 helpBox.addEventListener('click', ev => {

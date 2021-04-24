@@ -278,6 +278,11 @@ label[for="token"] {
     max-inline-size: 100%;
     margin-block-start: .5rem;
     margin-block-end: .5rem;
+    -webkit-appearance: none;
+    appearance: none;
+    border: none;
+    border-radius: .25rem;
+    outline: none;
 }
 
 #chat-view:not([hidden]) {
